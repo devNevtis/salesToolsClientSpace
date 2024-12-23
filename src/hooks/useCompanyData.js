@@ -6,32 +6,50 @@ import useCompanyStages from '@/store/useCompanyStages';
 import axios from '@/lib/axios';
 import { env } from '@/config/env';
 
+// src/hooks/useCompanyData.js
 export const useCompanyData = () => {
   const { user } = useAuth();
   const { setTheme } = useCompanyTheme();
   const { setStages } = useCompanyStages();
 
   useEffect(() => {
-    const fetchCompanyData = async () => {
-      if (user?.companyId) {
-        try {
-          const response = await axios.get(env.endpoints.company.getById(user.companyId));
-          const { configuration } = response.data;
-          
-          if (configuration?.theme) {
-            setTheme(configuration.theme);
-          }
+    console.log('0. Hook effect ejecutado');
+    console.log('0.1 Estado actual de auth:', { user });
 
-          if (configuration?.stages) {
-            // Guardamos todos los stages sin filtrar
-            setStages(configuration.stages);
-          }
-        } catch (error) {
-          console.error('Error fetching company data:', error);
+    // Añadir validación explícita
+    if (!user) {
+      console.log('0.2 No hay usuario aún, esperando...');
+      return;
+    }
+
+    const fetchCompanyData = async () => {
+      try {
+        console.log('1. Iniciando fetch con companyId:', user.companyId);
+        console.log('2. URL de fetch:', env.endpoints.company.getById(user.companyId));
+        
+        const response = await axios.get(env.endpoints.company.getById(user.companyId));
+        console.log('3. Respuesta recibida:', response.data);
+        
+        const { configuration } = response.data;
+        
+        if (configuration?.theme) {
+          console.log('4. Configurando theme:', configuration.theme);
+          setTheme(configuration.theme);
         }
+
+        if (configuration?.stages) {
+          console.log('5. Configurando stages:', configuration.stages);
+          setStages(configuration.stages);
+        }
+      } catch (error) {
+        console.error('Error en fetchCompanyData:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status
+        });
       }
     };
 
     fetchCompanyData();
-  }, [user?.companyId, setTheme, setStages]);
+  }, [user, setTheme, setStages]); // Cambiamos la dependencia a user completo
 };
