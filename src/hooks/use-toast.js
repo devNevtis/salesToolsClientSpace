@@ -102,7 +102,7 @@ function dispatch(action) {
   })
 }
 
-function toast({
+/* function toast({
   ...props
 }) {
   const id = genId()
@@ -131,6 +131,37 @@ function toast({
     dismiss,
     update,
   }
+} */
+
+function toast(props) {
+  const id = genId();
+
+  const update = (props) =>
+    dispatch({
+      type: "UPDATE_TOAST",
+      toast: { ...props, id },
+    });
+
+  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id });
+
+  dispatch({
+    type: "ADD_TOAST",
+    toast: {
+      ...props,
+      id,
+      duration: props.duration || 5000, // Duración por defecto
+      className: "toast-slide-in", // Clase para animación
+      onOpenChange: (open) => {
+        if (!open) dismiss();
+      },
+    },
+  });
+
+  return {
+    id,
+    dismiss,
+    update,
+  };
 }
 
 function useToast() {

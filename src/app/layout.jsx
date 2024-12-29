@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 import { AuthProvider } from "@/components/AuthProvider";
 import { Toaster } from "@/components/ui/toaster";
+import { DialogProvider } from "@/contexts/DialogContext";
 
 
 export const metadata = {
@@ -14,12 +15,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body >
+      <body>
         <AuthProvider>
-          <main>
-            {children}
-            <Toaster />
-          </main>
+          <DialogProvider>
+            <main>
+              {children}
+              <Toaster />
+            </main>
+          </DialogProvider>
         </AuthProvider>
       </body>
     </html>

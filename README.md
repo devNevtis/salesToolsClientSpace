@@ -192,6 +192,7 @@ Sistema de gestión de leads B2B con personalización por compañía, implementa
 - **Frontend:** React 18
 - **Estilos:** Tailwind CSS + shadcn/ui
 - **Estado:** Zustand
+- **Charts:** Recharts 2.12.7
 - **API:** Axios
 - **Auth:** JWT + Cookies
 
@@ -236,6 +237,7 @@ yarn dev
 src/
 ├── app/                    # Rutas Next.js
 │   ├── main/              # Área principal
+│   │   ├── dashboard/    # Analiticas y funnels
 │   │   ├── leads/        # Gestión de leads
 │   │   └── company/      # Configuración
 │   └── login/            # Autenticación
@@ -284,11 +286,20 @@ Las compañías pueden configurar:
 - Configuración de etapas
 - Creación de leads
 - Vista de leads
+- Full lead edit con múltiples pestañas
+  - Edit: Información completa del lead y contactos asociados
+  - Notes: Sistema de notas con etiquetas
+  - Opportunities: Gestión de oportunidades de venta
+- Analytics Dashboard
+  - Sales funnel visualization
+  - Opportunity funnel tracking
+  - Stage-based monetary tracking
+- Sistema de feedback mejorado
+  - Toasts informativos con estados
+  - Transiciones suaves
+  - Loading states optimizados
 
 ### 🚧 En Desarrollo
-- Edición rápida de leads
-- Edición completa de leads
-- Eliminación de leads
 - Gestión avanzada de oportunidades
 
 ## 🧪 Testing

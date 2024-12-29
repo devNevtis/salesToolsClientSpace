@@ -16,13 +16,11 @@ import useDeleteBusinessStore from '@/store/useDeleteBusinessStore';
 import { Loader2, AlertTriangle } from "lucide-react";
 import useLeadsStore from "@/store/useLeadsStore";
 import { useAuth } from "@/components/AuthProvider";
-import { useDialogContext } from "@/contexts/DialogContext";
 
 export default function DeleteBusinessDialog() {
   const { toast } = useToast();
   const { user } = useAuth();
   const { fetchBusinesses } = useLeadsStore();
-  const { registerOverlay, unregisterOverlay } = useDialogContext();
   const {
     isOpen,
     closeDialog,
@@ -34,12 +32,10 @@ export default function DeleteBusinessDialog() {
   } = useDeleteBusinessStore();
 
   useEffect(() => {
-    if (isOpen) {
-      registerOverlay('delete-business');
-    } else {
-      unregisterOverlay('delete-business');
+    if (!isOpen) {
+      document.body.style.pointerEvents = 'auto';
     }
-  }, [isOpen, registerOverlay, unregisterOverlay]);
+  }, [isOpen]);
 
   const handleDelete = async () => {
     try {
@@ -60,6 +56,7 @@ export default function DeleteBusinessDialog() {
   };
 
   if (!business) return null;
+
 
   return (
     <Dialog open={isOpen} onOpenChange={closeDialog}>

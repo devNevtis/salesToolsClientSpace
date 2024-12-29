@@ -40,16 +40,11 @@ export default function LeadsPage() {
     setSearchTerm(e.target.value);
   };
 
-  console.log(user)
+  //console.log(user)
 
   const handleImportLeads = () => {
     // TODO: Implementar importación de leads
     console.log('Import leads clicked');
-  };
-
-  const handleAddLead = () => {
-    // TODO: Implementar añadir lead
-    console.log('Add lead clicked');
   };
 
   if (error) {
@@ -96,7 +91,7 @@ export default function LeadsPage() {
 
         {/* Leads Tab Content */}
         <TabsContent value="leads" className="mt-6">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-semibold flex items-center gap-2">
               <LayoutGrid className="h-6 w-6" />
               Leads

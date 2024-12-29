@@ -46,8 +46,6 @@ const Navbar = () => {
     e.currentTarget.style.color = isActive ? theme.highlighting : 'white';
   };
 
-  console.log(user)
-
   return (
     <div style={navbarStyle}>
       <div className="flex gap-2 w-1/3">

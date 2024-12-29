@@ -1,6 +1,7 @@
 // src/components/leads/QuickEditDialog.jsx
 'use client';
 
+import { useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -16,14 +17,11 @@ import useQuickEditStore from '@/store/useQuickEditStore';
 import { Loader2 } from "lucide-react";
 import useLeadsStore from "@/store/useLeadsStore";
 import { useAuth } from "@/components/AuthProvider";
-import { useDialogContext } from "@/contexts/DialogContext";
-import { useEffect } from 'react';
 
 export default function QuickEditDialog() {
   const { toast } = useToast();
   const { user } = useAuth();
   const { fetchBusinesses } = useLeadsStore();
-  const { registerOverlay, unregisterOverlay } = useDialogContext();
   const {
     isOpen,
     closeDialog,
@@ -35,18 +33,24 @@ export default function QuickEditDialog() {
   } = useQuickEditStore();
 
   useEffect(() => {
-    if (isOpen) {
-      registerOverlay('quick-edit');
-    } else {
-      unregisterOverlay('quick-edit');
+    if (!isOpen) {
+      document.body.style.pointerEvents = 'auto';
     }
-  }, [isOpen, registerOverlay, unregisterOverlay]);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setBusinessData(null);
+    }
+  }, [isOpen, setBusinessData]);
 
   const handleSave = async (e) => {
     e.preventDefault();
+    
     try {
       await saveChanges();
       await fetchBusinesses(user);
+      
       toast({
         title: "Changes saved",
         description: "Business information has been updated successfully.",
@@ -63,7 +67,14 @@ export default function QuickEditDialog() {
   if (!businessData) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={closeDialog}>
+    <Dialog 
+  open={isOpen} 
+  onOpenChange={(open) => {
+    console.log('Dialog state changing:', open);
+    console.log('Current DOM state:', document.body.style.pointerEvents);
+    closeDialog();
+  }}
+>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Quick Edit Business</DialogTitle>
