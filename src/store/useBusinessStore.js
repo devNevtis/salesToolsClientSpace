@@ -1,10 +1,11 @@
 // store/useBusinessStore.js
 import { create } from 'zustand';
 import axios from 'axios';
+import { env } from '@/config/env';
 
-const api = axios.create({
-  baseURL: 'https://api.nevtis.com',
-});
+/* const api = axios.create({
+    baseURL: env.apiUrl,
+  }); */
 
 // Función para obtener columnas visibles del localStorage
 const getStoredColumns = () => {
@@ -32,13 +33,6 @@ const useBusinessStore = create((set, get) => ({
     pageSize: 10,
     pageSizeOptions: [5, 10, 20, 50, 100],
     visibleColumns: getStoredColumns(),
-/*     visibleColumns: [
-        'name',
-        'email',
-        'phone',
-        'city',
-        'website'
-    ], */
 
     // Función original createBusinessWithContact
     createBusinessWithContact: async (businessData, contactData, userData) => {
@@ -46,7 +40,7 @@ const useBusinessStore = create((set, get) => ({
         try {
             // Crear Business
             const businessResponse = await axios.post(
-                'https://api.nevtis.com/dialtools/business/create', 
+                env.endpoints.business.create, 
                 businessData
             );
     
@@ -85,7 +79,7 @@ const useBusinessStore = create((set, get) => ({
             };
             
             const contactResponse = await axios.post(
-                'https://api.nevtis.com/dialtools/leads/create',
+                env.endpoints.leads.create,
                 fullContactData
             );
     
@@ -142,7 +136,7 @@ const useBusinessStore = create((set, get) => ({
     fetchBusinesses: async () => {
         set({ isLoading: true, error: null });
         try {
-            const response = await api.get('/dialtools/business/all');
+            const response = await axios.get(env.endpoints.business.all);
             set({ 
                 businesses: response.data, 
                 filteredBusinesses: response.data,
@@ -159,7 +153,7 @@ const useBusinessStore = create((set, get) => ({
     updateBusiness: async (id, data) => {
         set({ isTransitioning: true });
         try {
-            const response = await api.put(`/dialtools/business/update/${id}`, data);
+            const response = await axios.put(env.endpoints.business.update(id), data);
             
             // Actualizar el estado local después de la actualización exitosa
             set(state => {
@@ -197,7 +191,7 @@ const useBusinessStore = create((set, get) => ({
     deleteBusiness: async (id) => {
         set({ isTransitioning: true });
         try {
-            await api.delete(`/dialtools/business/delete/${id}`);
+            await axios.delete(env.endpoints.business.delete(id));
             set(state => ({
                 businesses: state.businesses.filter(business => business._id !== id),
                 filteredBusinesses: state.filteredBusinesses.filter(business => business._id !== id),
@@ -222,7 +216,7 @@ const useBusinessStore = create((set, get) => ({
             // Eliminar businesses uno por uno
             await Promise.all(ids.map(async (id) => {
                 try {
-                    await api.delete(`/dialtools/business/delete/${id}`);
+                    await axios.delete(env.endpoints.business.delete(id));
                 } catch (error) {
                     errors.push({
                         id,
@@ -385,7 +379,7 @@ const useBusinessStore = create((set, get) => ({
     fetchContacts: async () => {
         try {
             set({ isLoadingContacts: true });
-            const response = await axios.get('https://api.nevtis.com/dialtools/leads/allLeads');
+            const response = await axios.get(env.endpoints.leads.all);
             set({ 
                 contacts: response.data, 
                 isLoadingContacts: false 

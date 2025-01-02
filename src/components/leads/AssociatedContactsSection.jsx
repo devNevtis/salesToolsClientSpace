@@ -40,12 +40,15 @@ import useBusinessStore from "@/store/useBusinessStore";
 import AddContactDialog from "./dialogs/AddContactDialog";
 import EditContactDialog from "./dialogs/EditContactDialog";
 import DeleteContactDialog from "./dialogs/DeleteContactDialog";
+import { useDialogContext } from "@/contexts/DialogContext";
+
 
 export default function AssociatedContactsSection({ businessId, currentStatus }) { // Añadimos currentStatus
     const [selectedContact, setSelectedContact] = useState(null);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const { registerOverlay, unregisterOverlay } = useDialogContext();
     
     const { 
         businesses, 
@@ -63,6 +66,32 @@ export default function AssociatedContactsSection({ businessId, currentStatus })
         };
         loadData();
     }, [fetchContacts, fetchLeads]);
+
+    // Añadir useEffect para manejar overlays
+/*     useEffect(() => {
+        if (isEditDialogOpen) {
+          registerOverlay('edit-contact');
+        } else {
+          unregisterOverlay('edit-contact');
+        }
+      }, [isEditDialogOpen, registerOverlay, unregisterOverlay]); */
+      useEffect(() => {
+        if (isEditDialogOpen) {
+            registerOverlay('edit-contact');
+        } else {
+            unregisterOverlay('edit-contact');
+        }
+        return () => unregisterOverlay('edit-contact');
+    }, [isEditDialogOpen, registerOverlay, unregisterOverlay]);
+  
+      useEffect(() => {
+        if (isDeleteDialogOpen) {
+            registerOverlay('delete-contact');
+        } else {
+            unregisterOverlay('delete-contact');
+        }
+        return () => unregisterOverlay('delete-contact');
+    }, [isDeleteDialogOpen, registerOverlay, unregisterOverlay]);
 
     const business = businesses.find(b => b._id === businessId);
     const contacts = getBusinessContacts(businessId);
@@ -174,7 +203,8 @@ export default function AssociatedContactsSection({ businessId, currentStatus })
                                                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                                     <DropdownMenuSeparator />
                                                     <DropdownMenuItem
-                                                        onClick={() => {
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();  // Añadir esto
                                                             setSelectedContact(contact);
                                                             setIsEditDialogOpen(true);
                                                         }}
@@ -183,7 +213,8 @@ export default function AssociatedContactsSection({ businessId, currentStatus })
                                                         Edit Contact
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem
-                                                        onClick={() => {
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();  // Añadir esto
                                                             setSelectedContact(contact);
                                                             setIsDeleteDialogOpen(true);
                                                         }}

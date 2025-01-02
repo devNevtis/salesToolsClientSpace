@@ -1,5 +1,6 @@
 // src/hooks/useOverlayManager.js
-import { useState, useCallback, useEffect } from 'react';
+'use client';
+import { useState, useCallback } from 'react';
 
 export function useOverlayManager() {
   const [activeOverlays, setActiveOverlays] = useState(new Set());
@@ -18,14 +19,6 @@ export function useOverlayManager() {
       }
       return next;
     });
-  }, []);
-
-  // Limpieza en caso de desmontaje
-  useEffect(() => {
-    return () => {
-      document.body.style.pointerEvents = 'auto';
-      setActiveOverlays(new Set());
-    };
   }, []);
 
   return { registerOverlay, unregisterOverlay, activeOverlays };

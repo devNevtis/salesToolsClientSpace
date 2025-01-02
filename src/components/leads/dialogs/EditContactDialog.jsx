@@ -11,6 +11,8 @@ import {
     DialogTitle,
     DialogDescription,
     DialogFooter,
+    DialogPortal,
+    DialogOverlay
 } from "@/components/ui/dialog";
 import {
     Form,
@@ -28,6 +30,7 @@ import { useToast } from "@/hooks/use-toast";
 import { contactSchema } from "@/components/business/schemas/formSchemas";
 import useLeadsStore from "@/store/useLeadsStore2";
 import { useAuth } from "@/components/AuthProvider";
+/* import { DialogPortal } from "@/components/ui/DialogPortal"; */
 
 export default function EditContactDialog({ 
     open, 
@@ -92,7 +95,8 @@ export default function EditContactDialog({
         }
     }, [contact, open, form]);
 
-    const onSubmit = async (data) => {
+    const onSubmit = async (data, e) => {
+        e?.nativeEvent?.stopPropagation();
         try {
             setIsLoading(true);
             
@@ -159,223 +163,226 @@ export default function EditContactDialog({
     };
 
     return (
-<Dialog open={open} onOpenChange={onOpenChange}>
-    <DialogContent className="sm:max-w-[900px] max-h-[95vh]"> {/* Aumentamos el ancho y alto máximo */}
-        <DialogHeader>
-            <DialogTitle>Edit Contact</DialogTitle>
-            <DialogDescription>
-                Edit contact information for {contact?.firstName} {contact?.lastName}.
-            </DialogDescription>
-        </DialogHeader>
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-[900px] max-h-[95vh]"> {/* Aumentamos el ancho y alto máximo */}
+                <DialogHeader>
+                    <DialogTitle>Edit Contact</DialogTitle>
+                    <DialogDescription>
+                        Edit contact information for {contact?.firstName} {contact?.lastName}.
+                    </DialogDescription>
+                </DialogHeader>
 
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                {/* Status Badge */}
-                <div className="space-y-2">
-                    <FormLabel>Status</FormLabel>
-                    <div>
-                        <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${getStatusBadgeStyle(currentStatus)}`}>
-                            {currentStatus}
-                        </span>
-                    </div>
-                </div>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        {/* Status Badge */}
+                        <div className="space-y-2">
+                            <FormLabel>Status</FormLabel>
+                            <div>
+                                <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${getStatusBadgeStyle(currentStatus)}`}>
+                                    {currentStatus}
+                                </span>
+                            </div>
+                        </div>
 
-                {/* Basic Information - 3 columnas */}
-                <div className="grid grid-cols-3 gap-4">
-                    <FormField
-                        control={form.control}
-                        name="firstName"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>First Name</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="lastName"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Last Name</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="source"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Source</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-
-                {/* Contact Information - 2 columnas */}
-                <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input type="email" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Phone</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-
-                {/* Address Fields - 2 filas, distribución optimizada */}
-                <div className="space-y-4">
-                    <FormField
-                        control={form.control}
-                        name="address1"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Address</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <div className="grid grid-cols-4 gap-4">
-                        <FormField
-                            control={form.control}
-                            name="city"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>City</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="state"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>State</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="postalCode"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Postal Code</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="country"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Country</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                </div>
-
-                {/* DND Settings - 3 columnas */}
-                <div className="space-y-2">
-                    <FormLabel>Communication Preferences</FormLabel>
-                    <div className="grid grid-cols-3 gap-4">
-                        {Object.keys(form.getValues("dndSettings")).map((channel) => (
+                        {/* Basic Information - 3 columnas */}
+                        <div className="grid grid-cols-3 gap-4">
                             <FormField
-                                key={channel}
                                 control={form.control}
-                                name={`dndSettings.${channel}.status`}
+                                name="firstName"
                                 render={({ field }) => (
-                                    <FormItem className="flex flex-row items-center space-x-2">
+                                    <FormItem>
+                                        <FormLabel>First Name</FormLabel>
                                         <FormControl>
-                                            <Checkbox
-                                                checked={field.value === "true"}
-                                                onCheckedChange={(checked) => {
-                                                    field.onChange(checked ? "true" : "false");
-                                                }}
-                                            />
+                                            <Input {...field} />
                                         </FormControl>
-                                        <FormLabel className="text-sm font-normal">
-                                            Allow {channel}
-                                        </FormLabel>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        ))}
-                    </div>
-                </div>
+                            <FormField
+                                control={form.control}
+                                name="lastName"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Last Name</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="source"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Source</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
-                <DialogFooter>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => onOpenChange(false)}
-                        disabled={isLoading}
-                    >
-                        Cancel
-                    </Button>
-                    <Button type="submit" disabled={isLoading}>
-                        {isLoading ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Updating...
-                            </>
-                        ) : (
-                            'Save Changes'
-                        )}
-                    </Button>
-                </DialogFooter>
-            </form>
-        </Form>
-    </DialogContent>
-</Dialog>
+                        {/* Contact Information - 2 columnas */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Email</FormLabel>
+                                        <FormControl>
+                                            <Input type="email" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="phone"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Phone</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        {/* Address Fields - 2 filas, distribución optimizada */}
+                        <div className="space-y-4">
+                            <FormField
+                                control={form.control}
+                                name="address1"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Address</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <div className="grid grid-cols-4 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="city"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>City</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="state"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>State</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="postalCode"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Postal Code</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="country"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Country</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        </div>
+
+                        {/* DND Settings - 3 columnas */}
+                        <div className="space-y-2">
+                            <FormLabel>Communication Preferences</FormLabel>
+                            <div className="grid grid-cols-3 gap-4">
+                                {Object.keys(form.getValues("dndSettings")).map((channel) => (
+                                    <FormField
+                                        key={channel}
+                                        control={form.control}
+                                        name={`dndSettings.${channel}.status`}
+                                        render={({ field }) => (
+                                            <FormItem className="flex flex-row items-center space-x-2">
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value === "true"}
+                                                        onCheckedChange={(checked) => {
+                                                            field.onChange(checked ? "true" : "false");
+                                                        }}
+                                                    />
+                                                </FormControl>
+                                                <FormLabel className="text-sm font-normal">
+                                                    Allow {channel}
+                                                </FormLabel>
+                                            </FormItem>
+                                        )}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+
+                        <DialogFooter>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => {
+                                    onOpenChange(false);
+                                    setIsLoading(false); // Asegura que no quede en estado de carga.
+                                }}
+                                disabled={isLoading}
+                            >
+                                Cancel
+                            </Button>
+                            <Button type="submit" disabled={isLoading}>
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Updating...
+                                    </>
+                                ) : (
+                                    'Save Changes'
+                                )}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
     );
 }

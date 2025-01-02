@@ -1,6 +1,7 @@
 // store/useOpportunitiesStore.js
 import { create } from 'zustand';
 import axios from 'axios';
+import { env } from '@/config/env';
 
 const useOpportunitiesStore = create((set, get) => ({
     products: [],
@@ -12,7 +13,7 @@ const useOpportunitiesStore = create((set, get) => ({
     fetchProducts: async () => {
         try {
             set({ isLoadingProducts: true, error: null });
-            const response = await axios.get('https://api.nevtis.com/dialtools/products/getAll');
+            const response = await axios.get(env.endpoints.products.getAll);
             
             const formattedProducts = response.data.map(product => ({
                 value: product.name,
@@ -34,7 +35,7 @@ const useOpportunitiesStore = create((set, get) => ({
     fetchStages: async () => {
         try {
             set({ isLoadingStages: true, error: null });
-            const response = await axios.get('https://api.nevtis.com/dialtools/configuration/all');
+            const response = await axios.get(env.endpoints.config.all);
             
             const formattedStages = response.data[0].stages.map(stage => ({
                 value: stage.name,
@@ -51,9 +52,7 @@ const useOpportunitiesStore = create((set, get) => ({
                 isLoadingStages: false 
             });
         }
-    },
-
-    // Podemos agregar más funciones específicas para oportunidades aquí si es necesario
+    }
 }));
 
 export default useOpportunitiesStore;

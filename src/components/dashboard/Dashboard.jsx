@@ -17,7 +17,7 @@ export default function Dashboard({ leads }) {
     const initialize = async () => {
       if (!user || !leads) return;
       
-      console.log('Dashboard - Contacts before initialization:', contacts);
+      //console.log('Dashboard - Contacts before initialization:', contacts);
       setContacts(contacts);  // Primero establecer los contacts
       initializeWithLeads(leads);
       

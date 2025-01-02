@@ -1,19 +1,19 @@
-// store/useLeadsStore.js
+// src/store/useLeadsStore2.js
 import { create } from 'zustand';
 import axios from 'axios';
+import { env } from '@/config/env';
 
 const useLeadsStore = create((set, get) => ({
     leads: [],
     isLoading: false,
-    isTransitioning: false, // Nuevo estado para transiciones suaves
+    isTransitioning: false,
 
     setTransitioning: (status) => set({ isTransitioning: status }),
 
     fetchLeads: async () => {
         try {
             set({ isLoading: true, isTransitioning: true });
-            const response = await axios.get("https://api.nevtis.com/dialtools/leads/allLeads");
-            // Pequeño delay para suavizar la transición
+            const response = await axios.get(env.endpoints.leads2.all);
             await new Promise(resolve => setTimeout(resolve, 100));
             set({ leads: response.data, isLoading: false, isTransitioning: false });
             return response.data;
@@ -23,18 +23,16 @@ const useLeadsStore = create((set, get) => ({
         }
     },
 
-    // Actualización optimista para crear
     createLead: async (leadData) => {
-        const newLead = { ...leadData, _id: Date.now() }; // ID temporal
+        const newLead = { ...leadData, _id: Date.now() };
         
-        // Actualización optimista
         set(state => ({
             leads: [...state.leads, newLead],
             isTransitioning: true
         }));
 
         try {
-            const response = await axios.post("https://api.nevtis.com/dialtools/leads/create", leadData);
+            const response = await axios.post(env.endpoints.leads2.create, leadData);
             set(state => ({
                 leads: state.leads.map(lead => 
                     lead._id === newLead._id ? response.data : lead
@@ -43,7 +41,6 @@ const useLeadsStore = create((set, get) => ({
             }));
             return { success: true, data: response.data };
         } catch (error) {
-            // Revertir en caso de error
             set(state => ({
                 leads: state.leads.filter(lead => lead._id !== newLead._id),
                 isTransitioning: false
@@ -52,9 +49,7 @@ const useLeadsStore = create((set, get) => ({
         }
     },
 
-    // Actualización optimista para update
     updateLead: async (leadData) => {
-        // Guardar estado anterior y actualizar optimistamente
         const previousLeads = get().leads;
         set(state => ({
             leads: state.leads.map(lead => 
@@ -65,19 +60,17 @@ const useLeadsStore = create((set, get) => ({
 
         try {
             const response = await axios.put(
-                `https://api.nevtis.com/dialtools/leads/update/${leadData._id}`,
+                env.endpoints.leads2.update(leadData._id),
                 leadData
             );
             set({ isTransitioning: false });
             return { success: true, data: response.data };
         } catch (error) {
-            // Revertir en caso de error
             set({ leads: previousLeads, isTransitioning: false });
             return { success: false, error: error.message };
         }
     },
 
-    // Actualización optimista para delete
     deleteLead: async (id) => {
         const previousLeads = get().leads;
         
@@ -87,7 +80,7 @@ const useLeadsStore = create((set, get) => ({
         }));
 
         try {
-            await axios.delete(`https://api.nevtis.com/dialtools/leads/delete/${id}`);
+            await axios.delete(env.endpoints.leads2.delete(id));
             set({ isTransitioning: false });
             return { success: true };
         } catch (error) {

@@ -5,15 +5,18 @@ import { useState } from "react";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogHeader,
     DialogTitle,
+    DialogDescription,
     DialogFooter,
+    DialogPortal,
+    DialogOverlay
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import useLeadsStore from "@/store/useLeadsStore2";
+/* import { DialogPortal } from "@/components/ui/DialogPortal"; */
 
 export default function DeleteContactDialog({ 
     open, 
@@ -25,7 +28,7 @@ export default function DeleteContactDialog({
     const { deleteLead } = useLeadsStore();
     const { toast } = useToast();
 
-    const handleDelete = async () => {
+    const handleDelete = async () => { 
         try {
             setIsLoading(true);
             const result = await deleteLead(contact._id);
@@ -73,12 +76,16 @@ export default function DeleteContactDialog({
                     <Button
                         type="button"
                         variant="outline"
-                        onClick={() => onOpenChange(false)}
+                        onClick={() => {
+                            onOpenChange(false);
+                            setIsLoading(false); // Asegura que no quede en estado de carga.
+                        }}
                         disabled={isLoading}
                     >
                         Cancel
                     </Button>
                     <Button 
+                        type="button"
                         variant="destructive"
                         onClick={handleDelete}
                         disabled={isLoading}
