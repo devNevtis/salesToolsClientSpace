@@ -21,7 +21,7 @@ const useFunnelStore = create((set, get) => ({
 
   // Inicializar datos con los leads ya filtrados de useLeadsStore
   initializeWithLeads: (leads) => {
-    console.log('FunnelStore - Initialize with leads:', leads);
+    //console.log('FunnelStore - Initialize with leads:', leads);
     if (!leads || !Array.isArray(leads)) {
       console.error('Invalid leads data provided');
       return;
@@ -29,7 +29,7 @@ const useFunnelStore = create((set, get) => ({
   
     try {
       const contacts = get().contacts;
-      console.log('FunnelStore - Current contacts:', contacts);
+      //console.log('FunnelStore - Current contacts:', contacts);
   
       const statusCounts = {
         new: 0,
@@ -43,7 +43,7 @@ const useFunnelStore = create((set, get) => ({
       leads.forEach(business => {
         // Los contacts ahora están indexados por el business._id
         const businessContacts = contacts[business._id];
-        console.log(`Processing business ${business.name}:`, businessContacts);
+        //console.log(`Processing business ${business.name}:`, businessContacts);
   
         if (businessContacts && businessContacts.length > 0) {
           // Usar el primer contacto ya que todos tienen el mismo status
@@ -54,7 +54,7 @@ const useFunnelStore = create((set, get) => ({
         }
       });
   
-      console.log('FunnelStore - Final status counts:', statusCounts);
+      //console.log('FunnelStore - Final status counts:', statusCounts);
       set({ leadStatuses: statusCounts });
   
     } catch (error) {
@@ -67,12 +67,12 @@ const useFunnelStore = create((set, get) => ({
   fetchConfig: async () => {
     set({ isLoading: true });
     try {
-      console.log('FunnelStore - Fetching config...');
+      //console.log('FunnelStore - Fetching config...');
       // Corregir la ruta
       const response = await axios.get(`${env.apiUrl}/dialtools/configuration/all`);
-      console.log('FunnelStore - Config response:', response.data);
+      //console.log('FunnelStore - Config response:', response.data);
       const stages = response.data[0]?.stages || [];
-      console.log('FunnelStore - Processed stages:', stages);
+      //console.log('FunnelStore - Processed stages:', stages);
       
       set({ 
         stages,
@@ -92,7 +92,7 @@ const useFunnelStore = create((set, get) => ({
 
   // Procesar oportunidades usando los leads ya filtrados
   processOpportunities: (leads, stages) => {
-    console.log('FunnelStore - Processing opportunities with:', { leads, stages });
+    //console.log('FunnelStore - Processing opportunities with:', { leads, stages });
     if (!leads || !stages) return;
   
     try {
@@ -109,19 +109,19 @@ const useFunnelStore = create((set, get) => ({
       // Process each business's contacts
       leads.forEach(business => {
         const businessContacts = contacts[business._id];
-        console.log(`Processing business ${business.name}:`, {
+/*         console.log(`Processing business ${business.name}:`, {
           contacts: businessContacts,
           opportunities: businessContacts?.map(c => c.opportunities)
-        });
+        }); */
   
         if (businessContacts) {
           businessContacts.forEach(contact => {
             contact.opportunities?.forEach(opportunity => {
-              console.log('Found opportunity:', {
+/*               console.log('Found opportunity:', {
                 stage: opportunity.stage,
                 value: opportunity.value,
                 contact: contact.name
-              });
+              }); */
               
               if (stageValues.hasOwnProperty(opportunity.stage)) {
                 stageValues[opportunity.stage] += opportunity.value;
@@ -131,7 +131,7 @@ const useFunnelStore = create((set, get) => ({
         }
       });
   
-      console.log('FunnelStore - Final opportunity values:', stageValues);
+      //console.log('FunnelStore - Final opportunity values:', stageValues);
       const hasData = Object.values(stageValues).some(value => value > 0);
       
       set({ opportunityStages: hasData ? stageValues : null });

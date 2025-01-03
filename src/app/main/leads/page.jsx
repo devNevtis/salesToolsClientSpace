@@ -1,4 +1,4 @@
-//src/app/main/leads/page.jsx
+// src/app/main/leads/page.jsx
 'use client';
 
 import { useEffect } from "react";
@@ -15,6 +15,7 @@ import {
   Loader2 
 } from "lucide-react";
 import LeadsDataTable from "@/components/leads/LeadsDataTable";
+import CustomersTab from "@/components/customers/CustomersTab";
 import ColumnsVisibilityDialog from "@/components/leads/ColumnsVisibilityDialog";
 import { Card } from "@/components/ui/card";
 import LeadCreationDialog from "@/components/leads/LeadCreationDialog";
@@ -35,12 +36,9 @@ export default function LeadsPage() {
     }
   }, [user, fetchBusinesses]);
 
-  // Manejadores de eventos
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
-
-  //console.log(user)
 
   const handleImportLeads = () => {
     // TODO: Implementar importación de leads
@@ -65,37 +63,44 @@ export default function LeadsPage() {
   }
 
   return (
-    <div className="p-6">
-      {/* Tabs Container */}
+    <div className="container mx-auto p-6">
       <Tabs defaultValue="leads" className="w-full">
-        <TabsList className="w-full bg-card border-b rounded-none">
-          <TabsTrigger 
-            value="leads" 
-            className="data-[state=active]:bg-background rounded-none"
-          >
-            Leads
-          </TabsTrigger>
-          <TabsTrigger 
-            value="customers"
-            className="data-[state=active]:bg-background rounded-none"
-          >
-            Customers
-          </TabsTrigger>
-          <TabsTrigger 
-            value="milestones"
-            className="data-[state=active]:bg-background rounded-none"
-          >
-            Milestones
-          </TabsTrigger>
-        </TabsList>
+        <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0 mb-6">
+          <h1 className="text-2xl font-bold">Sales Pipeline</h1>
+          <TabsList className="bg-card border rounded-lg p-1 h-auto">
+            <TabsTrigger 
+              value="leads" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-md transition-all"
+            >
+              <div className="flex flex-col items-center gap-1">
+                <span className="font-medium">Leads</span>
+                <span className="text-xs text-muted-foreground">Active Pipeline</span>
+              </div>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="customers" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-md transition-all"
+            >
+              <div className="flex flex-col items-center gap-1">
+                <span className="font-medium">Customers</span>
+                <span className="text-xs text-muted-foreground">Won Deals</span>
+              </div>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="milestones" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-md transition-all"
+            >
+              <div className="flex flex-col items-center gap-1">
+                <span className="font-medium">Milestones</span>
+                <span className="text-xs text-muted-foreground">Key Events</span>
+              </div>
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* Leads Tab Content */}
-        <TabsContent value="leads" className="mt-6">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-semibold flex items-center gap-2">
-              <LayoutGrid className="h-6 w-6" />
-              Leads
-            </h1>
+        <TabsContent value="leads">
+          <div className="flex justify-between items-center mb-6">
             <div className="flex gap-2">
               <Button 
                 variant="outline" 
@@ -112,13 +117,6 @@ export default function LeadsPage() {
                   }
                 }} 
               />
-{/*               <Button 
-                className="flex items-center gap-2"
-                onClick={handleAddLead}
-              >
-                <UserPlus className="h-4 w-4" />
-                Add Lead
-              </Button> */}
             </div>
           </div>
 
@@ -147,11 +145,9 @@ export default function LeadsPage() {
           )}
         </TabsContent>
 
-        {/* Customers Tab Content - Placeholder */}
+        {/* Customers Tab Content */}
         <TabsContent value="customers">
-          <div className="flex items-center justify-center h-[50vh]">
-            <p className="text-muted-foreground">Customers section coming soon...</p>
-          </div>
+          <CustomersTab />
         </TabsContent>
 
         {/* Milestones Tab Content - Placeholder */}

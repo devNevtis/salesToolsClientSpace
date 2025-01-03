@@ -1,4 +1,4 @@
-// src/components/leads/LeadsDataTable.jsx
+// src/components/customers/CustomersDataTable.jsx
 'use client';
 
 import { useState, Fragment } from "react";
@@ -41,13 +41,13 @@ import {
   ChevronsRight
 } from "lucide-react";
 import useLeadsStore from "@/store/useLeadsStore";
-import QuickEditDialog from './QuickEditDialog';
+import QuickEditDialog from '@/components/leads/QuickEditDialog';
 import useQuickEditStore from '@/store/useQuickEditStore';
-import DeleteBusinessDialog from './DeleteBusinessDialog';
+import DeleteBusinessDialog from '@/components/leads/DeleteBusinessDialog';
 import useDeleteBusinessStore from '@/store/useDeleteBusinessStore';
 import Link from "next/link";
 
-export default function LeadsDataTable() {
+export default function CustomersDataTable() {
   const { openDialog:openQuickEditDialog } = useQuickEditStore();
   const { openDialog: openDeleteDialog } = useDeleteBusinessStore();
   const { 
@@ -232,8 +232,8 @@ export default function LeadsDataTable() {
               {paginatedBusinesses
               .filter(business => {
                 const contacts = getContactsForBusiness(business._id);
-                // No mostramos los WON en la vista de LEADS
-                return !contacts.length || contacts[0].status !== 'won';
+                // Mostramos los WON en la vista de CUSTOMERS
+                return !contacts.length || contacts[0].status === 'won';
               })
               .map((business) => (
                 <Fragment key={business._id}>

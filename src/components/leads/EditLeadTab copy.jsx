@@ -28,13 +28,11 @@ import useLeadsStore from "@/store/useLeadsStore2";
 import useBusinessStore from "@/store/useBusinessStore";
 import { businessSchema, STATUS_OPTIONS } from '@/components/schemas/formSchemas';
 import AssociatedContactsSection from "./AssociatedContactsSection";
-import { useAuth } from "@/components/AuthProvider";
 
 export default function EditLeadTab({ business }) {
     const [isLoading, setIsLoading] = useState(false);
-    const { updateBusiness, getBusinessContacts, fetchContacts, fetchBusinesses } = useBusinessStore();
+    const { updateBusiness, getBusinessContacts, fetchContacts } = useBusinessStore();
     const { updateLead, fetchLeads } = useLeadsStore();
-    const { user } = useAuth();
     const { toast } = useToast();
     
     // Obtener contacts y status inicial
@@ -89,11 +87,8 @@ export default function EditLeadTab({ business }) {
             });
             
             // 5. Refrescar los datos
-            await Promise.all([
-                fetchContacts(),  // Esto ya estaba
-                fetchLeads(),     // Esto ya estaba
-                fetchBusinesses(user)  // Añadimos esta línea
-            ]);
+            await fetchContacts();
+            await fetchLeads();
           }
         } catch (error) {
           toast({

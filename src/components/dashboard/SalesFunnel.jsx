@@ -99,7 +99,7 @@ export default function SalesFunnel() {
   if (!leadStatuses || Object.values(funnelData).every(item => item.value === 0)) {
     return (
       <Card className="relative bg-white">
-        <div className="p-4 h-[300px] flex flex-col items-center justify-center text-muted-foreground">
+        <div className="p-4 h-[280px] flex flex-col items-center justify-center text-muted-foreground">
           <AlertCircle className="h-10 w-10 mb-2 text-muted-foreground/50" />
           <p>No leads data to display</p>
         </div>
@@ -109,7 +109,7 @@ export default function SalesFunnel() {
 
   return (
     <Card className="relative bg-white">
-      <div className="p-4 flex flex-col h-[300px]">
+      <div className="p-2 flex flex-col h-[280px]">
         {/* Header with Lost indicator */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-[#224f5a]">Sales Funnel</h2>

@@ -30,7 +30,6 @@ import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import useLeadsStore from "@/store/useLeadsStore2";
 import useOpportunitiesStore from "@/store/useOpportunitiesStore";
-import { useAuth } from "@/components/AuthProvider";
 
 const opportunitySchema = z.object({
     titles: z.array(z.object({
@@ -57,12 +56,9 @@ export default function EditOpportunityDialog({
     onSuccess 
 }) {
     const [isLoading, setIsLoading] = useState(false);
-    const { user } = useAuth(); // Obtener datos del usuario autenticado
-    const companyId = user?.companyId;
     const { updateLead } = useLeadsStore();
     const { products, stages, isLoadingProducts, isLoadingStages } = useOpportunitiesStore();
     const { toast } = useToast();
-    const [filteredProducts, setFilteredProducts] = useState([]);
 
     const form = useForm({
         resolver: zodResolver(opportunitySchema),
@@ -74,29 +70,16 @@ export default function EditOpportunityDialog({
         }
     });
 
-    // Filtrar productos basados en el companyId
-    useEffect(() => {
-        if (products.length > 0) {
-            const companyProducts = products.filter(
-                (product) => product.companyId === companyId
-            );
-            const globalProducts = products.filter(
-                (product) => !product.companyId
-            );
-
-            setFilteredProducts(
-                companyProducts.length > 0 ? companyProducts : globalProducts
-            );
-        }
-    }, [products, companyId]);
-
     // Cargar datos iniciales cuando se abre el diálogo
     useEffect(() => {
         if (opportunity && open) {
+            // Convertir los títulos al formato de react-select
             const selectedTitles = opportunity.titles.map(title => ({
                 value: title,
                 label: title
             }));
+
+            // Convertir el stage al formato de react-select
             const selectedStage = {
                 value: opportunity.stage,
                 label: opportunity.stage
@@ -115,6 +98,7 @@ export default function EditOpportunityDialog({
         try {
             setIsLoading(true);
 
+            // Preparar la oportunidad actualizada
             const updatedOpportunity = {
                 ...opportunity,
                 titles: data.titles.map(product => product.value),
@@ -124,10 +108,12 @@ export default function EditOpportunityDialog({
                 updatedAt: new Date().toISOString()
             };
 
+            // Actualizar el array de oportunidades
             const updatedOpportunities = contact.opportunities.map(opp => 
                 opp === opportunity ? updatedOpportunity : opp
             );
 
+            // Actualizar el contacto
             const updatedContact = {
                 ...contact,
                 opportunities: updatedOpportunities
@@ -169,6 +155,7 @@ export default function EditOpportunityDialog({
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        {/* Products Multi-select */}
                         <FormField
                             control={form.control}
                             name="titles"
@@ -179,7 +166,7 @@ export default function EditOpportunityDialog({
                                         <Select
                                             {...field}
                                             isMulti
-                                            options={filteredProducts}
+                                            options={products}
                                             isLoading={isLoadingProducts}
                                             className="min-h-[40px]"
                                             classNamePrefix="react-select"
@@ -194,6 +181,7 @@ export default function EditOpportunityDialog({
                             )}
                         />
 
+                        {/* Stage Select */}
                         <FormField
                             control={form.control}
                             name="stage"
@@ -215,6 +203,7 @@ export default function EditOpportunityDialog({
                             )}
                         />
 
+                        {/* Value Input */}
                         <FormField
                             control={form.control}
                             name="value"
@@ -235,6 +224,7 @@ export default function EditOpportunityDialog({
                             )}
                         />
 
+                        {/* Description */}
                         <FormField
                             control={form.control}
                             name="description"

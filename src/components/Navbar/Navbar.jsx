@@ -89,6 +89,7 @@ const Navbar = () => {
             width={150}
             height={100}
             className="pt-2"
+            priority={true}
           />
         </div>
       </div>

@@ -7,6 +7,7 @@ import useFunnelStore from '@/store/useFunnelStore';
 import useLeadsStore from '@/store/useLeadsStore';  // Añadir esta importación
 import SalesFunnel from './SalesFunnel';
 import OpportunityFunnel from './OpportunityFunnel';
+import LeadSourceChart from './LeadSourceChart';
 
 export default function Dashboard({ leads }) {
   const { user } = useAuth();
@@ -30,14 +31,16 @@ export default function Dashboard({ leads }) {
     initialize();
   }, [leads, user, contacts, initializeWithLeads, fetchConfig, processOpportunities, setContacts]);
 
+  //console.log(contacts)
+
   return (
-    <div className="p-6 h-[calc(100vh-5rem)] overflow-y-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="space-y-6">
+    <div className="px-6 py-1 h-[calc(100vh-4rem)] overflow-y-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="space-y-2">
           <SalesFunnel />
-          <div className="h-64 bg-card rounded-lg border shadow-sm" />
+          <LeadSourceChart contacts={contacts} />
         </div>
-        <div className="space-y-6">
+        <div className="space-y-2">
           <OpportunityFunnel />
           <div className="h-64 bg-card rounded-lg border shadow-sm" />
         </div>

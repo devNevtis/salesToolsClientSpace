@@ -18,7 +18,7 @@ export const useCompanyData = () => {
 
     // Añadir validación explícita
     if (!user) {
-      console.log('0.2 No hay usuario aún, esperando...');
+      //console.log('0.2 No hay usuario aún, esperando...');
       return;
     }
 

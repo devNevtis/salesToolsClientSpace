@@ -1,7 +1,8 @@
 // components/leads/dialogs/AddOpportunityDialog.jsx
 "use client";
 
-import { useState } from "react";
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '@/components/AuthProvider';
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -55,10 +56,37 @@ export default function AddOpportunityDialog({
     contact,
     onSuccess 
 }) {
+    const { user } = useAuth(); // Obtener datos del usuario autenticado
+    const companyId = user?.companyId;
     const [isLoading, setIsLoading] = useState(false);
     const { updateLead } = useLeadsStore();
-    const { products, stages, isLoadingProducts, isLoadingStages } = useOpportunitiesStore();
+    const { products, stages, isLoadingProducts, isLoadingStages, fetchProducts } = useOpportunitiesStore();
+    const [filteredProducts, setFilteredProducts] = useState([]);
     const { toast } = useToast();
+
+    useEffect(() => {
+        if (!isLoadingProducts && products.length === 0) {
+            fetchProducts();
+        }
+    }, [isLoadingProducts, products.length, fetchProducts]);
+    
+
+    useEffect(() => {
+        // Filtrar productos según el companyId
+        if (products.length > 0) {
+            const companyProducts = products.filter(
+                (product) => product.companyId === companyId
+            );
+            const globalProducts = products.filter(
+                (product) => !product.companyId
+            );
+
+            // Si hay productos de la compañía, prioriza esos; si no, usa los globales
+            setFilteredProducts(
+                companyProducts.length > 0 ? companyProducts : globalProducts
+            );
+        }
+    }, [products, companyId]);
 
     const form = useForm({
         resolver: zodResolver(opportunitySchema),
@@ -137,7 +165,7 @@ export default function AddOpportunityDialog({
                                         <Select
                                             {...field}
                                             isMulti
-                                            options={products}
+                                            options={filteredProducts}
                                             isLoading={isLoadingProducts}
                                             className="min-h-[40px]"
                                             classNamePrefix="react-select"

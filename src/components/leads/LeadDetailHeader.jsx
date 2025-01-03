@@ -25,7 +25,7 @@ export default function LeadDetailHeader({ business, contactsCount }) {
                     <BreadcrumbItem>
                         <BreadcrumbLink href="/main/leads">Leads</BreadcrumbLink>
                     </BreadcrumbItem>
-                    <BreadcrumbItem isCurrentPage>
+                    <BreadcrumbItem >
                         <BreadcrumbLink>{business.name}</BreadcrumbLink>
                     </BreadcrumbItem>
                 </Breadcrumb>

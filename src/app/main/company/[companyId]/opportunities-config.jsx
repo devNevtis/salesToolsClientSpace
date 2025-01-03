@@ -87,7 +87,7 @@ export default function OpportunitiesConfig({ companyId }) {
 
       addProduct(response.data);
       setNewProduct({ name: '', description: '' });
-      setIsDialogOpen(false);
+      setIsCreateDialogOpen(false);
       
       toast({
         title: "Product created successfully",
@@ -213,6 +213,9 @@ export default function OpportunitiesConfig({ companyId }) {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Add New Product</DialogTitle>
+                <DialogDescription>
+                  Please fill in the fields below to create a new product.
+                </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="space-y-2">

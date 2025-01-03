@@ -148,6 +148,7 @@ useEffect(() => {
     }
   };
 
+  //console.log(user)
   return (
     <Card 
       className="w-full overflow-hidden"

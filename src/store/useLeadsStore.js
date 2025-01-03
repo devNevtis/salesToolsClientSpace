@@ -150,7 +150,8 @@ const useLeadsStore = create((set, get) => ({
           status: contact.status,
           assignedTo: contact.assignedTo,
           createdAt: contact.createdAt,
-          opportunities: contact.opportunities || []
+          opportunities: contact.opportunities || [],
+          dndSettings: contact.dndSettings
         });
       });
 

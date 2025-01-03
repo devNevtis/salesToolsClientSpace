@@ -10,6 +10,12 @@ B2B lead management system with company customization, built on Next.js 14.
 - 📊 Configurable funnel stages
 - 📱 Responsive design
 - 🚀 Optimized performance
+- 📊 Advanced Lead Management
+  - Pipeline view with status-based filtering
+  - Separate Customers view for won deals
+  - Visual indicators for lost leads
+  - Real-time status updates
+  - Unified contact management
 
 ## 🛠️ Tech Stack
 
@@ -109,12 +115,17 @@ Companies can configure:
 - Stage configuration
 - Lead creation
 - Leads view
+- Full lead management system
+  - Status-based filtering (Leads/Customers)
+  - Visual treatment for different statuses
+  - Real-time updates across views
+  - Contact association and management
+  - Quick edit and deletion features
 
 ### 🚧 Under Development
-- Quick lead editing
-- Full lead editing
-- Lead deletion
-- Advanced opportunity management
+- Milestones section
+- Advanced analytics features
+- Bulk operations
 
 ## 🧪 Testing
 

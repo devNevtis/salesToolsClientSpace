@@ -79,7 +79,7 @@ export default function LeadDetailPage() {
     }
 
     return (
-        <div className="container mx-auto py-4">
+        <div className="container mx-auto p-4">
             <LeadDetailHeader 
                 business={currentBusiness} 
                 contactsCount={associatedContacts.length} 
