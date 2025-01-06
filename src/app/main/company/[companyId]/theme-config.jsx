@@ -101,7 +101,7 @@ export default function ThemeConfig({ companyId }) {
       <div className="flex items-center gap-2 mb-4">
         <MdColorLens className="text-2xl text-gray-600" />
         <h2 className="text-xl font-semibold text-gray-700">Theme Customization</h2>
-        <span className="text-sm text-gray-500 ml-2">Personalize your app's look and feel</span>
+        <span className="text-sm text-gray-500 ml-2">Personalize your app&#39;s look and feel</span>
       </div>
 
       <Card className="shadow-md mb-6">

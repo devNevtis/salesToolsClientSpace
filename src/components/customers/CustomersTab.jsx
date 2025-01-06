@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Loader2 } from "lucide-react";
 import useLeadsStore from "@/store/useLeadsStore";
 import ColumnsVisibilityDialog from "../leads/ColumnsVisibilityDialog";
+import { Card } from "../ui/card";
 
 export default function CustomersTab() {
   const { 
