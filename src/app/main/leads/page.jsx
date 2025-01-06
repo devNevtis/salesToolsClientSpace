@@ -19,6 +19,7 @@ import CustomersTab from "@/components/customers/CustomersTab";
 import ColumnsVisibilityDialog from "@/components/leads/ColumnsVisibilityDialog";
 import { Card } from "@/components/ui/card";
 import LeadCreationDialog from "@/components/leads/LeadCreationDialog";
+import MilestonesTab from "@/components/milestones/MilestonesTab";
 
 export default function LeadsPage() {
   const { user } = useAuth();
@@ -152,9 +153,7 @@ export default function LeadsPage() {
 
         {/* Milestones Tab Content - Placeholder */}
         <TabsContent value="milestones">
-          <div className="flex items-center justify-center h-[50vh]">
-            <p className="text-muted-foreground">Milestones section coming soon...</p>
-          </div>
+          <MilestonesTab/>
         </TabsContent>
       </Tabs>
     </div>
