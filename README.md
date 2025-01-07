@@ -179,7 +179,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## 🙋‍♂️ Support
 
 For support and questions:
-- 📧 Email: support@sales-tools-pro.com
+- 📧 Email: diego.b@nevtis.com
 - 💬 Slack: sales-tools-pro.slack.com
 
 <!-- ------------------------------------------------------------- -->
