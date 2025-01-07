@@ -126,16 +126,6 @@ export default function MilestonesList() {
               {/* Milestone Tasks */}
               {expandedMilestones.has(milestone.id) && (
                 <div className="border-t px-4 py-3 bg-muted/50">
-                  <div className="flex justify-between items-center mb-3">
-                    <h4 className="text-sm font-medium">Tasks</h4>
-                    <Button 
-                      onClick={() => handleAddTask(milestone)}
-                      size="sm" 
-                      className="h-8 text-xs"
-                    >
-                      Add Task
-                    </Button>
-                  </div>
                   <div className="space-y-3">
                     <h4 className="text-sm font-medium">Tasks</h4>
                     {milestone.tasks.map((task) => (
@@ -184,16 +174,6 @@ export default function MilestonesList() {
       <AddMilestoneDialog 
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
-      />
-      <AddTaskDialog 
-        open={isAddTaskOpen}
-        onOpenChange={(open) => {
-          setIsAddTaskOpen(open);
-          if (!open) {
-            setSelectedMilestone(null); // Limpiar el milestone al cerrar
-          }
-        }}
-        milestone={selectedMilestone}
       />
     </div>
   );

@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, Calendar as CalendarIcon } from "lucide-react";
+import { X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import useMilestonesStore from '@/store/useMilestonesStore';
 
@@ -85,117 +85,129 @@ export default function AddMilestoneDialog({
     }
   };
 
+  const formatDate = (date) => {
+    if (!date) return '';
+    const d = new Date(date);
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] p-6">
-        <DialogHeader className="space-y-3">
-          <DialogTitle className="text-xl font-semibold">Create New Milestone</DialogTitle>
-          <DialogDescription className="text-slate-500">
+      <DialogContent className="sm:max-w-[500px] px-6 py-5 [&_button[aria-label='Close']]:opacity-40 [&_button[aria-label='Close']]:hover:opacity-60 [&_button[aria-label='Close']>svg]:h-3 [&_button[aria-label='Close']>svg]:w-3">
+        <DialogHeader className="space-y-2 pb-3">
+          <DialogTitle>Create New Milestone</DialogTitle>
+          <DialogDescription className="text-slate-500 text-sm font-normal">
             Add a new milestone for this lead. You can add tasks after creating the milestone.
           </DialogDescription>
         </DialogHeader>
-
+ 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 mt-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-slate-700 font-medium">Title</FormLabel>
+                <FormItem className="space-y-1">
+                  <FormLabel className="text-sm text-slate-600 font-normal">Title</FormLabel>
                   <FormControl>
                     <Input 
                       {...field} 
                       placeholder="Enter milestone title" 
-                      className="border-slate-200 focus-visible:ring-0 focus-visible:border-slate-400"
+                      className="h-9 border-slate-200 focus-visible:ring-0 focus-visible:border-slate-300"
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
-
+ 
             <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-slate-700 font-medium">Description</FormLabel>
+                <FormItem className="space-y-1">
+                  <FormLabel className="text-sm text-slate-600 font-normal">Description</FormLabel>
                   <FormControl>
                     <Input 
                       {...field} 
                       placeholder="Enter milestone description" 
-                      className="border-slate-200 focus-visible:ring-0 focus-visible:border-slate-400"
+                      className="h-9 border-slate-200 focus-visible:ring-0 focus-visible:border-slate-300"
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
-
+ 
             <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="startDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-slate-700 font-medium">Start Date</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input 
-                          type="date" 
-                          {...field}
-                          className="border-slate-200 focus-visible:ring-0 focus-visible:border-slate-400 pl-3 pr-10"
-                        />
-                        <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-                      </div>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="dueDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-slate-700 font-medium">Due Date</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input 
-                          type="date" 
-                          {...field}
-                          className="border-slate-200 focus-visible:ring-0 focus-visible:border-slate-400 pl-3 pr-10"
-                        />
-                        <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-                      </div>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name="startDate" 
+              render={({ field }) => (
+                <FormItem className="space-y-1">
+                  <FormLabel className="text-sm text-slate-600 font-normal">Start Date</FormLabel>
+                  <div className="relative">
+                    <Input 
+                      type="date" 
+                      {...field}
+                      className="h-9 border-slate-200 pr-8 focus-visible:ring-0 focus-visible:border-slate-300"
+                    />
+                    <svg 
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    >
+                      <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                </FormItem>
+              )}
+            />
+ 
+            <FormField
+              control={form.control}
+              name="dueDate" 
+              render={({ field }) => (
+                <FormItem className="space-y-1">
+                  <FormLabel className="text-sm text-slate-600 font-normal">Start Date</FormLabel>
+                  <div className="relative">
+                    <Input 
+                      type="date" 
+                      {...field}
+                      className="h-9 border-slate-200 pr-8 focus-visible:ring-0 focus-visible:border-slate-300"
+                    />
+                    <svg 
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    >
+                      <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                </FormItem>
+              )}
+            />
             </div>
-
-            <div className="flex justify-end items-center gap-3 pt-4">
-              <Button
+ 
+            <div className="flex justify-end items-center gap-4 pt-2">
+              <button
                 type="button"
-                variant="ghost"
                 onClick={() => onOpenChange(false)}
-                disabled={isLoading}
-                className="text-slate-600 hover:text-slate-800 hover:bg-transparent"
+                className="text-slate-500 hover:text-slate-600 text-sm px-2"
               >
                 Cancel
-              </Button>
+              </button>
               <Button 
                 type="submit" 
                 disabled={isLoading}
-                className="bg-[#0f172a] hover:bg-[#0f172a]/90 text-white px-6"
+                className="bg-[#0f172a] hover:bg-[#0f172a]/90 text-white px-4 py-1.5 h-8 text-sm font-normal"
               >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  'Create Milestone'
-                )}
+                Create Milestone
               </Button>
             </div>
           </form>
