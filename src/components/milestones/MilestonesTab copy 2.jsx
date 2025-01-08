@@ -1,4 +1,6 @@
 // src/components/milestones/MilestonesTab.jsx
+'use client';
+
 import { useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import LeadSelector from './LeadSelector';
@@ -7,20 +9,18 @@ import useMilestonesStore from '@/store/useMilestonesStore';
 import useLeadsStore from '@/store/useLeadsStore';
 
 export default function MilestonesTab() {
-  const milestonesStore = useMilestonesStore();
-  const leadsStore = useLeadsStore();
-
-  const { selectedLeadId, setSelectedLead } = milestonesStore || {};
-  const { businesses } = leadsStore || {};
-
+  const { selectedLeadId, setSelectedLead } = useMilestonesStore();
+  const { businesses, getPaginatedBusinesses } = useLeadsStore();
+  
+  // Al montar, si hay businesses pero no hay lead seleccionado, seleccionar el primero
   useEffect(() => {
-    if (!selectedLeadId && businesses?.length > 0) {
+    if (!selectedLeadId && businesses.length > 0) {
       setSelectedLead(businesses[0]._id);
     }
-  }, [selectedLeadId, businesses, setSelectedLead]);
+  }, [businesses, selectedLeadId, setSelectedLead]);
 
-  if (!selectedLeadId || !businesses) {
-    return <div>Loading...</div>;
+  if (!selectedLeadId) {
+    return <div>Loading...</div>; // Mostrar un mensaje temporal si el estado aún no está inicializado
   }
 
   return (
@@ -28,6 +28,7 @@ export default function MilestonesTab() {
       <Card className="p-4">
         <LeadSelector />
       </Card>
+
       <Card className="p-4">
         <MilestonesList />
       </Card>

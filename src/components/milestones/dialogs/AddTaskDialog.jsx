@@ -1,7 +1,7 @@
 // src/components/milestones/dialogs/AddTaskDialog.jsx
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Dialog,
@@ -39,7 +39,8 @@ export default function AddTaskDialog({
   const [isLoading, setIsLoading] = useState(false);
   const { addTask } = useMilestonesStore();
   const { getBusinessContacts } = useBusinessStore();
-  const contacts = getBusinessContacts(milestone.leadId);
+  const { contacts } = useMilestonesStore();
+  const [subtasks, setSubtasks] = useState([]);
 
   const form = useForm({
     defaultValues: {
@@ -52,40 +53,76 @@ export default function AddTaskDialog({
     }
   });
 
+  useEffect(() => {
+    if (!document.getElementById("dialog-portal-root")) {
+      const portalRoot = document.createElement("div");
+      portalRoot.id = "dialog-portal-root";
+      document.body.appendChild(portalRoot);
+    }
+  }, []);
+  
+
+  const addSubtask = () => {
+    setSubtasks((prev) => [
+      ...prev,
+      { id: `st-${Date.now()}`, title: '', completed: false },
+    ]);
+  };
+
+  const updateSubtask = (id, title) => {
+    setSubtasks((prev) =>
+      prev.map((subtask) =>
+        subtask.id === id ? { ...subtask, title } : subtask
+      )
+    );
+  };
+
+  const removeSubtask = (id) => {
+    setSubtasks((prev) => prev.filter((subtask) => subtask.id !== id));
+  };
+
+  
+
   const onSubmit = async (data) => {
     try {
-      setIsLoading(true);
-
+      if (subtasks.length === 0) {
+        alert("A task must have at least one subtask.");
+        return;
+      }
+  
       const assignedContact = contacts.find(c => c._id === data.assignedTo);
-
       const newTask = {
         id: `t-${Date.now()}`,
         title: data.title,
         description: data.description,
         startDate: new Date(data.startDate),
         dueDate: new Date(data.dueDate),
-        status: 'in-progress',
+        status: 'planned', // Cambiar el estado inicial a planned
         progress: 0,
-        assignedTo: data.assignedTo ? {
-          id: data.assignedTo,
-          type: 'contact',
-          name: assignedContact ? `${assignedContact.firstName} ${assignedContact.lastName}` : ''
-        } : null,
-        subtasks: []
+        assignedTo: assignedContact
+          ? {
+              id: assignedContact._id,
+              type: 'contact',
+              name: `${assignedContact.name}`,
+            }
+          : null,
+        subtasks,
       };
-
-      await addTask(milestone.id, newTask);
+  
+      await useMilestonesStore.getState().addTask(milestone.id, newTask);
       form.reset();
+      setSubtasks([]);
       onOpenChange(false);
     } catch (error) {
       console.error('Error adding task:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
+  
+  
 
+  //console.log(contacts);
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog key={milestone?.id || 'default-dialog'} open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] px-6 py-5">
         <DialogHeader className="space-y-2 pb-3">
           <DialogTitle>Add Task</DialogTitle>
@@ -154,7 +191,7 @@ export default function AddTaskDialog({
                           key={contact._id} 
                           value={contact._id}
                         >
-                          {contact.firstName} {contact.lastName}
+                          {contact.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -216,6 +253,40 @@ export default function AddTaskDialog({
                   </FormItem>
                 )}
               />
+            </div>
+
+            {/* Subtasks Section */}
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium">Subtasks</h4>
+              {subtasks.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No subtasks added yet.</p>
+              ) : (
+                subtasks.map((subtask) => (
+                  <div key={subtask.id} className="flex items-center gap-2">
+                    <Input
+                      value={subtask.title}
+                      onChange={(e) => updateSubtask(subtask.id, e.target.value)}
+                      placeholder="Enter subtask title"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => removeSubtask(subtask.id)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ))
+              )}
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={addSubtask}
+              >
+                Add Subtask
+              </Button>
             </div>
 
             <div className="flex justify-end items-center gap-4 pt-2">

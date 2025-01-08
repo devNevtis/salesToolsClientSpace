@@ -1,4 +1,6 @@
 // src/store/useMilestonesStore.js
+import useLeadsStore from '@/store/useLeadsStore';
+import Cookies from 'js-cookie';
 import { create } from 'zustand';
 import { format, addDays } from 'date-fns';
 
@@ -74,23 +76,31 @@ const useMilestonesStore = create((set, get) => ({
   // Estado
   milestones: [],
   selectedLeadId: null,
-  isLoading: false,
-  error: null,
+  contacts: [], // Contactos asociados al lead
+  user: null, // Usuario logueado
 
   // Acciones principales
   setSelectedLead: (leadId) => {
     const state = get();
-    const existingMilestones = state.milestones.some(m => m.leadId === leadId);
+    const leadsStore = useLeadsStore.getState(); // Obtener contactos desde LeadsStore
+    const contacts = leadsStore.getContactsForBusiness(leadId) || []; // Método para obtener contactos por Lead
+    const user = Cookies.get('user') ? JSON.parse(Cookies.get('user')) : null;
+
+    const existingMilestones = state.milestones.some((m) => m.leadId === leadId);
 
     if (!existingMilestones) {
-      // Si el lead no tiene milestones, generamos algunos de prueba
+      // Generar milestone de prueba si no existen
       const newMilestones = generateInitialMilestonesForLead(leadId);
       set({
         selectedLeadId: leadId,
-        milestones: [...state.milestones, ...newMilestones]
+        milestones: [...state.milestones, ...newMilestones],
+        contacts: [...contacts, ...(user ? [user] : [])],
       });
     } else {
-      set({ selectedLeadId: leadId });
+      set({
+        selectedLeadId: leadId,
+        contacts: [...contacts, ...(user ? [user] : [])],
+      });
     }
   },
 
@@ -122,19 +132,22 @@ const useMilestonesStore = create((set, get) => ({
       )
     })),
 
-  updateTask: (milestoneId, taskId, data) =>
-    set((state) => ({
-      milestones: state.milestones.map((m) =>
-        m.id === milestoneId
-          ? {
-              ...m,
-              tasks: m.tasks.map((t) =>
-                t.id === taskId ? { ...t, ...data } : t
-              )
-            }
-          : m
-      )
-    })),
+    updateTask: (milestoneId, taskId, data) => {
+      set((state) => {
+        const updatedMilestones = state.milestones.map((milestone) => {
+          if (milestone.id === milestoneId) {
+            const updatedTasks = milestone.tasks.map((task) =>
+              task.id === taskId ? { ...task, ...data } : task
+            );
+            const progress = get().calculateMilestoneProgress(milestoneId);
+            return { ...milestone, tasks: updatedTasks, progress };
+          }
+          return milestone;
+        });
+    
+        return { milestones: updatedMilestones };
+      });
+    },
 
   deleteTask: (milestoneId, taskId) =>
     set((state) => ({
@@ -162,45 +175,90 @@ const useMilestonesStore = create((set, get) => ({
       )
     })),
 
-  updateSubtask: (milestoneId, taskId, subtaskId, data) =>
-    set((state) => ({
-      milestones: state.milestones.map((m) =>
-        m.id === milestoneId
-          ? {
-              ...m,
-              tasks: m.tasks.map((t) =>
-                t.id === taskId
-                  ? {
-                      ...t,
-                      subtasks: t.subtasks.map((st) =>
-                        st.id === subtaskId ? { ...st, ...data } : st
-                      )
-                    }
-                  : t
-              )
-            }
-          : m
-      )
-    })),
+// src/store/useMilestonesStore.js
+/* updateSubtask: (milestoneId, taskId, subtaskId, data) =>
+  set((state) => ({
+    milestones: state.milestones.map((milestone) =>
+      milestone.id === milestoneId
+        ? {
+            ...milestone,
+            tasks: milestone.tasks.map((task) =>
+              task.id === taskId
+                ? {
+                    ...task,
+                    subtasks: task.subtasks.map((subtask) =>
+                      subtask.id === subtaskId ? { ...subtask, ...data } : subtask
+                    ),
+                  }
+                : task
+            ),
+          }
+        : milestone
+    ),
+  })), */
 
-  deleteSubtask: (milestoneId, taskId, subtaskId) =>
-    set((state) => ({
-      milestones: state.milestones.map((m) =>
-        m.id === milestoneId
-          ? {
-              ...m,
-              tasks: m.tasks.map((t) =>
-                t.id === taskId
-                  ? {
-                      ...t,
-                      subtasks: t.subtasks.filter((st) => st.id !== subtaskId)
-                    }
-                  : t
-              )
+  updateSubtask: (milestoneId, taskId, subtaskId, data) =>
+    set((state) => {
+      const updatedMilestones = state.milestones.map((milestone) => {
+        if (milestone.id === milestoneId) {
+          const updatedTasks = milestone.tasks.map((task) => {
+            if (task.id === taskId) {
+              const updatedSubtasks = task.subtasks.map((subtask) =>
+                subtask.id === subtaskId ? { ...subtask, ...data } : subtask
+              );
+  
+              // Recalcular progreso
+              const totalSubtasks = updatedSubtasks.length;
+              const completedSubtasks = updatedSubtasks.filter(
+                (st) => st.completed
+              ).length;
+              const progress = totalSubtasks
+                ? Math.round((completedSubtasks / totalSubtasks) * 100)
+                : 0;
+  
+              // Actualizar status de la tarea basado en progreso
+              const status =
+                progress === 100
+                  ? "completed"
+                  : progress > 0
+                  ? "in-progress"
+                  : "planned";
+  
+              return { ...task, subtasks: updatedSubtasks, progress, status };
             }
-          : m
-      )
-    })),
+            return task;
+          });
+  
+          return { ...milestone, tasks: updatedTasks };
+        }
+        return milestone;
+      });
+  
+      return { milestones: updatedMilestones };
+    }),
+  
+  
+deleteSubtask: (milestoneId, taskId, subtaskId) =>
+  set((state) => ({
+    milestones: state.milestones.map((milestone) =>
+      milestone.id === milestoneId
+        ? {
+            ...milestone,
+            tasks: milestone.tasks.map((task) =>
+              task.id === taskId
+                ? {
+                    ...task,
+                    subtasks: task.subtasks.filter(
+                      (subtask) => subtask.id !== subtaskId
+                    ),
+                  }
+                : task
+            ),
+          }
+        : milestone
+    ),
+  })),
+
 
   // Utilidades
   getMilestonesByLead: (leadId) => {
@@ -212,11 +270,13 @@ const useMilestonesStore = create((set, get) => ({
     const state = get();
     const milestone = state.milestones.find(m => m.id === milestoneId);
     if (!milestone || !milestone.tasks.length) return 0;
-
+  
     const totalTasks = milestone.tasks.length;
-    const completedTasks = milestone.tasks.filter(t => t.status === 'completed').length;
+    const completedTasks = milestone.tasks.filter(t => t.status === "completed").length;
+  
     return Math.round((completedTasks / totalTasks) * 100);
-  }
+  },
+  
 }));
 
 export default useMilestonesStore;

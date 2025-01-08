@@ -5,24 +5,23 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { CustomProgress } from "@/components/ui/custom-progress";
 import { format } from 'date-fns';
+import AddMilestoneDialog from '../dialogs/AddMilestoneDialog';
 import { 
   Plus,
   ChevronDown,
   ChevronRight,
-  Calendar,
-  CheckCircle2,
-  Clock,
-  AlertCircle
+  Calendar
 } from "lucide-react";
 import useMilestonesStore from '@/store/useMilestonesStore';
 import { cn } from "@/lib/utils";
+import AddTaskDialog from '../dialogs/AddTaskDialog';
+import { Input } from '@/components/ui/input';
 
 const StatusBadge = ({ status }) => {
   const statusConfig = {
-    'planned': { color: 'bg-slate-100 text-slate-700', icon: Clock },
-    'in-progress': { color: 'bg-blue-100 text-blue-700', icon: Clock },
-    'completed': { color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
-    'delayed': { color: 'bg-red-100 text-red-700', icon: AlertCircle },
+    'planned': { color: 'bg-slate-100 text-slate-700', icon: Calendar },
+    'in-progress': { color: 'bg-blue-100 text-blue-700', icon: Calendar },
+    'completed': { color: 'bg-green-100 text-green-700', icon: Calendar },
   };
 
   const config = statusConfig[status] || statusConfig.planned;
@@ -39,7 +38,12 @@ const StatusBadge = ({ status }) => {
 export default function MilestonesList() {
   const { milestones, selectedLeadId } = useMilestonesStore();
   const [expandedMilestones, setExpandedMilestones] = useState(new Set());
-  
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
+  const [selectedMilestone, setSelectedMilestone] = useState(null);
+  const [isEditTaskOpen, setIsEditTaskOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+
   const filteredMilestones = selectedLeadId 
     ? milestones.filter(m => m.leadId === selectedLeadId)
     : [];
@@ -54,11 +58,19 @@ export default function MilestonesList() {
     setExpandedMilestones(newExpanded);
   };
 
+  const handleAddTask = (milestone) => {
+    setSelectedMilestone(milestone);
+    setIsAddTaskOpen(true);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold">Milestones</h2>
-        <Button className="gap-2">
+        <h2 className="text-xl font-medium">Milestones</h2>
+        <Button 
+          onClick={() => setIsAddDialogOpen(true)}
+          className="gap-2 bg-[#0f172a] hover:bg-[#0f172a]/90"
+        >
           <Plus className="h-4 w-4" />
           Add Milestone
         </Button>
@@ -75,7 +87,6 @@ export default function MilestonesList() {
               key={milestone.id}
               className="border rounded-lg hover:border-primary/50 transition-colors"
             >
-              {/* Milestone Header */}
               <div 
                 className="p-4 cursor-pointer"
                 onClick={() => toggleMilestone(milestone.id)}
@@ -99,7 +110,6 @@ export default function MilestonesList() {
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <StatusBadge status={milestone.status} />
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium">{milestone.progress}%</span>
                       <div className="w-32">
@@ -110,11 +120,19 @@ export default function MilestonesList() {
                 </div>
               </div>
 
-              {/* Milestone Tasks */}
               {expandedMilestones.has(milestone.id) && (
                 <div className="border-t px-4 py-3 bg-muted/50">
-                  <div className="space-y-3">
+                  <div className="flex justify-between items-center mb-3">
                     <h4 className="text-sm font-medium">Tasks</h4>
+                    <Button 
+                      onClick={() => handleAddTask(milestone)}
+                      size="sm" 
+                      className="h-8 text-xs"
+                    >
+                      Add Task
+                    </Button>
+                  </div>
+                  <div className="space-y-3">
                     {milestone.tasks.map((task) => (
                       <div 
                         key={task.id}
@@ -132,19 +150,48 @@ export default function MilestonesList() {
                           </div>
                           <StatusBadge status={task.status} />
                         </div>
-                        {/* Subtasks */}
                         {task.subtasks?.length > 0 && (
                           <div className="mt-2 pl-4 border-l space-y-2">
                             {task.subtasks.map((subtask) => (
-                              <div 
-                                key={subtask.id} 
-                                className="flex items-center gap-2"
-                              >
-                                <div className={cn(
-                                  "h-1.5 w-1.5 rounded-full",
-                                  subtask.completed ? "bg-green-500" : "bg-slate-300"
-                                )} />
-                                <span className="text-sm">{subtask.title}</span>
+                              <div key={subtask.id} className="flex items-center gap-2">
+                                <input
+                                  type="checkbox"
+                                  checked={subtask.completed}
+                                  onChange={() =>
+                                    useMilestonesStore.getState().updateSubtask(
+                                      milestone.id,
+                                      task.id,
+                                      subtask.id,
+                                      { completed: !subtask.completed }
+                                    )
+                                  }
+                                  className="h-4 w-4 rounded border-slate-200"
+                                />
+                                <Input
+                                  value={subtask.title}
+                                  onChange={(e) =>
+                                    useMilestonesStore.getState().updateSubtask(
+                                      milestone.id,
+                                      task.id,
+                                      subtask.id,
+                                      { title: e.target.value }
+                                    )
+                                  }
+                                  placeholder="Subtask title"
+                                  className="h-9 border-slate-200 focus-visible:ring-0 focus-visible:border-slate-300"
+                                />
+                                <button
+                                  onClick={() =>
+                                    useMilestonesStore.getState().deleteSubtask(
+                                      milestone.id,
+                                      task.id,
+                                      subtask.id
+                                    )
+                                  }
+                                  className="text-red-500 text-sm hover:underline"
+                                >
+                                  Delete
+                                </button>
                               </div>
                             ))}
                           </div>
@@ -158,6 +205,22 @@ export default function MilestonesList() {
           ))
         )}
       </div>
+      <AddMilestoneDialog 
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+      />
+      <AddTaskDialog 
+        open={isAddTaskOpen}
+        onOpenChange={(open) => {
+          setIsAddTaskOpen(open);
+          if (!open) {
+            setSelectedMilestone(null);
+          }
+        }}
+        milestone={selectedMilestone}
+      />
+      
     </div>
   );
-}
+};
+

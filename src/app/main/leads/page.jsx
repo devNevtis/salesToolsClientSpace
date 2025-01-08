@@ -31,6 +31,8 @@ export default function LeadsPage() {
     error 
   } = useLeadsStore();
 
+  //console.log(error)
+
   useEffect(() => {
     if (user) {
       fetchBusinesses(user);
@@ -46,7 +48,7 @@ export default function LeadsPage() {
     console.log('Import leads clicked');
   };
 
-  if (error) {
+/*   if (error) {
     return (
       <div className="p-6">
         <Card className="p-4 bg-red-50 text-red-600">
@@ -61,7 +63,7 @@ export default function LeadsPage() {
         </Card>
       </div>
     );
-  }
+  } */
 
   return (
     <div className="container mx-auto p-6">
