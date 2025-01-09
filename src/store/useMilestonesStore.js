@@ -132,7 +132,22 @@ const useMilestonesStore = create((set, get) => ({
       )
     })),
 
-    updateTask: (milestoneId, taskId, data) => {
+    updateTask: (milestoneId, taskId, data) =>
+      set((state) => ({
+        milestones: state.milestones.map((milestone) =>
+          milestone.id === milestoneId
+            ? {
+                ...milestone,
+                tasks: milestone.tasks.map((task) =>
+                  task.id === taskId ? { ...task, ...data } : task
+                ),
+              }
+            : milestone
+        ),
+      })),
+    
+
+/*     updateTask: (milestoneId, taskId, data) => {
       set((state) => {
         const updatedMilestones = state.milestones.map((milestone) => {
           if (milestone.id === milestoneId) {
@@ -147,7 +162,7 @@ const useMilestonesStore = create((set, get) => ({
     
         return { milestones: updatedMilestones };
       });
-    },
+    }, */
 
   deleteTask: (milestoneId, taskId) =>
     set((state) => ({
