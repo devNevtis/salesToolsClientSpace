@@ -44,13 +44,13 @@ export default function MilestoneItem({ milestone, onAddTask, onEditTask, onTogg
             </div>
           </div>
           <div className="flex flex-col items-end gap-2">
-            <span className="text-sm font-medium">{milestone.progress}%</span>
-            <div className="relative w-32 h-2 bg-gray-200 rounded">
-              <div
-                className="absolute top-0 left-0 h-full bg-blue-600 rounded"
-                style={{ width: `${milestone.progress}%` }}
-              ></div>
-            </div>
+          <div className="relative w-32 h-2 bg-gray-200 rounded">
+            <div
+              className="absolute top-0 left-0 h-full bg-blue-600 rounded"
+              style={{ width: `${milestone.progress}%` }}
+            ></div>
+          </div>
+          <span className="text-sm font-medium">{milestone.progress}%</span>
           </div>
         </div>
       </div>

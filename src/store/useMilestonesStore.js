@@ -72,6 +72,16 @@ const generateInitialMilestonesForLead = (leadId) => {
   ];
 };
 
+const calculateMilestoneProgressFromSubtasks = (tasks) => {
+  const allSubtasks = tasks.flatMap((task) => task.subtasks);
+  const totalSubtasks = allSubtasks.length;
+  const completedSubtasks = allSubtasks.filter((st) => st.completed).length;
+
+  return totalSubtasks
+    ? Math.round((completedSubtasks / totalSubtasks) * 100)
+    : 0;
+};
+
 const useMilestonesStore = create((set, get) => ({
   // Estado
   milestones: [],
@@ -147,23 +157,6 @@ const useMilestonesStore = create((set, get) => ({
       })),
     
 
-/*     updateTask: (milestoneId, taskId, data) => {
-      set((state) => {
-        const updatedMilestones = state.milestones.map((milestone) => {
-          if (milestone.id === milestoneId) {
-            const updatedTasks = milestone.tasks.map((task) =>
-              task.id === taskId ? { ...task, ...data } : task
-            );
-            const progress = get().calculateMilestoneProgress(milestoneId);
-            return { ...milestone, tasks: updatedTasks, progress };
-          }
-          return milestone;
-        });
-    
-        return { milestones: updatedMilestones };
-      });
-    }, */
-
   deleteTask: (milestoneId, taskId) =>
     set((state) => ({
       milestones: state.milestones.map((m) =>
@@ -190,27 +183,6 @@ const useMilestonesStore = create((set, get) => ({
       )
     })),
 
-// src/store/useMilestonesStore.js
-/* updateSubtask: (milestoneId, taskId, subtaskId, data) =>
-  set((state) => ({
-    milestones: state.milestones.map((milestone) =>
-      milestone.id === milestoneId
-        ? {
-            ...milestone,
-            tasks: milestone.tasks.map((task) =>
-              task.id === taskId
-                ? {
-                    ...task,
-                    subtasks: task.subtasks.map((subtask) =>
-                      subtask.id === subtaskId ? { ...subtask, ...data } : subtask
-                    ),
-                  }
-                : task
-            ),
-          }
-        : milestone
-    ),
-  })), */
 
   updateSubtask: (milestoneId, taskId, subtaskId, data) =>
     set((state) => {
@@ -222,7 +194,6 @@ const useMilestonesStore = create((set, get) => ({
                 subtask.id === subtaskId ? { ...subtask, ...data } : subtask
               );
   
-              // Recalcular progreso
               const totalSubtasks = updatedSubtasks.length;
               const completedSubtasks = updatedSubtasks.filter(
                 (st) => st.completed
@@ -231,7 +202,6 @@ const useMilestonesStore = create((set, get) => ({
                 ? Math.round((completedSubtasks / totalSubtasks) * 100)
                 : 0;
   
-              // Actualizar status de la tarea basado en progreso
               const status =
                 progress === 100
                   ? "completed"
@@ -244,7 +214,11 @@ const useMilestonesStore = create((set, get) => ({
             return task;
           });
   
-          return { ...milestone, tasks: updatedTasks };
+          const milestoneProgress = calculateMilestoneProgressFromSubtasks(
+            updatedTasks
+          );
+  
+          return { ...milestone, tasks: updatedTasks, progress: milestoneProgress };
         }
         return milestone;
       });
@@ -291,6 +265,7 @@ deleteSubtask: (milestoneId, taskId, subtaskId) =>
   
     return Math.round((completedTasks / totalTasks) * 100);
   },
+  
   
 }));
 
