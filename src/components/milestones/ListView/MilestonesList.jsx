@@ -39,11 +39,12 @@ export default function MilestonesList() {
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-medium">Milestones</h2>
         <Button 
-          onClick={() => setIsAddDialogOpen(true)}
-          className="gap-2 bg-[#0f172a] hover:bg-[#0f172a]/90"
+          size="icon" 
+          variant="ghost" 
+          onClick={() => setIsAddDialogOpen(true)} 
+          className="text-primary hover:text-primary/90"
         >
-          <Plus className="h-4 w-4" />
-          Add Milestone
+          <Plus className="h-5 w-5" />
         </Button>
       </div>
 

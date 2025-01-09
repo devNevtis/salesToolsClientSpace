@@ -1,18 +1,29 @@
 // src/components/milestones/ListView/TaskItem.jsx
 'use client';
 
-import { useState } from "react";
 import SubtaskItem from "./SubtaskItem";
-import DeleteTaskDialog from "../dialogs/DeleteTaskDialog";
-import useMilestonesStore from "@/store/useMilestonesStore";
-import StatusBadge from "@/components/ui/StatusBadge";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import useMilestonesStore from "@/store/useMilestonesStore";
 import { Trash2, Edit3 } from "lucide-react";
+import StatusBadge from "@/components/ui/StatusBadge";
+
+
+function getBadgeVariant(status) {
+  switch (status) {
+    case "completed":
+      return "default"; // Badge más destacado para tareas completadas
+    case "in-progress":
+      return "secondary"; // Badge secundario para tareas en progreso
+    case "planned":
+    default:
+      return "outline"; // Badge contorneado para tareas planeadas
+  }
+}
 
 export default function TaskItem({ task, milestoneId, onEditTask }) {
     const { deleteTask } = useMilestonesStore();
     const { deleteSubtask } = useMilestonesStore();
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
     const handleDelete = () => {
       deleteTask(milestoneId, task.id);
@@ -40,10 +51,10 @@ export default function TaskItem({ task, milestoneId, onEditTask }) {
           >
             <Edit3 className="h-4 w-4" />
           </Button>
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={() => setIsDeleteDialogOpen(true)}
+          <Button 
+            size="icon" 
+            variant="ghost" 
+            onClick={handleDelete} 
             className="text-destructive hover:text-destructive/90"
           >
             <Trash2 className="h-4 w-4" />
@@ -58,19 +69,10 @@ export default function TaskItem({ task, milestoneId, onEditTask }) {
               subtask={subtask}
               milestoneId={milestoneId}
               taskId={task.id}
-              onDeleteSubtask={(milestoneId, taskId, subtaskId) =>
-                deleteSubtask(milestoneId, taskId, subtaskId)
-              }
             />
           ))}
         </div>
       )}
-      <DeleteTaskDialog
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-        task={task}
-        onDelete={(id) => deleteTask(milestoneId, id)}
-      />
     </div>
   );
 }

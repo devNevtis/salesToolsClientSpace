@@ -46,42 +46,39 @@ export default function MilestoneItem({ milestone, onAddTask, onEditTask, onTogg
                     {formattedStartDate} - {formattedDueDate}
                   </span>
                 </div>
-
+                <div className="flex gap-2">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsEditDialogOpen(true);
+                    }}
+                  >
+                    <Edit3 className="w-4 h-4 text-primary" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsDeleteDialogOpen(true);
+                    }}
+                  >
+                    <Trash2 className="w-4 h-4 text-destructive" />
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
           <div className="flex flex-col items-end gap-2">
-            <div className="flex flex-col items-end gap-2">
-              <div className="relative w-32 h-2 bg-gray-200 rounded">
-                <div
-                  className="absolute top-0 left-0 h-full bg-blue-600 rounded"
-                  style={{ width: `${milestone.progress}%` }}
-                ></div>
-              </div>
-              <span className="text-sm font-medium">{milestone.progress}%</span>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsEditDialogOpen(true);
-                }}
-              >
-                <Edit3 className="w-4 h-4 text-primary" />
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsDeleteDialogOpen(true);
-                }}
-              >
-                <Trash2 className="w-4 h-4 text-destructive" />
-              </Button>
-            </div>
+          <div className="relative w-32 h-2 bg-gray-200 rounded">
+            <div
+              className="absolute top-0 left-0 h-full bg-blue-600 rounded"
+              style={{ width: `${milestone.progress}%` }}
+            ></div>
+          </div>
+          <span className="text-sm font-medium">{milestone.progress}%</span>
           </div>
         </div>
       </div>

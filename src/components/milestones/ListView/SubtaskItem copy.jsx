@@ -42,20 +42,14 @@ export default function SubtaskItem({ subtask, milestoneId, taskId, onDeleteSubt
         onChange={handleTitleChange} // Actualización dinámica del título
         className="h-9 border-slate-200 focus-visible:ring-0 focus-visible:border-slate-300"
       />
-      <Button
-        size="icon"
-        variant="ghost"
-        onClick={() => setIsDeleteDialogOpen(true)}
+      <Button 
+        size="icon" 
+        variant="ghost" 
+        onClick={handleRemove} 
         className="text-destructive hover:text-destructive/90"
       >
         <Trash2 className="h-4 w-4" />
       </Button>
-      <DeleteSubtaskDialog
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-        subtask={subtask}
-        onDelete={(id) => onDeleteSubtask(milestoneId, taskId, id)}
-      />
     </div>
   );
 }
