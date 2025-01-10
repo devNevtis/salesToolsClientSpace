@@ -34,7 +34,6 @@ export default function AddTaskDialog({
   onOpenChange,
   milestone 
 }) {
-  if (!milestone) return null;
 
   const [isLoading, setIsLoading] = useState(false);
   const { addTask } = useMilestonesStore();
@@ -60,7 +59,8 @@ export default function AddTaskDialog({
       document.body.appendChild(portalRoot);
     }
   }, []);
-  
+
+  if (!milestone) return null;
 
   const addSubtask = () => {
     setSubtasks((prev) => [
@@ -127,7 +127,7 @@ export default function AddTaskDialog({
         <DialogHeader className="space-y-2 pb-3">
           <DialogTitle>Add Task</DialogTitle>
           <DialogDescription className="text-slate-500 text-sm font-normal">
-            Add a new task to "{milestone.title}"
+            Add a new task to &quot;{milestone.title}&quot;
           </DialogDescription>
         </DialogHeader>
 
