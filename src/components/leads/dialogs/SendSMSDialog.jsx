@@ -15,7 +15,6 @@ export function SendSMSDialog({ open, onOpenChange, phone }) {
   const [message, setMessage] = useState('');
 
   const handleSend = async () => {
-    // Aquí puedes implementar la lógica para enviar el SMS
     console.log({
       to: phone,
       message

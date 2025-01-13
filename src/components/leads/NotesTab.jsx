@@ -183,7 +183,6 @@ export default function NotesTab({ businessId }) {
                         ))
                     )}
                 </div>
-
                 {/* Diálogos */}
                 <AddNoteDialog
                     open={isAddNoteOpen}
@@ -191,7 +190,6 @@ export default function NotesTab({ businessId }) {
                     contact={primaryContact}
                     onSuccess={handleRefreshData}
                 />
-
                 <EditNoteDialog
                     open={isEditNoteOpen}
                     onOpenChange={(open) => {
@@ -202,7 +200,6 @@ export default function NotesTab({ businessId }) {
                     contact={primaryContact}
                     onSuccess={handleRefreshData}
                 />
-
                 <DeleteNoteDialog
                     open={isDeleteNoteOpen}
                     onOpenChange={(open) => {

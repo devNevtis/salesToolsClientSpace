@@ -34,39 +34,16 @@ export default function ContactForm({ onSuccess }) {
 
   const fetchBusinesses = useLeadsStore((state) => state.fetchBusinesses);
 
-/*   const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    try {
-      await createContact(user._id, user.name);
-      toast({
-        title: "Success",
-        description: "Lead created successfully"
-      });
-      router.push('/main/leads');
-    } catch (err) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: err.message || "Something went wrong"
-      });
-    }
-  }; */
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     try {
       await createContact(user._id, user.name);
       // Refrescar los datos
       await fetchBusinesses(user);
-      
       toast({
         title: "Success",
         description: "Lead created successfully"
       });
-      
-      // Notificar al padre del éxito
       onSuccess?.();
     } catch (err) {
       toast({

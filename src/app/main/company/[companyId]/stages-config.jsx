@@ -82,16 +82,6 @@ export default function StagesConfig({ companyId }) {
     setDraggedItem(null);
   };
 
-/*   const addNewStage = () => {
-    const newStage = {
-      _id: `temp-${Date.now()}`,
-      name: "New Stage",
-      show: true,
-      order: stages.length + 1
-    };
-    setStages([...stages, newStage]);
-  }; */
-
   const addNewStage = () => {
     toast({
       variant: "warning",
@@ -142,37 +132,6 @@ export default function StagesConfig({ companyId }) {
     }
   };
 
-/*   const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      // Primero obtenemos los datos actuales
-      const response = await axios.get(`${env.endpoints.company.getById(companyId)}`);
-      const currentConfiguration = response.data.configuration;
-  
-      // Actualizamos con los nuevos stages manteniendo el resto de la configuración
-      await axios.put(`${env.endpoints.company.getById(companyId)}`, {
-        configuration: {
-          ...currentConfiguration,  // Mantenemos theme y cualquier otra config
-          stages: stages           // Actualizamos solo los stages
-        }
-      });
-      
-      toast({
-        title: "Stages updated successfully",
-        description: "Your funnel stages configuration has been saved.",
-      });
-    } catch (error) {
-      console.error('Error saving stages:', error);
-      toast({
-        variant: "destructive",
-        title: "Error saving stages",
-        description: "There was a problem saving your changes. Please try again.",
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  }; */
-
   return (
     <div className="max-w-2xl mx-auto mt-4">
       <div className="flex items-center justify-between mb-4">
@@ -191,14 +150,6 @@ export default function StagesConfig({ companyId }) {
             <span>Add Stage</span>
             <span className="text-xs ml-2">(Coming soon)</span>
         </Button>
-{/*         <Button
-          onClick={addNewStage}
-          variant="outline"
-          className="flex items-center gap-2"
-        >
-          <MdAdd size={20} />
-          Add Stage
-        </Button> */}
       </div>
 
       <Card className="shadow-md">

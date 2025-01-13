@@ -16,8 +16,6 @@ export function SendEmailDialog({ open, onOpenChange, email }) {
   const [message, setMessage] = useState('');
 
   const handleSend = async () => {
-    // Aquí puedes implementar la lógica para enviar el email
-    // Por ahora solo mostraremos los datos en consola
     console.log({
       to: email,
       subject,

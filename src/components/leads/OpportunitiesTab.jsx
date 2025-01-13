@@ -225,14 +225,12 @@ export default function OpportunitiesTab({ businessId }) {
                     )}
                 </div>
             </div>
-
             <AddOpportunityDialog
                 open={isAddOpen}
                 onOpenChange={setIsAddOpen}
                 contact={primaryContact}
                 onSuccess={handleRefreshData}
             />
-
             <EditOpportunityDialog
                 open={isEditOpen}
                 onOpenChange={(open) => {
@@ -243,7 +241,6 @@ export default function OpportunitiesTab({ businessId }) {
                 contact={primaryContact}
                 onSuccess={handleRefreshData}
             />
-
             <DeleteOpportunityDialog
                 open={isDeleteOpen}
                 onOpenChange={(open) => {
@@ -254,7 +251,6 @@ export default function OpportunitiesTab({ businessId }) {
                 contact={primaryContact}
                 onSuccess={handleRefreshData}
             />
-
         </div>
     );
 }

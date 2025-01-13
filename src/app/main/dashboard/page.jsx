@@ -16,11 +16,6 @@ function DashboardPage() {
     }
   }, [user, fetchBusinesses]);
 
-  // Añadir logs
-  //console.log('Dashboard Page - User:', user);
-  //console.log('Dashboard Page - Businesses:', businesses);
-  //console.log('Dashboard Page - Contacts:', contacts);
-
   return <Dashboard leads={businesses} />;
 }
 

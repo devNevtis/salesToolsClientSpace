@@ -9,15 +9,12 @@ import { useAuth } from "@/components/AuthProvider";
 import useLeadsStore from "@/store/useLeadsStore";
 import { 
   Upload, 
-  UserPlus, 
-  LayoutGrid, 
   Search,
   Loader2 
 } from "lucide-react";
 import LeadsDataTable from "@/components/leads/LeadsDataTable";
 import CustomersTab from "@/components/customers/CustomersTab";
 import ColumnsVisibilityDialog from "@/components/leads/ColumnsVisibilityDialog";
-import { Card } from "@/components/ui/card";
 import LeadCreationDialog from "@/components/leads/LeadCreationDialog";
 import MilestonesTab from "@/components/milestones/MilestonesTab";
 
@@ -30,8 +27,6 @@ export default function LeadsPage() {
     isLoading,
     error 
   } = useLeadsStore();
-
-  //console.log(error)
 
   useEffect(() => {
     if (user) {
@@ -47,23 +42,6 @@ export default function LeadsPage() {
     // TODO: Implementar importación de leads
     console.log('Import leads clicked');
   };
-
-/*   if (error) {
-    return (
-      <div className="p-6">
-        <Card className="p-4 bg-red-50 text-red-600">
-          <p>Error loading leads: {error}</p>
-          <Button 
-            variant="outline" 
-            className="mt-2"
-            onClick={() => fetchBusinesses(user)}
-          >
-            Retry
-          </Button>
-        </Card>
-      </div>
-    );
-  } */
 
   return (
     <div className="container mx-auto p-6">

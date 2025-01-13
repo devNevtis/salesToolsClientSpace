@@ -45,12 +45,6 @@ export default function LeadDetailPage() {
         });
     };
 
-/*     const handleTabChange = (value) => {
-        startTransition(() => {
-            setActiveTab(value);
-        });
-    }; */
-
     const currentBusiness = businesses.find(b => b._id === leadId);
     const associatedContacts = currentBusiness ? getBusinessContacts(currentBusiness._id) : [];
 

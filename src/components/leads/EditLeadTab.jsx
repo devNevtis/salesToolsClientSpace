@@ -61,13 +61,10 @@ export default function EditLeadTab({ business }) {
     const onSubmit = async (data) => {
         try {
           setIsLoading(true);
-          
           // 1. Actualizar business
           const businessResult = await updateBusiness(business._id, data);
-          
           // 2. Obtener todos los contactos asociados
           const contacts = getBusinessContacts(business._id);
-          
           // 3. Actualizar cada contacto con el nuevo status
           const contactUpdates = contacts.map(async (contact) => {
             const updatedContact = {
@@ -76,7 +73,6 @@ export default function EditLeadTab({ business }) {
             };
             return updateLead(updatedContact);
           });
-    
           // 4. Esperar que todas las actualizaciones terminen
           await Promise.all(contactUpdates);
     
@@ -87,12 +83,11 @@ export default function EditLeadTab({ business }) {
               variant: "success",
               className: "bg-green-50 border-green-200 text-green-900",
             });
-            
             // 5. Refrescar los datos
             await Promise.all([
-                fetchContacts(),  // Esto ya estaba
-                fetchLeads(),     // Esto ya estaba
-                fetchBusinesses(user)  // Añadimos esta línea
+                fetchContacts(),
+                fetchLeads(),
+                fetchBusinesses(user)
             ]);
           }
         } catch (error) {

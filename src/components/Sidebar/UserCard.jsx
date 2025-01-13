@@ -106,13 +106,6 @@ useEffect(() => {
         phone: user.phone, // Mantenemos el teléfono existente
       };
       
-/*       console.log('Sending update request with data:', updateData);
-      console.log('Update URL:', `https://api.nevtis.com/user/users/${user.role}/update`); */
-  
-/*       const response = await axios.put(
-        `https://api.nevtis.com/user/users/${user.role}/update`,
-        updateData
-      ); */
       const response = await axios.put(
         env.endpoints.users.update(user.role),
         updateData

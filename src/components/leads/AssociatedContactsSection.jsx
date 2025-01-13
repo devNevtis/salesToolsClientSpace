@@ -42,21 +42,18 @@ import EditContactDialog from "./dialogs/EditContactDialog";
 import DeleteContactDialog from "./dialogs/DeleteContactDialog";
 import { useDialogContext } from "@/contexts/DialogContext";
 
-
 export default function AssociatedContactsSection({ businessId, currentStatus }) { // Añadimos currentStatus
     const [selectedContact, setSelectedContact] = useState(null);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const { registerOverlay, unregisterOverlay } = useDialogContext();
-    
     const { 
         businesses, 
         getBusinessContacts, 
         isLoadingContacts,
         fetchContacts 
     } = useBusinessStore();
-    
     const { fetchLeads } = useLeadsStore();
 
     // Efecto para cargar los datos inicialmente y después de cada operación
@@ -67,15 +64,7 @@ export default function AssociatedContactsSection({ businessId, currentStatus })
         loadData();
     }, [fetchContacts, fetchLeads]);
 
-    // Añadir useEffect para manejar overlays
-/*     useEffect(() => {
-        if (isEditDialogOpen) {
-          registerOverlay('edit-contact');
-        } else {
-          unregisterOverlay('edit-contact');
-        }
-      }, [isEditDialogOpen, registerOverlay, unregisterOverlay]); */
-      useEffect(() => {
+    useEffect(() => {
         if (isEditDialogOpen) {
             registerOverlay('edit-contact');
         } else {
@@ -84,7 +73,7 @@ export default function AssociatedContactsSection({ businessId, currentStatus })
         return () => unregisterOverlay('edit-contact');
     }, [isEditDialogOpen, registerOverlay, unregisterOverlay]);
   
-      useEffect(() => {
+    useEffect(() => {
         if (isDeleteDialogOpen) {
             registerOverlay('delete-contact');
         } else {
@@ -95,7 +84,6 @@ export default function AssociatedContactsSection({ businessId, currentStatus })
 
     const business = businesses.find(b => b._id === businessId);
     const contacts = getBusinessContacts(businessId);
-
     const handleAddSuccess = async () => {
         await Promise.all([fetchContacts(), fetchLeads()]);
     };
@@ -233,7 +221,6 @@ export default function AssociatedContactsSection({ businessId, currentStatus })
                     </div>
                 )}
             </CardContent>
-
             {/* Add Contact Dialog - Pasamos el currentStatus */}
             <AddContactDialog
                 open={isAddDialogOpen}
@@ -242,7 +229,6 @@ export default function AssociatedContactsSection({ businessId, currentStatus })
                 currentStatus={currentStatus} // Pasamos el status actual
                 onSuccess={handleAddSuccess}
             />
-
             <EditContactDialog
                 open={isEditDialogOpen}
                 onOpenChange={setIsEditDialogOpen}
@@ -251,7 +237,6 @@ export default function AssociatedContactsSection({ businessId, currentStatus })
                 currentStatus={currentStatus} // Pasamos el status actual
                 onSuccess={handleAddSuccess}
             />
-
             <DeleteContactDialog
                 open={isDeleteDialogOpen}
                 onOpenChange={setIsDeleteDialogOpen}
