@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/AuthProvider";
 import useLeadsStore from "@/store/useLeadsStore";
+import useCompanyTheme from '@/store/useCompanyTheme';
 import { 
   Upload, 
   Search,
@@ -20,6 +21,7 @@ import MilestonesTab from "@/components/milestones/MilestonesTab";
 import OpportunitiesTab from "@/components/opportunities/OpportunitiesTab";
 
 export default function LeadsPage() {
+  const { theme } = useCompanyTheme();
   const { user } = useAuth();
   const { 
     fetchBusinesses, 
@@ -43,6 +45,7 @@ export default function LeadsPage() {
     // TODO: Implementar importación de leads
     console.log('Import leads clicked');
   };
+  console.log(`data-[state=active]:bg-[${theme.base1}] data-[state=active]:text-primary-foreground px-4 py-2 rounded-md transition-all`)
 
   return (
     <div className="container mx-auto p-6">
@@ -56,7 +59,7 @@ export default function LeadsPage() {
             >
               <div className="flex flex-col items-center gap-1">
                 <span className="font-medium">Leads</span>
-                <span className="text-xs text-muted-foreground">Active Pipeline</span>
+                <span className="text-xs text-white text-muted-foreground">Active Pipeline</span>
               </div>
             </TabsTrigger>
             <TabsTrigger 

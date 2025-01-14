@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, LucideFilterX } from "lucide-react";
 import useLeadsStore from "@/store/useLeadsStore";
 
 export default function OpportunitiesDataTable() {
@@ -118,6 +118,9 @@ export default function OpportunitiesDataTable() {
 
   return (
     <div className="rounded-md border">
+      <div className="px-4 py-2 border-b">
+        <h2 className="text-xl font-semibold">Opportunities</h2>
+      </div>
       <div className="p-4 flex justify-between items-center">
         <div className="flex gap-4">
           <Input
@@ -165,10 +168,10 @@ export default function OpportunitiesDataTable() {
             size="sm"
             onClick={resetFilters}
           >
-            Reset Filters
+            <LucideFilterX className="h-4 w-4 text-red-500" />
           </Button>
-          <div className="text-sm font-medium text-gray-600">
-            Total: ${totalOpportunitiesValue.toFixed(2)}
+          <div className="text-sm font-medium text-green-700 bg-green-300 py-0.5 px-1 rounded-lg border border-green-600">
+            <span>Total: </span><span className="font-semibold">${totalOpportunitiesValue.toFixed(2)}</span>
           </div>
         </div>
       </div>
