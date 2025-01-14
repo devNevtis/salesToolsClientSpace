@@ -17,6 +17,7 @@ import CustomersTab from "@/components/customers/CustomersTab";
 import ColumnsVisibilityDialog from "@/components/leads/ColumnsVisibilityDialog";
 import LeadCreationDialog from "@/components/leads/LeadCreationDialog";
 import MilestonesTab from "@/components/milestones/MilestonesTab";
+import OpportunitiesTab from "@/components/opportunities/OpportunitiesTab";
 
 export default function LeadsPage() {
   const { user } = useAuth();
@@ -65,6 +66,15 @@ export default function LeadsPage() {
               <div className="flex flex-col items-center gap-1">
                 <span className="font-medium">Customers</span>
                 <span className="text-xs text-muted-foreground">Won Deals</span>
+              </div>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="opportunities" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-md transition-all"
+            >
+              <div className="flex flex-col items-center gap-1">
+                <span className="font-medium">Oportunities</span>
+                <span className="text-xs text-muted-foreground">Key products</span>
               </div>
             </TabsTrigger>
             <TabsTrigger 
@@ -129,6 +139,11 @@ export default function LeadsPage() {
         {/* Customers Tab Content */}
         <TabsContent value="customers">
           <CustomersTab />
+        </TabsContent>
+
+        {/* Opportunities Tab Content */}
+        <TabsContent value="opportunities">
+          <OpportunitiesTab />
         </TabsContent>
 
         {/* Milestones Tab Content - Placeholder */}

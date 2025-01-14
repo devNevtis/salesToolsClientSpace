@@ -210,7 +210,30 @@ const useLeadsStore = create((set, get) => ({
     const end = start + pagination.pageSize;
     
     return filteredBusinesses.slice(start, end);
+  },
+  fetchAllOpportunities: async () => {
+    const { businesses, contacts } = get(); // Datos ya cargados en el store
+    const user = get().currentUser; // Información del usuario actual
+    
+    const opportunities = [];
+    
+    businesses.forEach((business) => {
+      const businessContacts = contacts[business._id] || [];
+      businessContacts.forEach((contact) => {
+        if (
+          user.role === 'admin' || 
+          (user.role === 'owner' && business.createdBy.companyId === user.companyId) || 
+          (user.role === 'manager' && contact.assignedTo === user._id) || 
+          (user.role === 'sale' && contact.assignedTo === user._id)
+        ) {
+          opportunities.push(...contact.opportunities);
+        }
+      });
+    });
+  
+    return opportunities;
   }
+  
 }));
 
 export default useLeadsStore;
