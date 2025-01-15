@@ -1,7 +1,7 @@
 // src/components/leads/LeadsDataTable.jsx
 'use client';
 
-import { useState, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 import {
   Table,
   TableBody,
@@ -45,9 +45,11 @@ import QuickEditDialog from './QuickEditDialog';
 import useQuickEditStore from '@/store/useQuickEditStore';
 import DeleteBusinessDialog from './DeleteBusinessDialog';
 import useDeleteBusinessStore from '@/store/useDeleteBusinessStore';
+import useCompanyTheme from '@/store/useCompanyTheme';
 import Link from "next/link";
 
 export default function LeadsDataTable() {
+  const { theme } = useCompanyTheme();
   const { openDialog:openQuickEditDialog } = useQuickEditStore();
   const { openDialog: openDeleteDialog } = useDeleteBusinessStore();
   const { 
@@ -67,6 +69,15 @@ export default function LeadsDataTable() {
   const start = (currentPage - 1) * pageSize;
   const end = Math.min(start + pageSize, totalBusinesses);
   const paginatedBusinesses = businesses.slice(start, end);
+
+  useEffect(() => {
+    if (theme.base2) {
+      document.documentElement.style.setProperty('--theme-base2', theme.base2);
+    }
+    if (theme.highlighting) {
+      document.documentElement.style.setProperty('--theme-highlighting', theme.highlighting);
+    }
+  }, [theme]);
 
   const toggleRow = (businessId) => {
     const newExpanded = new Set(expandedRows);
@@ -110,7 +121,7 @@ export default function LeadsDataTable() {
             </Button>
             <Link 
               href={`/main/leads/${business._id}`}
-              className="font-medium text-blue-600 hover:underline"
+              className="font-medium text-[var(--theme-base2)] hover:underline"
             >
               {business.name}
             </Link>
@@ -118,7 +129,7 @@ export default function LeadsDataTable() {
         );
       case 'email':
         return business.email ? (
-          <a href={`mailto:${business.email}`} className="flex items-center gap-2 text-blue-600 hover:underline">
+          <a href={`mailto:${business.email}`} className="flex items-center gap-2 text-[var(--theme-base2)] hover:underline">
             <Mail className="h-4 w-4" />
             {business.email}
           </a>
@@ -143,7 +154,7 @@ export default function LeadsDataTable() {
             href={business.website}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-blue-600 hover:underline"
+            className="flex items-center gap-2 text-[var(--theme-base2)] hover:underline"
           >
             <ExternalLink className="h-4 w-4" />
             Visit

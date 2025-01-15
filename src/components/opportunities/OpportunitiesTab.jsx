@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 import {
   Table,
   TableBody,
@@ -12,15 +12,34 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronDown, ChevronRight, LucideFilterX } from "lucide-react";
+import useCompanyTheme from '@/store/useCompanyTheme';
 import useLeadsStore from "@/store/useLeadsStore";
 
 export default function OpportunitiesDataTable() {
+  const { theme } = useCompanyTheme();
   const { getPaginatedBusinesses, getContactsForBusiness } = useLeadsStore();
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStage, setFilterStage] = useState('');
   const [filterSeller, setFilterSeller] = useState('');
   const businesses = getPaginatedBusinesses();
+
+  useEffect(() => {
+    if (theme.base1) {
+      document.documentElement.style.setProperty('--theme-base1', theme.base1);
+    }
+    if (theme.base2) {
+      document.documentElement.style.setProperty('--theme-base2', theme.base2);
+    }
+    if (theme.highlighting) {
+      document.documentElement.style.setProperty('--theme-highlighting', theme.highlighting);
+    }
+    if (theme.callToAction) {
+      document.documentElement.style.setProperty('--theme-callToAction', theme.callToAction);
+    }
+  }, [theme]);
+
+  console.log(theme.callToAction);
 
   const toggleRow = (businessId) => {
     const newExpanded = new Set(expandedRows);
@@ -168,9 +187,9 @@ export default function OpportunitiesDataTable() {
             size="sm"
             onClick={resetFilters}
           >
-            <LucideFilterX className="h-4 w-4 text-red-500" />
+            <LucideFilterX className="h-4 w-4 text-[var(--theme-callToAction)]" />
           </Button>
-          <div className="text-sm font-medium text-green-700 bg-green-300 py-0.5 px-1 rounded-lg border border-green-600">
+          <div className="text-sm font-medium text-[var(--theme-base1)] bg-[var(--theme-highlighting)] py-0.5 px-1 rounded-lg border border-[var(--theme-base1)]">
             <span>Total: </span><span className="font-semibold">${totalOpportunitiesValue.toFixed(2)}</span>
           </div>
         </div>
@@ -179,7 +198,7 @@ export default function OpportunitiesDataTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Business Name</TableHead>
+              <TableHead >Business Name</TableHead>
               <TableHead>Seller</TableHead>
               <TableHead>Total Value</TableHead>
               <TableHead>Stages</TableHead>

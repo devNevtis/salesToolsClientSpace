@@ -1,6 +1,7 @@
 // src/components/milestones/ListView/MilestoneItem.jsx
 'use client';
 
+import { useEffect } from "react";
 import { ChevronDown, ChevronRight, Calendar, Plus, Edit3, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TaskItem from "./TaskItem";
@@ -8,8 +9,10 @@ import { useState } from "react";
 import { format } from 'date-fns';
 import EditMilestoneDialog from "../dialogs/EditMilestoneDialog";
 import DeleteMilestoneDialog from "../dialogs/DeleteMilestoneDialog";
+import useCompanyTheme from '@/store/useCompanyTheme';
 
 export default function MilestoneItem({ milestone, onAddTask, onEditTask, onToggleExpand }) {
+  const { theme } = useCompanyTheme();
   const [expanded, setExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -18,6 +21,21 @@ export default function MilestoneItem({ milestone, onAddTask, onEditTask, onTogg
     setExpanded(!expanded);
     onToggleExpand(milestone.id);
   };
+
+  useEffect(() => {
+    if (theme.base1) {
+      document.documentElement.style.setProperty('--theme-base1', theme.base1);
+    }
+    if (theme.base2) {
+      document.documentElement.style.setProperty('--theme-base2', theme.base2);
+    }
+    if (theme.highlighting) {
+      document.documentElement.style.setProperty('--theme-highlighting', theme.highlighting);
+    }
+    if (theme.callToAction) {
+      document.documentElement.style.setProperty('--theme-callToAction', theme.callToAction);
+    }
+  }, [theme]);
 
   // Formatear fechas
   const formattedStartDate = format(new Date(milestone.startDate), 'MMM d, yyyy');
@@ -54,7 +72,7 @@ export default function MilestoneItem({ milestone, onAddTask, onEditTask, onTogg
             <div className="flex flex-col items-end gap-2">
               <div className="relative w-32 h-2 bg-gray-200 rounded">
                 <div
-                  className="absolute top-0 left-0 h-full bg-blue-600 rounded"
+                  className="absolute top-0 left-0 h-full bg-[var(--theme-base2)]"
                   style={{ width: `${milestone.progress}%` }}
                 ></div>
               </div>
@@ -69,7 +87,7 @@ export default function MilestoneItem({ milestone, onAddTask, onEditTask, onTogg
                   setIsEditDialogOpen(true);
                 }}
               >
-                <Edit3 className="w-4 h-4 text-primary" />
+                <Edit3 className="w-4 h-4 text-[var(--theme-base1)]" />
               </Button>
               <Button
                 size="icon"
@@ -79,7 +97,7 @@ export default function MilestoneItem({ milestone, onAddTask, onEditTask, onTogg
                   setIsDeleteDialogOpen(true);
                 }}
               >
-                <Trash2 className="w-4 h-4 text-destructive" />
+                <Trash2 className="w-4 h-4 text-[var(--theme-callToAction)]" />
               </Button>
             </div>
           </div>

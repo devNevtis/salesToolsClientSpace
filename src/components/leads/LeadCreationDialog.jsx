@@ -15,10 +15,21 @@ import { UserPlus } from "lucide-react";
 import BusinessForm from "./BusinessForm";
 import ContactForm from "./ContactForm";
 import useLeadCreationStore from "@/store/useLeadCreationStore";
+import useCompanyTheme from '@/store/useCompanyTheme';
 
 export default function LeadCreationDialog({ onLeadCreated }) {
   const [open, setOpen] = useState(false);
   const { currentStep, reset } = useLeadCreationStore();
+  const { theme } = useCompanyTheme();
+
+  useEffect(() => {
+    if (theme.base2) {
+      document.documentElement.style.setProperty('--theme-base2', theme.base2);
+    }
+    if (theme.highlighting) {
+      document.documentElement.style.setProperty('--theme-highlighting', theme.highlighting);
+    }
+  }, [theme]);
 
   // Reset form state when dialog closes
   const handleOpenChange = (isOpen) => {
@@ -35,7 +46,7 @@ export default function LeadCreationDialog({ onLeadCreated }) {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2 bg-[var(--theme-base2)]">
           <UserPlus className="h-4 w-4" />
           Add Lead
         </Button>

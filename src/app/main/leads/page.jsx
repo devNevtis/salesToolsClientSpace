@@ -41,52 +41,61 @@ export default function LeadsPage() {
     setSearchTerm(e.target.value);
   };
 
+  useEffect(() => {
+    if (theme.base1) {
+      document.documentElement.style.setProperty('--theme-base1', theme.base1);
+    }
+    if (theme.highlighting) {
+      document.documentElement.style.setProperty('--theme-highlighting', theme.highlighting);
+    }
+  }, [theme]);
+
   const handleImportLeads = () => {
     // TODO: Implementar importación de leads
     console.log('Import leads clicked');
   };
-  console.log(`data-[state=active]:bg-[${theme.base1}] data-[state=active]:text-primary-foreground px-4 py-2 rounded-md transition-all`)
+  //console.log(`data-[state=active]:bg-[${theme.base1}] data-[state=active]:text-primary-foreground px-4 py-2 rounded-md transition-all`)
 
   return (
     <div className="container mx-auto p-6">
       <Tabs defaultValue="leads" className="w-full">
         <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0 mb-6">
-          <h1 className="text-2xl font-bold">Sales Pipeline</h1>
+          <h1 className="text-2xl font-bold text-[var(--theme-base1)]">Sales Pipeline</h1>
           <TabsList className="bg-card border rounded-lg p-1 h-auto">
-            <TabsTrigger 
-              value="leads" 
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-md transition-all"
+            <TabsTrigger
+              value="leads"
+              className="px-4 py-2 rounded-md transition-all data-[state=active]:bg-[var(--theme-base1)] data-[state=active]:text-[var(--theme-highlighting)]"
             >
               <div className="flex flex-col items-center gap-1">
                 <span className="font-medium">Leads</span>
-                <span className="text-xs text-white text-muted-foreground">Active Pipeline</span>
+                <span className="text-xs">Active Pipeline</span>
               </div>
             </TabsTrigger>
             <TabsTrigger 
               value="customers" 
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-md transition-all"
+              className="px-4 py-2 rounded-md transition-all data-[state=active]:bg-[var(--theme-base1)] data-[state=active]:text-[var(--theme-highlighting)]"
             >
               <div className="flex flex-col items-center gap-1">
                 <span className="font-medium">Customers</span>
-                <span className="text-xs text-muted-foreground">Won Deals</span>
+                <span className="text-xs">Won Deals</span>
               </div>
             </TabsTrigger>
             <TabsTrigger 
               value="opportunities" 
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-md transition-all"
+              className="px-4 py-2 rounded-md transition-all data-[state=active]:bg-[var(--theme-base1)] data-[state=active]:text-[var(--theme-highlighting)]"
             >
               <div className="flex flex-col items-center gap-1">
                 <span className="font-medium">Oportunities</span>
-                <span className="text-xs text-muted-foreground">Key products</span>
+                <span className="text-xs">Key products</span>
               </div>
             </TabsTrigger>
             <TabsTrigger 
               value="milestones" 
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-md transition-all"
+              className="px-4 py-2 rounded-md transition-all data-[state=active]:bg-[var(--theme-base1)] data-[state=active]:text-[var(--theme-highlighting)]"
             >
               <div className="flex flex-col items-center gap-1">
                 <span className="font-medium">Milestones</span>
-                <span className="text-xs text-muted-foreground">Key Events</span>
+                <span className="text-xs">Key Events</span>
               </div>
             </TabsTrigger>
           </TabsList>

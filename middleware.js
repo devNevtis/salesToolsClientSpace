@@ -10,6 +10,14 @@ export function middleware(request) {
   if (!token && !request.nextUrl.pathname.startsWith('/login')) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
+  //
+  // Proteger ruta general
+  if (request.nextUrl.pathname.startsWith('/main')) {
+    if (!user || (user.role !== 'owner' && user.role !== 'admin' && user.role !== 'manager'  && user.role !== 'sale')) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+  }
+  //
 
   // Proteger ruta de company
   if (request.nextUrl.pathname.startsWith('/main/company')) {
