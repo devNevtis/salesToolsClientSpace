@@ -40,6 +40,7 @@ export default function AddTaskDialog({
   const { getBusinessContacts } = useBusinessStore();
   const { contacts } = useMilestonesStore();
   const [subtasks, setSubtasks] = useState([]);
+  const { updateMilestone } = useMilestonesStore();
 
   const form = useForm({
     defaultValues: {
@@ -108,8 +109,17 @@ export default function AddTaskDialog({
           : null,
         subtasks,
       };
+
+        // Actualizamos el milestone con la nueva tarea
+        const updatedMilestone = {
+          ...milestone,
+          tasks: [...milestone.tasks, newTask] // Añadimos la nueva tarea
+        };
+
+      // Llamamos al backend para actualizar el milestone con la nueva tarea
+      await updateMilestone(milestone._id, updatedMilestone);
   
-      await useMilestonesStore.getState().addTask(milestone.id, newTask);
+      /* await useMilestonesStore.getState().addTask(milestone.id, newTask); */
       form.reset();
       setSubtasks([]);
       onOpenChange(false);

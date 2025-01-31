@@ -31,9 +31,12 @@ export default function TaskItem({ task, milestoneId, onEditTask }) {
       }
     }, [theme]);
 
-    const handleDelete = () => {
-      deleteTask(milestoneId, task.id);
+    const handleDeleteSubtask = async (milestoneId, taskId, subtaskId) => {
+      await deleteSubtask(milestoneId, taskId, subtaskId);
     };
+
+    //console.log(milestoneId)
+    //console.log(task)
 
   return (
     <div className="bg-white p-3 rounded-lg border">
@@ -52,7 +55,7 @@ export default function TaskItem({ task, milestoneId, onEditTask }) {
           <Button 
             size="icon" 
             variant="ghost" 
-            onClick={() => onEditTask(task)} 
+            onClick={() => onEditTask(task,milestoneId)} 
             className="text-[var(--theme-base1)] hover:text-primary"
           >
             <Edit3 className="h-4 w-4" />
@@ -67,25 +70,29 @@ export default function TaskItem({ task, milestoneId, onEditTask }) {
           </Button>
         </div>
       </div>
-      {task.subtasks?.length > 0 && (
-        <div className="mt-2 pl-4 border-l space-y-2">
-          {task.subtasks.map((subtask) => (
-            <SubtaskItem
-              key={subtask.id}
-              subtask={subtask}
-              milestoneId={milestoneId}
-              taskId={task.id}
-              onDeleteSubtask={(milestoneId, taskId, subtaskId) =>
-                deleteSubtask(milestoneId, taskId, subtaskId)
-              }
-            />
-          ))}
-        </div>
-      )}
+
+      {task.subtasks.map((subtask) => {
+/*         console.log("Rendering SubtaskItem with:", {
+          milestoneId,
+          taskId: task._id,
+          subtask
+        }); */
+        return (
+          <SubtaskItem
+            key={subtask._id}
+            subtask={subtask}
+            milestoneId={milestoneId}
+            taskId={task._id}
+            onDeleteSubtask={handleDeleteSubtask}
+          />
+        );
+      })}
+
       <DeleteTaskDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
         task={task}
+        milestoneId={milestoneId}
         onDelete={(id) => deleteTask(milestoneId, id)}
       />
     </div>

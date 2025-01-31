@@ -17,14 +17,17 @@ export default function EditTaskDialog({ open, onOpenChange, task, milestoneId }
     dueDate: "",
   });
 
+  //console.log(milestoneId)
+
   useEffect(() => {
-    console.log("Task loaded into dialog:", task); // Debug: Verificar datos iniciales
+    //console.log("Task loaded into dialog:", task); // Debug
     if (task) {
       setFormData({
         title: task.title || "",
         description: task.description || "",
         startDate: task.startDate ? new Date(task.startDate).toISOString().split('T')[0] : "",
         dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : "",
+        status: task.status || "planned"
       });
     }
   }, [task]);
@@ -32,28 +35,31 @@ export default function EditTaskDialog({ open, onOpenChange, task, milestoneId }
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    console.log(`Field changed: ${name} = ${value}`); // Debug: Verificar cambios
+    //console.log(`Field changed: ${name} = ${value}`); // Debug: Verificar cambios
   };
 
-  const handleSubmit = () => {
-    console.log("Submit button clicked with:", { milestoneId, task }); // Debug
+  const handleSubmit = async () => {
+    //console.log("Submit button clicked with:", { milestoneId, task, formData }); // Debug
     if (!task || !milestoneId) {
       console.error("Missing task or milestoneId");
       return;
     }
-  
-    updateTask(milestoneId, task.id, {
-      ...task,
-      ...formData,
-      startDate: new Date(formData.startDate),
-      dueDate: new Date(formData.dueDate),
-    });
-  
-    console.log("Task updated successfully in store"); // Confirmación
-    onOpenChange(false);
+
+    try {
+      await updateTask(milestoneId, task._id, {
+        title: formData.title,
+        description: formData.description,
+        startDate: new Date(formData.startDate),
+        dueDate: new Date(formData.dueDate),
+        status: formData.status
+      });
+      //console.log("Task updated successfully in store"); // Confirmación
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Error updating task:", error);
+    }
   };
   
-
   if (!task) return null;
 
   return (

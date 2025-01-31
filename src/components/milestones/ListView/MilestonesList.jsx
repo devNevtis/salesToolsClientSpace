@@ -29,11 +29,8 @@ export default function MilestonesList() {
     setIsEditTaskOpen(true);
   };
   
-
-  const filteredMilestones = selectedLeadId 
-    ? milestones.filter((m) => m.leadId === selectedLeadId)
-    : [];
-
+  const filteredMilestones = milestones
+  //console.log("desde list",milestones); // Debug
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -55,7 +52,7 @@ export default function MilestonesList() {
       ) : (
         filteredMilestones.map((milestone) => (
           <MilestoneItem 
-            key={milestone.id} 
+            key={milestone._id} 
             milestone={milestone} 
             onAddTask={handleAddTask} 
             onEditTask={handleEditTask} // Conexión funcional

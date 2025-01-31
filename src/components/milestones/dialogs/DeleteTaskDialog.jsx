@@ -1,4 +1,4 @@
-// src/components/milestones/dialogs/EditSubtaskDialog.jsx
+// src/components/milestones/dialogs/DeleteTaskDialog.jsx
 'use client';
 
 import {
@@ -11,16 +11,30 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, Loader2 } from "lucide-react";
+import useMilestonesStore from "@/store/useMilestonesStore";
 import { useState } from "react";
 
-export default function DeleteTaskDialog({ open, onOpenChange, task, onDelete }) {
+export default function DeleteTaskDialog({ open, onOpenChange, task, milestoneId }) {
+  const { deleteTask } = useMilestonesStore();
   const [isLoading, setIsLoading] = useState(false);
 
+  //console.log("DeleteTaskDialog opened with:", { task, milestoneId });
+
   const handleDelete = async () => {
+    if (!task || !milestoneId) {
+      console.error("Task or milestoneId is missing!");
+      return;
+    }
+
     setIsLoading(true);
+    console.log("Deleting task with ID:", task._id, "from milestone:", milestoneId);
+
     try {
-      await onDelete(task.id);
+      await deleteTask(milestoneId, task._id);
+      console.log("Task deleted successfully");
       onOpenChange(false);
+    } catch (error) {
+      console.error("Error deleting task:", error);
     } finally {
       setIsLoading(false);
     }

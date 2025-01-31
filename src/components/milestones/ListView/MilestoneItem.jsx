@@ -41,6 +41,8 @@ export default function MilestoneItem({ milestone, onAddTask, onEditTask, onTogg
   const formattedStartDate = format(new Date(milestone.startDate), 'MMM d, yyyy');
   const formattedDueDate = format(new Date(milestone.dueDate), 'MMM d, yyyy');
 
+  //console.log(milestone);
+
   return (
     <div className="border rounded-lg hover:border-primary/50 transition-colors">
       <div 
@@ -120,16 +122,16 @@ export default function MilestoneItem({ milestone, onAddTask, onEditTask, onTogg
           <div className="space-y-3">
             {milestone.tasks.map((task) => (
                 <TaskItem 
-                    key={task.id} 
+                    key={task._id} 
                     task={task} 
-                    milestoneId={milestone.id} // Pasar milestoneId
-                    onEditTask={(task) => onEditTask(task, milestone.id)} // Pasar el milestoneId
+                    milestoneId={milestone._id} // Pasar milestoneId
+                    onEditTask={(task) => onEditTask(task, milestone._id)} // Pasar el milestoneId
                 />
             ))}
           </div>
         </div>
       )}
-            <EditMilestoneDialog
+      <EditMilestoneDialog
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
         milestone={milestone}

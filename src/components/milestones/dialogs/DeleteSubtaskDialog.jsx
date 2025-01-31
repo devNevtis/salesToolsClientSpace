@@ -12,22 +12,23 @@ import {
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import { useState } from "react";
+import useMilestonesStore from "@/store/useMilestonesStore";
 
-export default function DeleteSubtaskDialog({ open, onOpenChange, subtask, onDelete }) {
+export default function DeleteSubtaskDialog({ open, onOpenChange,milestoneId,subtask,taskId,onDelete }) {
+  const { deleteSubtask, clearSubtaskToDelete } = useMilestonesStore();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDelete = async () => {
+    //console.log("✅ DeleteSubtaskDialog - handleDelete ejecutado con:", subtask);
     setIsLoading(true);
     try {
-      await onDelete(subtask.id);
+      await onDelete(milestoneId,taskId,subtask._id);
       onOpenChange(false);
     } finally {
       setIsLoading(false);
     }
   };
-
-  if (!subtask) return null;
-
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -37,7 +38,7 @@ export default function DeleteSubtaskDialog({ open, onOpenChange, subtask, onDel
             Confirm Subtask Deletion
           </DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete the subtask <strong>{subtask.title}</strong>? This action cannot be undone.
+            Are you sure you want to delete the subtask? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex gap-2 mt-4">

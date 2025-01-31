@@ -1,35 +1,47 @@
 // src/components/milestones/MilestonesTab.jsx
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import LeadSelector from './LeadSelector';
-import MilestonesList from './ListView/MilestonesList';
-import useMilestonesStore from '@/store/useMilestonesStore';
-import useLeadsStore from '@/store/useLeadsStore';
+import LeadSelector from "./LeadSelector";
+import MilestonesList from "./ListView/MilestonesList";
+import useMilestonesStore from "@/store/useMilestonesStore";
+import useLeadsStore from "@/store/useLeadsStore";
 
 export default function MilestonesTab() {
-  const milestonesStore = useMilestonesStore();
-  const leadsStore = useLeadsStore();
+  const {
+    milestones,
+    selectedLeadId,
+    setSelectedLead,
+    fetchMilestonesByBusiness,
+  } = useMilestonesStore();
 
-  const { selectedLeadId, setSelectedLead } = milestonesStore || {};
-  const { businesses } = leadsStore || {};
+  const { businesses } = useLeadsStore();
 
   useEffect(() => {
-    if (!selectedLeadId && businesses?.length > 0) {
-      setSelectedLead(businesses[0]._id);
+    if (selectedLeadId) {
+      fetchMilestonesByBusiness(selectedLeadId);
     }
-  }, [selectedLeadId, businesses, setSelectedLead]);
+  }, [selectedLeadId, fetchMilestonesByBusiness]);
 
-  if (!selectedLeadId || !businesses) {
-    return <div>Loading...</div>;
+  if (!businesses) {
+    return <div>Loading businesses...</div>;
   }
+  //console.log(milestones)
+  //console.log(selectedLeadId)
 
   return (
     <div className="space-y-4">
       <Card className="p-4">
-        <LeadSelector />
+        <LeadSelector
+          selectedLeadId={selectedLeadId}
+          onSelectLead={setSelectedLead}
+        />
       </Card>
       <Card className="p-4">
-        <MilestonesList />
+        {!selectedLeadId ? (
+          <div>Please select a business to view milestones.</div>
+        ) : (
+          <MilestonesList milestones={milestones} />
+        )}
       </Card>
     </div>
   );

@@ -2,271 +2,296 @@
 import useLeadsStore from '@/store/useLeadsStore';
 import Cookies from 'js-cookie';
 import { create } from 'zustand';
-import { format, addDays } from 'date-fns';
-
-const generateInitialMilestonesForLead = (leadId) => {
-  const today = new Date();
-  
-  return [
-    {
-      id: `m-${leadId}-1`,
-      leadId: leadId,
-      title: 'Licencia de Constructor California',
-      description: 'Proceso de obtención de licencia',
-      startDate: today,
-      dueDate: addDays(today, 90),
-      progress: 60,
-      status: 'in-progress',
-      tasks: [
-        {
-          id: `t-${leadId}-1`,
-          title: 'Llenar Formulario A',
-          description: 'Completar documentación inicial',
-          startDate: today,
-          dueDate: addDays(today, 15),
-          completedDate: addDays(today, 14),
-          progress: 100,
-          status: 'completed',
-          assignedTo: {
-            id: 'user1',
-            type: 'user',
-            name: 'John Doe'
-          },
-          dependencies: [],
-          subtasks: [
-            {
-              id: `st-${leadId}-1`,
-              title: 'Recopilar documentos personales',
-              description: 'DNI, pasaporte, etc',
-              completed: true,
-              completedDate: addDays(today, 10)
-            }
-          ]
-        },
-        {
-          id: `t-${leadId}-2`,
-          title: 'Certificación de Seguridad',
-          description: 'Obtener certificación de seguridad laboral',
-          startDate: addDays(today, 15),
-          dueDate: addDays(today, 45),
-          progress: 30,
-          status: 'in-progress',
-          assignedTo: {
-            id: 'user2',
-            type: 'user',
-            name: 'Jane Smith'
-          },
-          dependencies: [`t-${leadId}-1`],
-          subtasks: [
-            {
-              id: `st-${leadId}-2`,
-              title: 'Completar curso online',
-              description: 'Curso básico de seguridad',
-              completed: false
-            }
-          ]
-        }
-      ],
-      notifications: true
-    }
-  ];
-};
-
-const calculateMilestoneProgressFromSubtasks = (tasks) => {
-  const allSubtasks = tasks.flatMap((task) => task.subtasks);
-  const totalSubtasks = allSubtasks.length;
-  const completedSubtasks = allSubtasks.filter((st) => st.completed).length;
-
-  return totalSubtasks
-    ? Math.round((completedSubtasks / totalSubtasks) * 100)
-    : 0;
-};
+import axios from 'axios';
 
 const useMilestonesStore = create((set, get) => ({
-  // Estado
   milestones: [],
   selectedLeadId: null,
-  contacts: [], // Contactos asociados al lead
-  user: null, // Usuario logueado
 
-  // Acciones principales
-  setSelectedLead: (leadId) => {
-    const state = get();
-    const leadsStore = useLeadsStore.getState(); // Obtener contactos desde LeadsStore
-    const contacts = leadsStore.getContactsForBusiness(leadId) || []; // Método para obtener contactos por Lead
-    const user = Cookies.get('user') ? JSON.parse(Cookies.get('user')) : null;
 
-    const existingMilestones = state.milestones.some((m) => m.leadId === leadId);
+    // 🔹 Nuevo estado para manejar la eliminación de subtareas
+    subtaskToDelete: null,
 
-    if (!existingMilestones) {
-      // Generar milestone de prueba si no existen
-      const newMilestones = generateInitialMilestonesForLead(leadId);
-      set({
-        selectedLeadId: leadId,
-        milestones: [...state.milestones, ...newMilestones],
-        contacts: [...contacts, ...(user ? [user] : [])],
-      });
-    } else {
-      set({
-        selectedLeadId: leadId,
-        contacts: [...contacts, ...(user ? [user] : [])],
-      });
-    }
-  },
-
-  // CRUD Milestones
-  addMilestone: (milestone) => 
-    set((state) => ({
-      milestones: [...state.milestones, milestone]
-    })),
-
-  updateMilestone: (id, data) =>
-    set((state) => ({
-      milestones: state.milestones.map((m) =>
-        m.id === id ? { ...m, ...data } : m
-      )
-    })),
-
-  deleteMilestone: (id) =>
-    set((state) => ({
-      milestones: state.milestones.filter((m) => m.id !== id)
-    })),
-
-  // CRUD Tasks
-  addTask: (milestoneId, task) =>
-    set((state) => ({
-      milestones: state.milestones.map((m) =>
-        m.id === milestoneId
-          ? { ...m, tasks: [...m.tasks, task] }
-          : m
-      )
-    })),
-
-    updateTask: (milestoneId, taskId, data) =>
-      set((state) => ({
-        milestones: state.milestones.map((milestone) =>
-          milestone.id === milestoneId
-            ? {
-                ...milestone,
-                tasks: milestone.tasks.map((task) =>
-                  task.id === taskId ? { ...task, ...data } : task
-                ),
+    setSubtaskToDelete: (milestoneId, taskId, subtaskId) => {
+      set({ subtaskToDelete: { milestoneId, taskId, subtaskId } });
+    },
+  
+    clearSubtaskToDelete: () => {
+      set({ subtaskToDelete: null });
+    },
+  
+    // 🔹 Función para eliminar la subtask (Usamos el endpoint de update)
+    deleteSubtask: async () => {
+      const { subtaskToDelete, milestones, updateMilestone } = get();
+      if (!subtaskToDelete) return;
+  
+      const { milestoneId, taskId, subtaskId } = subtaskToDelete;
+  
+      const updatedMilestones = milestones.map((milestone) => {
+        if (milestone._id === milestoneId) {
+          return {
+            ...milestone,
+            tasks: milestone.tasks.map((task) => {
+              if (task._id === taskId) {
+                const updatedSubtasks = task.subtasks.filter(
+                  (subtask) => subtask._id !== subtaskId
+                );
+  
+                // 📌 Si eliminamos la última subtask, eliminamos la tarea también
+                if (updatedSubtasks.length === 0) {
+                  return null; // Eliminamos la tarea
+                }
+  
+                return {
+                  ...task,
+                  subtasks: updatedSubtasks,
+                };
               }
-            : milestone
-        ),
-      })),
-    
-
-  deleteTask: (milestoneId, taskId) =>
-    set((state) => ({
-      milestones: state.milestones.map((m) =>
-        m.id === milestoneId
-          ? { ...m, tasks: m.tasks.filter((t) => t.id !== taskId) }
-          : m
-      )
-    })),
-
-  // CRUD Subtasks
-  addSubtask: (milestoneId, taskId, subtask) =>
-    set((state) => ({
-      milestones: state.milestones.map((m) =>
-        m.id === milestoneId
-          ? {
-              ...m,
-              tasks: m.tasks.map((t) =>
-                t.id === taskId
-                  ? { ...t, subtasks: [...t.subtasks, subtask] }
-                  : t
-              )
-            }
-          : m
-      )
-    })),
-
-
-  updateSubtask: (milestoneId, taskId, subtaskId, data) =>
-    set((state) => {
-      const updatedMilestones = state.milestones.map((milestone) => {
-        if (milestone.id === milestoneId) {
-          const updatedTasks = milestone.tasks.map((task) => {
-            if (task.id === taskId) {
-              const updatedSubtasks = task.subtasks.map((subtask) =>
-                subtask.id === subtaskId ? { ...subtask, ...data } : subtask
-              );
-  
-              const totalSubtasks = updatedSubtasks.length;
-              const completedSubtasks = updatedSubtasks.filter(
-                (st) => st.completed
-              ).length;
-              const progress = totalSubtasks
-                ? Math.round((completedSubtasks / totalSubtasks) * 100)
-                : 0;
-  
-              const status =
-                progress === 100
-                  ? "completed"
-                  : progress > 0
-                  ? "in-progress"
-                  : "planned";
-  
-              return { ...task, subtasks: updatedSubtasks, progress, status };
-            }
-            return task;
-          });
-  
-          const milestoneProgress = calculateMilestoneProgressFromSubtasks(
-            updatedTasks
-          );
-  
-          return { ...milestone, tasks: updatedTasks, progress: milestoneProgress };
+              return task;
+            }).filter(Boolean), // Filtramos para quitar las tareas vacías
+          };
         }
         return milestone;
       });
   
-      return { milestones: updatedMilestones };
-    }),
+      // 📌 Hacemos el PUT al backend con la nueva data
+      await updateMilestone(milestoneId, updatedMilestones.find(m => m._id === milestoneId));
   
+      set({ milestones: updatedMilestones, subtaskToDelete: null });
+    },
+
+    updateTask: async (milestoneId, taskId, updatedTaskData) => {
+      try {
+        const response = await axios.put(`https://api.nevtis.com/dialtools/milestones/update/${milestoneId}`, updatedTaskData);
+        
+        set((state) => ({
+          milestones: state.milestones.map((milestone) =>
+            milestone._id === milestoneId
+              ? {
+                  ...milestone,
+                  tasks: milestone.tasks.map((task) =>
+                    task._id === taskId ? { ...task, ...updatedTaskData } : task
+                  ),
+                }
+              : milestone
+          ),
+        }));
+    
+        return response.data;
+      } catch (error) {
+        console.error("Error updating task:", error);
+        throw error;
+      }
+    },    
+
+    
+  // Fetch all milestones
+  fetchMilestones: async () => {
+    try {
+      //console.log('Fetching all milestones...');
+      const response = await axios.get('https://api.nevtis.com/dialtools/milestones/getAll');
+      //console.log('All milestones fetched:', response.data);
+      set({ milestones: response.data });
+    } catch (error) {
+      console.error('Error fetching milestones:', error);
+    }
+  },
+
+  // Fetch milestones by business
+  fetchMilestonesByBusiness: async (businessId) => {
+    try {
+      //console.log(`Fetching milestones for businessId: ${businessId}`);
+      const response = await axios.get(`https://api.nevtis.com/dialtools/milestones/business/${businessId}`);
+      //console.log(`Milestones fetched for businessId ${businessId}:`, response.data);
+      set({ milestones: response.data, selectedLeadId: businessId });
+    } catch (error) {
+      if (error.response?.status === 404 && error.response?.data?.message === 'No milestones found for this businessId') {
+        //console.warn(`No milestones found for businessId: ${businessId}`);
+        set({ milestones: [], selectedLeadId: businessId });
+      } else {
+        console.error('Error fetching milestones by business:', error);
+      }
+    }
+  },
+
+  // Set the selected lead
+  setSelectedLead: (leadId) => {
+    //console.log(`Selected leadId set to: ${leadId}`);
+    const leadsStore = useLeadsStore.getState(); // Obtener contactos desde LeadsStore
+    const contacts = leadsStore.getContactsForBusiness(leadId) || []; // Método para obtener contactos por Lead
+    const user = Cookies.get('user') ? JSON.parse(Cookies.get('user')) : null;
+    set({ 
+      selectedLeadId: leadId,
+      contacts: [...contacts, ...(user ? [user] : [])], 
+    });
+    const fetchMilestonesByBusiness = get().fetchMilestonesByBusiness;
+    if (leadId) {
+      fetchMilestonesByBusiness(leadId);
+    }
+  },
+
+  // Create a new milestone
+  createMilestone: async (milestoneData) => {
+    try {
+      //console.log('Creating milestone with data:', milestoneData);
+      const response = await axios.post('https://api.nevtis.com/dialtools/milestones/create', milestoneData);
+      //console.log('Milestone created:', response.data);
+      set((state) => ({ milestones: [...state.milestones, response.data] }));
+      return response.data;
+    } catch (error) {
+      console.error('Error creating milestone:', error);
+      throw error;
+    }
+  },
+
+  // Update an existing milestone (includes tasks and subtasks)
+  updateMilestone: async (milestoneId, updatedData) => {
+    //console.log("✅ Store - updateMilestone ejecutado con:", { milestoneId, updatedData });
+    try {
+      //console.log(`Updating milestone with id ${milestoneId} and data:`, updatedData);
+      const response = await axios.put(`https://api.nevtis.com/dialtools/milestones/update/${milestoneId}`, updatedData);
+      //console.log('Milestone updated:', response.data);
+      set((state) => ({
+        milestones: state.milestones.map((milestone) =>
+          milestone._id === milestoneId ? response.data : milestone
+        ),
+      }));
+      return response.data;
+    } catch (error) {
+      console.error('Error updating milestone:', error);
+      throw error;
+    }
+  },
+
+  // Delete a milestone
+  deleteMilestone: async (milestoneId) => {
+    try {
+      //console.log(`Deleting milestone with id: ${milestoneId}`);
+      await axios.delete(`https://api.nevtis.com/dialtools/milestones/delete/${milestoneId}`);
+      //console.log(`Milestone with id ${milestoneId} deleted.`);
+      set((state) => ({
+        milestones: state.milestones.filter((milestone) => milestone._id !== milestoneId),
+      }));
+    } catch (error) {
+      console.error('Error deleting milestone:', error);
+      throw error;
+    }
+  },
+
+  // Utility function to get milestone by ID
+  getMilestoneById: (id) => {
+    //console.log(`Fetching milestone by id: ${id}`);
+    return get().milestones.find((milestone) => milestone._id === id);
+  },
+
+    // Delete subtask
+    deleteSubtask: async (milestoneId, taskId, subtaskId) => {
+      //console.log("✅ Store - deleteSubtask ejecutado con:", { milestoneId, taskId, subtaskId });
+      if (!milestoneId || !taskId || !subtaskId) {
+        //console.error("❌ ERROR: Faltan parámetros en deleteSubtask");
+        return;
+      }
+      try {
+        const state = get();
+        const milestone = state.milestones.find((m) => m._id === milestoneId);
+        if (!milestone) return;
   
-deleteSubtask: (milestoneId, taskId, subtaskId) =>
-  set((state) => ({
-    milestones: state.milestones.map((milestone) =>
-      milestone.id === milestoneId
-        ? {
-            ...milestone,
-            tasks: milestone.tasks.map((task) =>
-              task.id === taskId
-                ? {
-                    ...task,
-                    subtasks: task.subtasks.filter(
-                      (subtask) => subtask.id !== subtaskId
-                    ),
-                  }
-                : task
-            ),
+        const updatedTasks = milestone.tasks.map((task) => {
+          if (task._id === taskId) {
+            const updatedSubtasks = task.subtasks.filter((subtask) => subtask._id !== subtaskId);
+            return { ...task, subtasks: updatedSubtasks };
           }
-        : milestone
-    ),
-  })),
+          return task;
+        }).filter((task) => task.subtasks.length > 0); // Eliminar tareas sin subtareas
+  
+        const updatedMilestone = { ...milestone, tasks: updatedTasks };
+        await axios.put(`https://api.nevtis.com/dialtools/milestones/update/${milestoneId}`, updatedMilestone);
+  
+        set((state) => ({
+          milestones: state.milestones.map((m) => (m._id === milestoneId ? updatedMilestone : m)),
+        }));
+      } catch (error) {
+        console.error('Error deleting subtask:', error);
+      }
+    },
 
-
-  // Utilidades
-  getMilestonesByLead: (leadId) => {
-    const state = get();
-    return state.milestones.filter(m => m.leadId === leadId);
-  },
-
-  calculateMilestoneProgress: (milestoneId) => {
-    const state = get();
-    const milestone = state.milestones.find(m => m.id === milestoneId);
-    if (!milestone || !milestone.tasks.length) return 0;
+    deleteTask: async (milestoneId, taskId) => {
+      try {
+        //console.log("Deleting task:", { milestoneId, taskId });
+        const milestone = get().milestones.find(m => m._id === milestoneId);
+        if (!milestone) {
+          console.error("Milestone not found");
+          return;
+        }
   
-    const totalTasks = milestone.tasks.length;
-    const completedTasks = milestone.tasks.filter(t => t.status === "completed").length;
+        const updatedTasks = milestone.tasks.filter(task => task._id !== taskId);
+        const updatedMilestone = { ...milestone, tasks: updatedTasks };
+        
+        console.log("Updated milestone before sending to backend:", updatedMilestone);
   
-    return Math.round((completedTasks / totalTasks) * 100);
-  },
+        const response = await axios.put(`https://api.nevtis.com/dialtools/milestones/update/${milestoneId}`, updatedMilestone);
+        console.log("Task deleted successfully, updated milestone from backend:", response.data);
   
-  
+        set((state) => ({
+          milestones: state.milestones.map(m => m._id === milestoneId ? response.data : m)
+        }));
+      } catch (error) {
+        console.error("Error deleting task:", error);
+      }
+    },
+    updateSubtask: async (milestoneId, taskId, subtaskId, data) => {
+      try {
+        const state = get();
+        const milestone = state.milestones.find(m => m._id === milestoneId);
+        if (!milestone) return;
+    
+        // Buscar la tarea correcta
+        const updatedTasks = milestone.tasks.map(task => {
+          if (task._id === taskId) {
+            // Actualizar la subtask
+            const updatedSubtasks = task.subtasks.map(subtask =>
+              subtask._id === subtaskId ? { ...subtask, ...data } : subtask
+            );
+    
+            // Calcular progreso de la tarea
+            const totalSubtasks = updatedSubtasks.length;
+            const completedSubtasks = updatedSubtasks.filter(st => st.completed).length;
+            const taskProgress = totalSubtasks ? Math.round((completedSubtasks / totalSubtasks) * 100) : 0;
+            const status = taskProgress === 100 ? "completed" : taskProgress > 0 ? "in-progress" : "planned";
+    
+            return { ...task, subtasks: updatedSubtasks, progress: taskProgress, status };
+          }
+          return task;
+        });
+    
+        // ✅ CORRECCIÓN: Calcular progreso real del milestone basado en subtareas
+        const totalSubtasksAcrossTasks = updatedTasks.reduce((sum, task) => sum + task.subtasks.length, 0);
+        const completedSubtasksAcrossTasks = updatedTasks.reduce(
+          (sum, task) => sum + task.subtasks.filter(st => st.completed).length,
+          0
+        );
+        const milestoneProgress = totalSubtasksAcrossTasks
+          ? Math.round((completedSubtasksAcrossTasks / totalSubtasksAcrossTasks) * 100)
+          : 0;
+    
+        const updatedMilestone = { ...milestone, tasks: updatedTasks, progress: milestoneProgress };
+    
+        // Enviar actualización al backend
+        await axios.put(`https://api.nevtis.com/dialtools/milestones/update/${milestoneId}`, updatedMilestone);
+    
+        // Actualizar estado en el store
+        set(state => ({
+          milestones: state.milestones.map(m => (m._id === milestoneId ? updatedMilestone : m))
+        }));
+      } catch (error) {
+        console.error("Error updating subtask:", error);
+      }
+    },
+    
+    
 }));
 
 export default useMilestonesStore;
+
+
+

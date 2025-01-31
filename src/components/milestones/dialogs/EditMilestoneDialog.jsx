@@ -37,13 +37,13 @@ export default function EditMilestoneDialog({ open, onOpenChange, milestone }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
-    if (!milestone) return;
-    updateMilestone(milestone.id, {
+  const handleSubmit = async () => {
+    if (!milestone?._id) return;
+    await updateMilestone(milestone._id, {
       ...milestone,
       ...formData,
-      startDate: new Date(formData.startDate),
-      dueDate: new Date(formData.dueDate),
+      startDate: new Date(formData.startDate).toISOString(),
+      dueDate: new Date(formData.dueDate).toISOString(),
     });
     onOpenChange(false);
   };

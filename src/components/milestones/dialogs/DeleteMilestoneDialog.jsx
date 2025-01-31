@@ -13,16 +13,41 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import useMilestonesStore from "@/store/useMilestonesStore";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function DeleteMilestoneDialog({ open, onOpenChange, milestone }) {
   const { deleteMilestone } = useMilestonesStore();
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleDelete = async () => {
+    if (!milestone || !milestone._id) {
+      toast({
+        title: "Error",
+        description: "Invalid milestone data. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
+
     try {
-      await deleteMilestone(milestone.id);
+      await deleteMilestone(milestone._id);
+
+      toast({
+        title: "Success",
+        description: `Milestone "${milestone.title}" deleted successfully.`,
+      });
+
       onOpenChange(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete milestone. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Delete milestone error:", error);
     } finally {
       setIsLoading(false);
     }
