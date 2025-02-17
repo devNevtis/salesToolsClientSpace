@@ -129,7 +129,7 @@ export default function CustomersDataTable() {
         );
       case 'email':
         return business.email ? (
-          <Link href={`/main/email-compose?to=${encodeURIComponent(business.email)}`} className="flex items-center gap-2 text-[var(--theme-base2)] hover:underline">
+          <Link href={`/main/email-compose/${encodeURIComponent(business.email)}`} className="flex items-center gap-2 text-[var(--theme-base2)] hover:underline">
             {business.email}
           </Link>
 /*           <a href={`mailto:${business.email}`} className="flex items-center gap-2 text-[var(--theme-base2)] hover:underline">
