@@ -129,10 +129,13 @@ export default function LeadsDataTable() {
         );
       case 'email':
         return business.email ? (
-          <a href={`mailto:${business.email}`} className="flex items-center gap-2 text-[var(--theme-base2)] hover:underline">
+          <Link href={`/main/email-compose?to=${encodeURIComponent(business.email)}`} className="flex items-center gap-2 text-[var(--theme-base2)] hover:underline">
+            {business.email}
+          </Link>
+/*           <a href={`mailto:${business.email}`} className="flex items-center gap-2 text-[var(--theme-base2)] hover:underline">
             <Mail className="h-4 w-4" />
             {business.email}
-          </a>
+          </a> */
         ) : null;
       case 'phone':
         return business.phone ? (
