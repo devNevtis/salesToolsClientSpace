@@ -1,10 +1,17 @@
 //src/components/Sidebar/DialerPad.jsx
-"use client";
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+'use client';
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import useCompanyTheme from '@/store/useCompanyTheme';
-import { Phone, X } from "lucide-react";
+import { Phone, X } from 'lucide-react';
+import useCallStore from '@/store/useCallStore'; // Importamos el store
+import axios from 'axios';
 
 const DialerButton = ({ number, letters, onClick }) => (
   <div className="relative flex flex-col items-center">
@@ -12,7 +19,11 @@ const DialerButton = ({ number, letters, onClick }) => (
       onClick={() => onClick(number)}
       className="w-12 h-12 rounded-full flex flex-col items-center justify-center bg-white hover:bg-slate-200 transition-colors relative"
     >
-      <span className={`font-medium text-xl mb-4 ${number === '*' ? 'text-3xl' : ''}`}>
+      <span
+        className={`font-medium text-xl mb-4 ${
+          number === '*' ? 'text-3xl' : ''
+        }`}
+      >
         {number}
       </span>
       {letters && (
@@ -25,40 +36,161 @@ const DialerButton = ({ number, letters, onClick }) => (
 );
 
 const DialerPad = () => {
-  const [number, setNumber] = useState("");
+  const [number, setNumber] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { theme } = useCompanyTheme();
 
+  const setDialedNumber = useCallStore((state) => state.setDialedNumber); // Usamos la función para actualizar el número marcado
+  const destination = useCallStore((state) => state.destination); // Obtenemos el destino seleccionado
+  const userCall = useCallStore((state) => state.userCall); // Obtenemos los datos de la llamada del store
+
   const buttons = [
-    { number: "1", letters: "" },
-    { number: "2", letters: "ABC" },
-    { number: "3", letters: "DEF" },
-    { number: "4", letters: "GHI" },
-    { number: "5", letters: "JKL" },
-    { number: "6", letters: "MNO" },
-    { number: "7", letters: "PQRS" },
-    { number: "8", letters: "TUV" },
-    { number: "9", letters: "WXYZ" },
-    { number: "*", letters: "" },
-    { number: "0", letters: "+" },
-    { number: "#", letters: "" },
+    { number: '1', letters: '' },
+    { number: '2', letters: 'ABC' },
+    { number: '3', letters: 'DEF' },
+    { number: '4', letters: 'GHI' },
+    { number: '5', letters: 'JKL' },
+    { number: '6', letters: 'MNO' },
+    { number: '7', letters: 'PQRS' },
+    { number: '8', letters: 'TUV' },
+    { number: '9', letters: 'WXYZ' },
+    { number: '*', letters: '' },
+    { number: '0', letters: '+' },
+    { number: '#', letters: '' },
   ];
 
   const handleNumberClick = (value) => {
     if (number.length < 15) {
-      setNumber(prev => prev + value);
+      setNumber((prev) => prev + value);
+      setDialedNumber((prev) => prev + value); // Actualizamos el número marcado en el store
     }
   };
 
   const handleDelete = () => {
-    setNumber(prev => prev.slice(0, -1));
+    setNumber((prev) => prev.slice(0, -1));
+    setDialedNumber((prev) => prev.slice(0, -1)); // Eliminamos el último número del store
   };
 
-  const handleCall = () => {
-    if (number) {
-      setIsDialogOpen(true);
+  /*   const handleCall = () => {
+    if (number && destination) {
+      alert(
+        `Calling to: ${number}\nFrom: ${destination}\nUser extension: ${userCall.extension}`
+      );
+    }
+  }; */
+  /*   const handleCall = () => {
+    if (number && destination) {
+      console.log(
+        `{
+          "destination": {
+            "domain_uuid": "${userCall.domain_uuid}",
+            "destination_uuid": "${destination.destination_uuid}",
+            "dialplan_uuid": "${destination.dialplan_uuid}",
+            "destination_type": "inbound",
+            "destination_number": "${destination.destination_number}",
+            "destination_number_regex": "${destination.destination_number_regex}",
+            "destination_caller_id_name": "${destination.destination_caller_id_name}",
+            "destination_caller_id_number": "${destination.destination_caller_id_number}",
+            "insert_date": "${destination.insert_date}",
+            "insert_user": "${destination.insert_user}",
+            "destination_actions": [
+              {
+                "destination_app": "transfer",
+                "destination_data": "2001 XML nevtishq.nevtisvoice.com"
+              }
+            ]
+          },
+          "extension": {
+            "extension_uuid": "ac5112de-0843-4648-91b6-3d7f48c51c49",
+            "domain_uuid": "c401dee4-4ecf-4cc6-9fbd-5dddb3e1a376",
+            "extension": "120",
+            "password": "@Nex.2020$$",
+            "accountcode": "nevtishq.nevtisvoice.com",
+            "effective_caller_id_name": "Juan Olmedo",
+            "effective_caller_id_number": "120",
+            "outbound_caller_id_name": "NEVTIS",
+            "outbound_caller_id_number": "7147839680",
+            "directory_first_name": "Juan",
+            "directory_last_name": "Olmedo"
+          },
+          "dest": ${number}
+        }`
+      );
+    }
+  }; */
+
+  const handleCall = async () => {
+    if (number && destination) {
+      setIsDialogOpen(true); // Abrir el modal para mostrar los detalles de la llamada
+
+      // Crear el cuerpo de la solicitud POST (JSON)
+      const data = {
+        destination: {
+          domain_uuid: userCall.domain_uuid,
+          destination_uuid: destination.destination_uuid,
+          dialplan_uuid: destination.dialplan_uuid,
+          destination_type: 'inbound',
+          destination_number: destination.destination_number,
+          destination_number_regex: destination.destination_number_regex,
+          destination_caller_id_name: destination.destination_caller_id_name,
+          destination_caller_id_number:
+            destination.destination_caller_id_number,
+          insert_date: destination.insert_date,
+          insert_user: destination.insert_user,
+          destination_actions: [
+            {
+              destination_app: 'transfer',
+              destination_data: '2001 XML nevtishq.nevtisvoice.com',
+            },
+          ],
+        },
+        extension: {
+          extension_uuid: userCall.extension_uuid,
+          domain_uuid: userCall.domain_uuid,
+          extension: userCall.extension,
+          password: userCall.password,
+          accountcode: userCall.accountcode,
+          effective_caller_id_name: userCall.effective_caller_id_name,
+          effective_caller_id_number: userCall.effective_caller_id_number,
+          outbound_caller_id_name: userCall.outbound_caller_id_name,
+          outbound_caller_id_number: userCall.outbound_caller_id_number,
+          directory_first_name: userCall.directory_first_name,
+          directory_last_name: userCall.directory_last_name,
+        },
+        dest: number, // Número marcado
+      };
+
+      try {
+        // Hacer el POST a la API
+        console.log(data);
+        const response = await axios.post(
+          'https://api.nevtis.com/fusionpbx/users/serv2/click-to-call/c401dee4-4ecf-4cc6-9fbd-5dddb3e1a376',
+          data,
+          {
+            headers: {
+              'Content-Type': 'application/json', // Aseguramos que estamos enviando JSON
+            },
+          }
+        );
+
+        // Mostrar la respuesta de la API (puedes ajustarlo según lo que necesites)
+        /* console.log('Response from API:', response.data); */
+        // Verificar si la respuesta contiene la URL y abrirla en una nueva pestaña
+        const clickToCallUrl = response.data.clickToCallUrl;
+        if (clickToCallUrl) {
+          // Abre la URL en una nueva pestaña del navegador
+          window.open(clickToCallUrl, '_blank');
+        }
+
+        // Si la llamada fue exitosa, puedes hacer algo más (como mostrar un mensaje de éxito)
+        alert('Call initiated successfully!');
+      } catch (error) {
+        console.error('Error initiating the call:', error);
+        alert('Failed to initiate the call.');
+      }
     }
   };
+  //console.log(destination);
 
   return (
     <div className="mt-4">
@@ -104,40 +236,17 @@ const DialerPad = () => {
       <div className="px-4 mt-4">
         <button
           onClick={handleCall}
-          disabled={!number}
+          disabled={!number || !destination}
           className="w-full h-12 rounded-full flex items-center justify-center gap-2 transition-colors"
-          style={{ 
-            backgroundColor: number ? theme.base1 : 'white',
-            color: number ? 'white' : 'rgb(100, 116, 139)'
+          style={{
+            backgroundColor: number && destination ? theme.base1 : 'white',
+            color: number && destination ? 'white' : 'rgb(100, 116, 139)',
           }}
         >
           <Phone className="h-4 w-4" />
           <span>Call</span>
         </button>
       </div>
-
-      {/* Calling Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[300px]">
-          <DialogHeader>
-            <DialogTitle className="text-center">
-              <div className="flex items-center justify-center gap-2">
-                <Phone className="h-5 w-5 text-green-500 animate-pulse" />
-                <span>Calling to: {number}</span>
-              </div>
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex justify-center py-4">
-            <Button
-              variant="destructive"
-              onClick={() => setIsDialogOpen(false)}
-              className="rounded-full"
-            >
-              End Call
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
