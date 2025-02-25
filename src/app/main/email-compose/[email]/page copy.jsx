@@ -1,15 +1,18 @@
 // app/main/email-compose/[email]/page.jsx
 'use client';
 
+/* export const dynamic = 'force-dynamic';
+export const prerender = false;
+export const revalidate = 0; */
+
 import { useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { SiGmail } from 'react-icons/si';
 import { PiMicrosoftOutlookLogoFill } from 'react-icons/pi';
-import { FaMicrosoft } from 'react-icons/fa';
+import { FaMicrosoft } from 'react-icons/fa'; // Opcional, para icono de Azure AD
 import useCompanyTheme from '@/store/useCompanyTheme';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/components/AuthProvider';
-import Cookies from 'js-cookie';
 
 export default function EmailCompose() {
   const { email } = useParams();
@@ -34,20 +37,11 @@ export default function EmailCompose() {
   // Estado para el proveedor seleccionado
   const [selectedProvider, setSelectedProvider] = useState('');
 
-  // Verificar si hay un token en las cookies y habilitar el proveedor correspondiente
+  // Cuando se retorne del OAuth, lee el query "provider"
   useEffect(() => {
     const provider = searchParams.get('provider');
     if (provider) {
       setSelectedProvider(provider);
-    }
-
-    const googleToken = Cookies.get('google_access_token');
-    const microsoftToken = Cookies.get('azure_ad_access_token');
-
-    if (googleToken) {
-      setSelectedProvider('gmail');
-    } else if (microsoftToken) {
-      setSelectedProvider('microsoft');
     }
   }, [searchParams]);
 
@@ -72,6 +66,7 @@ export default function EmailCompose() {
         `/api/auth/azure-ad?redirectTo=${encodeURIComponent(redirectTo)}`
       );
     } else if (provider === 'microsoft') {
+      // Si en algún momento deseas mantener otra opción de Microsoft (con un flujo distinto), puedes implementarlo.
       toast({
         title: 'Microsoft integration',
         description: 'Microsoft integration coming soon',
@@ -200,6 +195,22 @@ export default function EmailCompose() {
           }}
         />
       </div>
+
+      {/*       <div className="flex gap-1 mb-4">
+        <p>Select your email provider:</p>
+        <button
+          className="border rounded-md px-8 py-2 shadow-lg"
+          onClick={() => handleProviderSelection('gmail')}
+        >
+          <SiGmail size={25} className="text-red-600" />
+        </button>
+        <button
+          className="border rounded-md px-8 py-2 shadow-lg"
+          onClick={() => handleProviderSelection('azure-ad')}
+        >
+          <FaMicrosoft size={25} className="text-blue-600" />
+        </button>
+      </div> */}
 
       <div>
         <button

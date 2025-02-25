@@ -1,5 +1,5 @@
 //src/components/AuthProvider.js
-'use client';
+'use client'
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
@@ -14,28 +14,17 @@ export function AuthProvider({ children }) {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-
-    // Verificamos si hay un token de Google en las cookies
-    const storedGoogleToken = Cookies.get('google_access_token');
-    if (storedGoogleToken) {
-      // El token de Google está presente, puedes hacer algo con él si es necesario
-      console.log('Google token encontrado: ', storedGoogleToken);
-    }
   }, []);
 
-  const login = (userData, googleToken) => {
+  const login = (userData) => {
     setUser(userData);
     Cookies.set('user', JSON.stringify(userData), { expires: 7 });
-    if (googleToken) {
-      Cookies.set('google_access_token', googleToken, { expires: 7 });
-    }
   };
 
   const logout = () => {
     setUser(null);
     Cookies.remove('token');
     Cookies.remove('user');
-    Cookies.remove('google_access_token'); // Remover el token de Google
   };
 
   const updateUserData = (newData) => {
@@ -43,6 +32,7 @@ export function AuthProvider({ children }) {
     setUser(updatedUser);
     Cookies.set('user', JSON.stringify(updatedUser), { expires: 7 });
   };
+  //console.log(user)
 
   return (
     <AuthContext.Provider value={{ user, login, logout, updateUserData }}>

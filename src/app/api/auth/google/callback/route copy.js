@@ -1,17 +1,14 @@
 // app/api/auth/google/callback/route.js
 import { NextResponse } from 'next/server';
-import Cookies from 'js-cookie'; // Añadimos js-cookie
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
+  // El parámetro state contiene la URL a la que debemos redirigir
   const state = searchParams.get('state') || '';
 
   if (!code) {
-    return NextResponse.json(
-      { error: 'No se recibió el código de autorización' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'No se recibió el código de autorización' }, { status: 400 });
   }
 
   // Intercambiar el código por tokens
@@ -33,8 +30,8 @@ export async function GET(request) {
     return NextResponse.json({ error: tokenData.error }, { status: 400 });
   }
 
-  // Almacenamos el access_token de Google en la cookie
-  Cookies.set('google_access_token', tokenData.access_token, { expires: 7 });
+  // Aquí deberías guardar tokenData (access_token, refresh_token, etc.) en tu base de datos asociado al usuario.
+  // Por este ejemplo, omitiremos esa parte.
 
   // Redirige a la URL que vino en state o, si está vacía, a /email-compose con provider=gmail
   const redirectUrl = state || '/email-compose?provider=gmail';
