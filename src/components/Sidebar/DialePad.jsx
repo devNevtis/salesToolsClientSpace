@@ -12,6 +12,7 @@ import useCompanyTheme from '@/store/useCompanyTheme';
 import { Phone, X } from 'lucide-react';
 import useCallStore from '@/store/useCallStore'; // Importamos el store
 import axios from 'axios';
+import { useToast } from '@/hooks/use-toast';
 
 const DialerButton = ({ number, letters, onClick }) => (
   <div className="relative flex flex-col items-center">
@@ -39,6 +40,7 @@ const DialerPad = () => {
   const [number, setNumber] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { theme } = useCompanyTheme();
+  const { toast } = useToast();
 
   const setDialedNumber = useCallStore((state) => state.setDialedNumber); // Usamos la función para actualizar el número marcado
   const destination = useCallStore((state) => state.destination); // Obtenemos el destino seleccionado
@@ -70,54 +72,6 @@ const DialerPad = () => {
     setNumber((prev) => prev.slice(0, -1));
     setDialedNumber((prev) => prev.slice(0, -1)); // Eliminamos el último número del store
   };
-
-  /*   const handleCall = () => {
-    if (number && destination) {
-      alert(
-        `Calling to: ${number}\nFrom: ${destination}\nUser extension: ${userCall.extension}`
-      );
-    }
-  }; */
-  /*   const handleCall = () => {
-    if (number && destination) {
-      console.log(
-        `{
-          "destination": {
-            "domain_uuid": "${userCall.domain_uuid}",
-            "destination_uuid": "${destination.destination_uuid}",
-            "dialplan_uuid": "${destination.dialplan_uuid}",
-            "destination_type": "inbound",
-            "destination_number": "${destination.destination_number}",
-            "destination_number_regex": "${destination.destination_number_regex}",
-            "destination_caller_id_name": "${destination.destination_caller_id_name}",
-            "destination_caller_id_number": "${destination.destination_caller_id_number}",
-            "insert_date": "${destination.insert_date}",
-            "insert_user": "${destination.insert_user}",
-            "destination_actions": [
-              {
-                "destination_app": "transfer",
-                "destination_data": "2001 XML nevtishq.nevtisvoice.com"
-              }
-            ]
-          },
-          "extension": {
-            "extension_uuid": "ac5112de-0843-4648-91b6-3d7f48c51c49",
-            "domain_uuid": "c401dee4-4ecf-4cc6-9fbd-5dddb3e1a376",
-            "extension": "120",
-            "password": "@Nex.2020$$",
-            "accountcode": "nevtishq.nevtisvoice.com",
-            "effective_caller_id_name": "Juan Olmedo",
-            "effective_caller_id_number": "120",
-            "outbound_caller_id_name": "NEVTIS",
-            "outbound_caller_id_number": "7147839680",
-            "directory_first_name": "Juan",
-            "directory_last_name": "Olmedo"
-          },
-          "dest": ${number}
-        }`
-      );
-    }
-  }; */
 
   const handleCall = async () => {
     if (number && destination) {
@@ -179,11 +133,16 @@ const DialerPad = () => {
         const clickToCallUrl = response.data.clickToCallUrl;
         if (clickToCallUrl) {
           // Abre la URL en una nueva pestaña del navegador
-          window.open(clickToCallUrl, '_blank');
+          //window.open(clickToCallUrl, '_blank');
+          console.log(clickToCallUrl);
+          toast({
+            title: 'Call initiated successfully!',
+            description: `to: ${number}`,
+          });
         }
 
         // Si la llamada fue exitosa, puedes hacer algo más (como mostrar un mensaje de éxito)
-        alert('Call initiated successfully!');
+        //alert('Call initiated successfully!');
       } catch (error) {
         console.error('Error initiating the call:', error);
         alert('Failed to initiate the call.');
@@ -196,8 +155,8 @@ const DialerPad = () => {
     <div className="mt-4">
       {/* Display Number */}
       <div className="px-4 mb-4">
-        <div className="relative h-10 flex items-center justify-between border-b border-slate-200">
-          <p className="text-lg font-mono tracking-wider flex-1 text-center">
+        <div className="bg-white rounded-xl relative h-10 flex items-center justify-between border-b border-slate-200 shadow-lg">
+          <p className="text-xl font-mono tracking-wider flex-1 text-center mr-4">
             {number}
           </p>
           {number && (
@@ -207,11 +166,11 @@ const DialerPad = () => {
             >
               <div className="relative flex items-center h-[22px] bg-black/80 hover:bg-black">
                 {/* X dentro del rectángulo */}
-                <div className="px-2">
+                <div className="px-1">
                   <X className="h-3 w-3 text-white" />
                 </div>
                 {/* Forma triangular derecha */}
-                <div className="absolute -left-[11px] h-full w-[11px] overflow-hidden">
+                <div className="absolute -left-[8px] h-full w-[11px] overflow-hidden">
                   <div className="absolute left-0 h-full w-[22px] bg-black/80 hover:bg-black transform -rotate-45"></div>
                 </div>
               </div>

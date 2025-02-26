@@ -52,28 +52,29 @@ const DialList = () => {
 
   return (
     <div>
-      <h1>Destinations</h1>
-      <Select onValueChange={setDestination}>
-        {' '}
-        {/* Actualizamos el store con el destino seleccionado */}
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Select a destination" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Destinations</SelectLabel>
-            {destinations.map((destination) => (
-              <SelectItem
-                key={destination.destination_number}
-                /* value={destination.destination_number} */
-                value={destination}
-              >
-                {destination.destination_number}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+      <div className="flex justify-center">
+        <Select onValueChange={setDestination}>
+          {' '}
+          {/* Actualizamos el store con el destino seleccionado */}
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select a Destination" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Destinations</SelectLabel>
+              {destinations.map((destination) => (
+                <SelectItem
+                  key={destination.destination_number}
+                  /* value={destination.destination_number} */
+                  value={destination}
+                >
+                  {destination.destination_number}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 };
