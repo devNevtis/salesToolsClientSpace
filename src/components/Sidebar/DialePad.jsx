@@ -134,7 +134,18 @@ const DialerPad = () => {
         if (clickToCallUrl) {
           // Abre la URL en una nueva pestaña del navegador
           //window.open(clickToCallUrl, '_blank');
-          console.log(clickToCallUrl);
+          const link = document.createElement('a');
+          link.href = clickToCallUrl;
+          link.target = '_self'; // No abrir una nueva pestaña
+          //console.log(clickToCallUrl);
+          // Simular el clic en el enlace sin redirigir
+          link.addEventListener('click', (event) => {
+            event.preventDefault(); // Evita que el navegador cambie la página
+            console.log('Simulating click on:', clickToCallUrl); // Solo para depuración
+          });
+
+          // Simular el clic en el enlace
+          link.click();
           toast({
             title: 'Call initiated successfully!',
             description: `to: ${number}`,
