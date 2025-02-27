@@ -17,7 +17,19 @@ const useCallStore = create((set) => ({
     outbound_caller_id_number: '7147839680',
     directory_first_name: 'Juan',
     directory_last_name: 'Olmedo',
+    /*     extension_uuid: '8a25f402-ef08-48ee-bebb-8be3ff9677d6',
+    domain_uuid: 'c401dee4-4ecf-4cc6-9fbd-5dddb3e1a376',
+    extension: '160',
+    password: 'RW0UB*$k3KX.8I.8Mcvv',
+    accountcode: null,
+    effective_caller_id_name: '160',
+    effective_caller_id_number: '160',
+    outbound_caller_id_name: 'NEVTIS',
+    outbound_caller_id_number: '7147839680',
+    directory_first_name: '160',
+    directory_last_name: '160', */
   },
+
   setDestination: (destination) => set({ destination }),
   setDialedNumber: (number) => set({ dialedNumber: number }),
   setUserCall: (userCallData) => set({ userCall: userCallData }), // Añadimos la función para actualizar los datos de la llamada

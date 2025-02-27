@@ -131,6 +131,7 @@ const DialerPad = () => {
           toast({
             title: 'Call initiated successfully!',
             description: `to: ${number}`,
+            URL: `${clickToCallUrl}`,
           });
           /*           await axios.get(clickToCallUrl); // Esto simula el "clic" al hacer una solicitud GET
           console.log('Request simulated to:', clickToCallUrl); // Solo para depuración */
