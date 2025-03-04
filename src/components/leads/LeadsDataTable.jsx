@@ -32,7 +32,6 @@ import {
   Trash2,
   ExternalLink,
   User,
-  Mail,
   MessageCircle,
   Phone,
   MapPin,
@@ -59,30 +58,30 @@ export default function LeadsDataTable() {
   const { openDialog: openDeleteDialog } = useDeleteBusinessStore();
   const { openDialog: openCallDialog } = useCallDialogStore();
   const { openDialog: openMessageDialog } = useMessageDialogStore();
-  const { getPaginatedBusinesses, visibleColumns, getContactsForBusiness } =
-    useLeadsStore();
 
+  // Extraemos la data, getters y acciones de paginación del store
+  const {
+    getPaginatedBusinesses,
+    getFilteredBusinesses,
+    visibleColumns,
+    getContactsForBusiness,
+    pagination,
+    setPage,
+    setPageSize,
+  } = useLeadsStore();
+
+  // Estados locales para controles de UI (dropdowns y filas expandidas)
   const [openDropdowns, setOpenDropdowns] = useState(new Set());
   const [expandedRows, setExpandedRows] = useState(new Set());
-  const [pageSize, setPageSize] = useState(10);
+
+  // Obtenemos los negocios paginados y el total de registros filtrados
   const businesses = getPaginatedBusinesses();
-
-  const [phoneDialog, setPhoneDialog] = useState({
-    open: false,
-    business: null,
-  });
-  const [messageDialog, setMessageDialog] = useState({
-    open: false,
-    business: null,
-  });
-
-  const totalBusinesses = businesses.length;
-  const totalPages = Math.ceil(totalBusinesses / pageSize);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const start = (currentPage - 1) * pageSize;
-  const end = Math.min(start + pageSize, totalBusinesses);
-  const paginatedBusinesses = businesses.slice(start, end);
+  const totalBusinesses = getFilteredBusinesses().length;
+  const currentPage = pagination.currentPage;
+  const pageSizeStore = pagination.pageSize;
+  const totalPages = Math.ceil(totalBusinesses / pageSizeStore);
+  const start = (currentPage - 1) * pageSizeStore;
+  const end = Math.min(start + pageSizeStore, totalBusinesses);
 
   useEffect(() => {
     if (theme.base2) {
@@ -108,18 +107,15 @@ export default function LeadsDataTable() {
 
   const getRowStyles = (contacts) => {
     if (!contacts || contacts.length === 0) return '';
-
-    const status = contacts[0].status; // Tomamos el status del primer contacto
+    const status = contacts[0].status;
     if (status === 'lost') {
       return 'bg-red-50 hover:bg-red-100 transition-colors';
     }
-
     return 'hover:bg-slate-100 transition-colors';
   };
 
   const renderCell = (business, column) => {
     const contacts = getContactsForBusiness(business._id);
-
     switch (column) {
       case 'companyName':
         return (
@@ -152,11 +148,7 @@ export default function LeadsDataTable() {
           >
             {business.email}
           </Link>
-        ) : /*           <a href={`mailto:${business.email}`} className="flex items-center gap-2 text-[var(--theme-base2)] hover:underline">
-            <Mail className="h-4 w-4" />
-            {business.email}
-          </a> */
-        null;
+        ) : null;
       case 'phone':
         return business.phone ? (
           <div className="flex items-center">
@@ -203,7 +195,8 @@ export default function LeadsDataTable() {
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-gray-500" />
             <span>
-              {contacts.length} Contact{contacts.length !== 1 ? 's' : ''}
+              {getContactsForBusiness(business._id).length} Contact
+              {getContactsForBusiness(business._id).length !== 1 ? 's' : ''}
             </span>
           </div>
         );
@@ -281,81 +274,75 @@ export default function LeadsDataTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedBusinesses
-                .filter((business) => {
-                  const contacts = getContactsForBusiness(business._id);
-                  // No mostramos los WON en la vista de LEADS
-                  return !contacts.length || contacts[0].status !== 'won';
-                })
-                .map((business) => (
-                  <Fragment key={business._id}>
-                    <TableRow
-                      className={`group ${getRowStyles(
-                        getContactsForBusiness(business._id)
-                      )}`}
-                    >
-                      {visibleColumns.map((column) => (
-                        <TableCell key={`${business._id}-${column}`}>
-                          {renderCell(business, column)}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                    {expandedRows.has(business._id) && (
-                      <TableRow className="bg-muted/50">
-                        <TableCell
-                          colSpan={visibleColumns.length}
-                          className="p-0"
-                        >
-                          <div className="p-4">
-                            {getContactsForBusiness(business._id).map(
-                              (contact) => (
-                                <div
-                                  key={contact._id}
-                                  className="flex items-center gap-4 p-2 hover:bg-muted rounded-md"
-                                >
-                                  <User className="h-4 w-4 text-gray-500" />
-                                  <span className="font-medium">
-                                    {contact.name}
-                                  </span>
-                                  {contact.email && (
-                                    <>
-                                      <span className="text-gray-500">•</span>
-                                      <span className="text-gray-500">
-                                        {contact.email}
-                                      </span>
-                                    </>
-                                  )}
-                                  {contact.phone && (
-                                    <>
-                                      <span className="text-gray-500">•</span>
-                                      <span className="text-gray-500">
-                                        {contact.phone}
-                                      </span>
-                                    </>
-                                  )}
-                                  <div className="ml-auto flex items-center gap-2">
-                                    <span
-                                      className={`text-xs px-2 py-1 rounded-full ${
-                                        contact.status === 'won'
-                                          ? 'bg-green-100 text-green-700'
-                                          : contact.status === 'lost'
-                                          ? 'bg-red-100 text-red-700'
-                                          : 'bg-blue-100 text-blue-700'
-                                      }`}
-                                    >
-                                      {contact.status.charAt(0).toUpperCase() +
-                                        contact.status.slice(1)}
+              {businesses.map((business) => (
+                <Fragment key={business._id}>
+                  <TableRow
+                    className={`group ${getRowStyles(
+                      getContactsForBusiness(business._id)
+                    )}`}
+                  >
+                    {visibleColumns.map((column) => (
+                      <TableCell key={`${business._id}-${column}`}>
+                        {renderCell(business, column)}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                  {expandedRows.has(business._id) && (
+                    <TableRow className="bg-muted/50">
+                      <TableCell
+                        colSpan={visibleColumns.length}
+                        className="p-0"
+                      >
+                        <div className="p-4">
+                          {getContactsForBusiness(business._id).map(
+                            (contact) => (
+                              <div
+                                key={contact._id}
+                                className="flex items-center gap-4 p-2 hover:bg-muted rounded-md"
+                              >
+                                <User className="h-4 w-4 text-gray-500" />
+                                <span className="font-medium">
+                                  {contact.name}
+                                </span>
+                                {contact.email && (
+                                  <>
+                                    <span className="text-gray-500">•</span>
+                                    <span className="text-gray-500">
+                                      {contact.email}
                                     </span>
-                                  </div>
+                                  </>
+                                )}
+                                {contact.phone && (
+                                  <>
+                                    <span className="text-gray-500">•</span>
+                                    <span className="text-gray-500">
+                                      {contact.phone}
+                                    </span>
+                                  </>
+                                )}
+                                <div className="ml-auto flex items-center gap-2">
+                                  <span
+                                    className={`text-xs px-2 py-1 rounded-full ${
+                                      contact.status === 'won'
+                                        ? 'bg-green-100 text-green-700'
+                                        : contact.status === 'lost'
+                                        ? 'bg-red-100 text-red-700'
+                                        : 'bg-blue-100 text-blue-700'
+                                    }`}
+                                  >
+                                    {contact.status.charAt(0).toUpperCase() +
+                                      contact.status.slice(1)}
+                                  </span>
                                 </div>
-                              )
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </Fragment>
-                ))}
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </Fragment>
+              ))}
             </TableBody>
           </Table>
         </div>
@@ -370,11 +357,11 @@ export default function LeadsDataTable() {
           <div className="flex items-center gap-2">
             <span className="text-sm">Rows per page</span>
             <Select
-              value={pageSize.toString()}
+              value={pageSizeStore.toString()}
               onValueChange={(value) => setPageSize(Number(value))}
             >
               <SelectTrigger className="w-[70px]">
-                <SelectValue>{pageSize}</SelectValue>
+                <SelectValue>{pageSizeStore}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {[5, 10, 20, 50, 100].map((size) => (
@@ -391,7 +378,7 @@ export default function LeadsDataTable() {
               variant="outline"
               size="icon"
               disabled={currentPage === 1}
-              onClick={() => setCurrentPage(1)}
+              onClick={() => setPage(1)}
             >
               <ChevronsLeft className="h-4 w-4" />
             </Button>
@@ -399,7 +386,7 @@ export default function LeadsDataTable() {
               variant="outline"
               size="icon"
               disabled={currentPage === 1}
-              onClick={() => setCurrentPage((prev) => prev - 1)}
+              onClick={() => setPage(currentPage - 1)}
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -410,7 +397,7 @@ export default function LeadsDataTable() {
               variant="outline"
               size="icon"
               disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((prev) => prev + 1)}
+              onClick={() => setPage(currentPage + 1)}
             >
               <ChevronRightIcon className="h-4 w-4" />
             </Button>
@@ -418,7 +405,7 @@ export default function LeadsDataTable() {
               variant="outline"
               size="icon"
               disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(totalPages)}
+              onClick={() => setPage(totalPages)}
             >
               <ChevronsRight className="h-4 w-4" />
             </Button>

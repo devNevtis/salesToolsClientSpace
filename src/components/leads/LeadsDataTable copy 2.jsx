@@ -1,7 +1,7 @@
-// src/components/customers/CustomersDataTable.jsx
+// src/components/leads/LeadsDataTable.jsx
 'use client';
 
-import { useEffect, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import {
   Table,
   TableBody,
@@ -32,6 +32,8 @@ import {
   Trash2,
   ExternalLink,
   User,
+  Mail,
+  MessageCircle,
   Phone,
   MapPin,
   ChevronsLeft,
@@ -40,37 +42,47 @@ import {
   ChevronsRight,
 } from 'lucide-react';
 import useLeadsStore from '@/store/useLeadsStore';
-import QuickEditDialog from '@/components/leads/QuickEditDialog';
+import QuickEditDialog from './QuickEditDialog';
 import useQuickEditStore from '@/store/useQuickEditStore';
-import DeleteBusinessDialog from '@/components/leads/DeleteBusinessDialog';
+import DeleteBusinessDialog from './DeleteBusinessDialog';
 import useDeleteBusinessStore from '@/store/useDeleteBusinessStore';
+import { useCallDialogStore } from '@/store/useCallDialogStore';
+import { useMessageDialogStore } from '@/store/useMessageDialogStore';
+import CallDialog from '@/components/leads/dialogs/CallDialog';
+import MessageDialog from '@/components/leads/dialogs/MessageDialog';
 import useCompanyTheme from '@/store/useCompanyTheme';
 import Link from 'next/link';
 
-export default function CustomersDataTable() {
+export default function LeadsDataTable() {
   const { theme } = useCompanyTheme();
   const { openDialog: openQuickEditDialog } = useQuickEditStore();
   const { openDialog: openDeleteDialog } = useDeleteBusinessStore();
+  const { openDialog: openCallDialog } = useCallDialogStore();
+  const { openDialog: openMessageDialog } = useMessageDialogStore();
+  const { getPaginatedBusinesses, visibleColumns, getContactsForBusiness } =
+    useLeadsStore();
 
-  // Extraemos getters y acciones de paginación para customers desde el store
-  const {
-    getPaginatedCustomerBusinesses,
-    getFilteredCustomerBusinesses,
-    visibleColumns,
-    getContactsForBusiness,
-    pagination,
-    setPage,
-    setPageSize,
-  } = useLeadsStore();
+  const [openDropdowns, setOpenDropdowns] = useState(new Set());
+  const [expandedRows, setExpandedRows] = useState(new Set());
+  const [pageSize, setPageSize] = useState(10);
+  const businesses = getPaginatedBusinesses();
 
-  // Obtenemos los negocios filtrados para customers y calculamos el total
-  const businesses = getPaginatedCustomerBusinesses();
-  const totalBusinesses = getFilteredCustomerBusinesses().length;
-  const currentPage = pagination.currentPage;
-  const pageSizeStore = pagination.pageSize;
-  const totalPages = Math.ceil(totalBusinesses / pageSizeStore);
-  const start = (currentPage - 1) * pageSizeStore;
-  const end = Math.min(start + pageSizeStore, totalBusinesses);
+  const [phoneDialog, setPhoneDialog] = useState({
+    open: false,
+    business: null,
+  });
+  const [messageDialog, setMessageDialog] = useState({
+    open: false,
+    business: null,
+  });
+
+  const totalBusinesses = businesses.length;
+  const totalPages = Math.ceil(totalBusinesses / pageSize);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const start = (currentPage - 1) * pageSize;
+  const end = Math.min(start + pageSize, totalBusinesses);
+  const paginatedBusinesses = businesses.slice(start, end);
 
   useEffect(() => {
     if (theme.base2) {
@@ -85,22 +97,29 @@ export default function CustomersDataTable() {
   }, [theme]);
 
   const toggleRow = (businessId) => {
-    // Usamos el estado de expandido que ya se encuentra en el store o lo manejamos localmente
-    // En este ejemplo se mantiene el manejo local
-    // Se recomienda centralizar la lógica de filas expandidas si es necesario
+    const newExpanded = new Set(expandedRows);
+    if (expandedRows.has(businessId)) {
+      newExpanded.delete(businessId);
+    } else {
+      newExpanded.add(businessId);
+    }
+    setExpandedRows(newExpanded);
   };
 
   const getRowStyles = (contacts) => {
     if (!contacts || contacts.length === 0) return '';
-    const status = contacts[0].status;
+
+    const status = contacts[0].status; // Tomamos el status del primer contacto
     if (status === 'lost') {
       return 'bg-red-50 hover:bg-red-100 transition-colors';
     }
+
     return 'hover:bg-slate-100 transition-colors';
   };
 
   const renderCell = (business, column) => {
     const contacts = getContactsForBusiness(business._id);
+
     switch (column) {
       case 'companyName':
         return (
@@ -111,8 +130,11 @@ export default function CustomersDataTable() {
               className="h-6 w-6"
               onClick={() => toggleRow(business._id)}
             >
-              {/* Se puede agregar lógica para expandir filas */}
-              <ChevronRight className="h-4 w-4" />
+              {expandedRows.has(business._id) ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
             </Button>
             <Link
               href={`/main/leads/${business._id}`}
@@ -130,12 +152,29 @@ export default function CustomersDataTable() {
           >
             {business.email}
           </Link>
-        ) : null;
+        ) : /*           <a href={`mailto:${business.email}`} className="flex items-center gap-2 text-[var(--theme-base2)] hover:underline">
+            <Mail className="h-4 w-4" />
+            {business.email}
+          </a> */
+        null;
       case 'phone':
         return business.phone ? (
-          <div className="flex items-center gap-2">
-            <Phone className="h-4 w-4 text-gray-500" />
-            {business.phone}
+          <div className="flex items-center">
+            <span>{business.phone}</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => openCallDialog(business)}
+            >
+              <Phone className="h-4 w-4 text-blue-500" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => openMessageDialog(business)}
+            >
+              <MessageCircle className="h-4 w-4 text-green-500" />
+            </Button>
           </div>
         ) : null;
       case 'location':
@@ -164,8 +203,7 @@ export default function CustomersDataTable() {
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-gray-500" />
             <span>
-              {getContactsForBusiness(business._id).length} Contact
-              {getContactsForBusiness(business._id).length !== 1 ? 's' : ''}
+              {contacts.length} Contact{contacts.length !== 1 ? 's' : ''}
             </span>
           </div>
         );
@@ -173,15 +211,24 @@ export default function CustomersDataTable() {
         const businessContacts = getContactsForBusiness(business._id);
         return (
           <DropdownMenu
+            open={openDropdowns.has(business._id)}
             onOpenChange={(open) => {
-              // Se maneja el estado de dropdowns de forma local o centralizada
+              const newOpenDropdowns = new Set(openDropdowns);
+              if (open) {
+                newOpenDropdowns.add(business._id);
+              } else {
+                newOpenDropdowns.delete(business._id);
+              }
+              setOpenDropdowns(newOpenDropdowns);
             }}
           >
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
               >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -217,7 +264,7 @@ export default function CustomersDataTable() {
         return null;
     }
   };
-
+  console.log(paginatedBusinesses);
   return (
     <>
       <div className="rounded-md border">
@@ -234,22 +281,81 @@ export default function CustomersDataTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {businesses.map((business) => (
-                <Fragment key={business._id}>
-                  <TableRow
-                    className={`group ${getRowStyles(
-                      getContactsForBusiness(business._id)
-                    )}`}
-                  >
-                    {visibleColumns.map((column) => (
-                      <TableCell key={`${business._id}-${column}`}>
-                        {renderCell(business, column)}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                  {/* Aquí se puede renderizar la fila expandida similar a LeadsDataTable si es necesario */}
-                </Fragment>
-              ))}
+              {paginatedBusinesses
+                .filter((business) => {
+                  const contacts = getContactsForBusiness(business._id);
+                  // No mostramos los WON en la vista de LEADS
+                  return !contacts.length || contacts[0].status !== 'won';
+                })
+                .map((business) => (
+                  <Fragment key={business._id}>
+                    <TableRow
+                      className={`group ${getRowStyles(
+                        getContactsForBusiness(business._id)
+                      )}`}
+                    >
+                      {visibleColumns.map((column) => (
+                        <TableCell key={`${business._id}-${column}`}>
+                          {renderCell(business, column)}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                    {expandedRows.has(business._id) && (
+                      <TableRow className="bg-muted/50">
+                        <TableCell
+                          colSpan={visibleColumns.length}
+                          className="p-0"
+                        >
+                          <div className="p-4">
+                            {getContactsForBusiness(business._id).map(
+                              (contact) => (
+                                <div
+                                  key={contact._id}
+                                  className="flex items-center gap-4 p-2 hover:bg-muted rounded-md"
+                                >
+                                  <User className="h-4 w-4 text-gray-500" />
+                                  <span className="font-medium">
+                                    {contact.name}
+                                  </span>
+                                  {contact.email && (
+                                    <>
+                                      <span className="text-gray-500">•</span>
+                                      <span className="text-gray-500">
+                                        {contact.email}
+                                      </span>
+                                    </>
+                                  )}
+                                  {contact.phone && (
+                                    <>
+                                      <span className="text-gray-500">•</span>
+                                      <span className="text-gray-500">
+                                        {contact.phone}
+                                      </span>
+                                    </>
+                                  )}
+                                  <div className="ml-auto flex items-center gap-2">
+                                    <span
+                                      className={`text-xs px-2 py-1 rounded-full ${
+                                        contact.status === 'won'
+                                          ? 'bg-green-100 text-green-700'
+                                          : contact.status === 'lost'
+                                          ? 'bg-red-100 text-red-700'
+                                          : 'bg-blue-100 text-blue-700'
+                                      }`}
+                                    >
+                                      {contact.status.charAt(0).toUpperCase() +
+                                        contact.status.slice(1)}
+                                    </span>
+                                  </div>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </Fragment>
+                ))}
             </TableBody>
           </Table>
         </div>
@@ -264,11 +370,11 @@ export default function CustomersDataTable() {
           <div className="flex items-center gap-2">
             <span className="text-sm">Rows per page</span>
             <Select
-              value={pageSizeStore.toString()}
+              value={pageSize.toString()}
               onValueChange={(value) => setPageSize(Number(value))}
             >
               <SelectTrigger className="w-[70px]">
-                <SelectValue>{pageSizeStore}</SelectValue>
+                <SelectValue>{pageSize}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {[5, 10, 20, 50, 100].map((size) => (
@@ -285,7 +391,7 @@ export default function CustomersDataTable() {
               variant="outline"
               size="icon"
               disabled={currentPage === 1}
-              onClick={() => setPage(1)}
+              onClick={() => setCurrentPage(1)}
             >
               <ChevronsLeft className="h-4 w-4" />
             </Button>
@@ -293,7 +399,7 @@ export default function CustomersDataTable() {
               variant="outline"
               size="icon"
               disabled={currentPage === 1}
-              onClick={() => setPage(currentPage - 1)}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -304,7 +410,7 @@ export default function CustomersDataTable() {
               variant="outline"
               size="icon"
               disabled={currentPage === totalPages}
-              onClick={() => setPage(currentPage + 1)}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
             >
               <ChevronRightIcon className="h-4 w-4" />
             </Button>
@@ -312,7 +418,7 @@ export default function CustomersDataTable() {
               variant="outline"
               size="icon"
               disabled={currentPage === totalPages}
-              onClick={() => setPage(totalPages)}
+              onClick={() => setCurrentPage(totalPages)}
             >
               <ChevronsRight className="h-4 w-4" />
             </Button>
@@ -322,6 +428,8 @@ export default function CustomersDataTable() {
 
       <QuickEditDialog />
       <DeleteBusinessDialog />
+      <CallDialog />
+      <MessageDialog />
     </>
   );
 }

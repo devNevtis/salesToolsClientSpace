@@ -70,6 +70,10 @@ const useLeadsStore = create((set, get) => ({
             axios.get(env.endpoints.business.all),
             axios.get(env.endpoints.leads.all),
           ]);
+          console.log(
+            'Total de registros sin filtrar:',
+            businessesResponse.data.length
+          );
           businessesData = businessesResponse.data;
           contactsData = contactsResponse.data;
           break;
@@ -146,7 +150,7 @@ const useLeadsStore = create((set, get) => ({
         });
       });
 
-      // Actualizar totalItems en la paginación usando los negocios filtrados para Leads (no WON)
+      // Actualizar totalItems en la paginación con la cantidad de negocios filtrados
       const filteredBusinesses = get().getFilteredBusinesses();
       set({
         businesses: businessesData,
@@ -197,7 +201,7 @@ const useLeadsStore = create((set, get) => ({
     return contacts[businessId] || [];
   },
 
-  // Para la vista de LEADS (se excluyen los que tienen WON en el primer contacto)
+  // Se aplica el filtro de búsqueda y se descartan los negocios cuyo primer contacto tenga status "won"
   getFilteredBusinesses: () => {
     const { businesses, searchTerm } = get();
     let filtered = businesses;
@@ -210,6 +214,7 @@ const useLeadsStore = create((set, get) => ({
           business.phone?.includes(searchTerm)
       );
     }
+    // Se filtran los negocios que tengan contacto con status "won" (se evalúa el primer contacto)
     return filtered.filter((business) => {
       const contacts = get().getContactsForBusiness(business._id);
       return !contacts.length || contacts[0].status !== 'won';
@@ -219,38 +224,6 @@ const useLeadsStore = create((set, get) => ({
   getPaginatedBusinesses: () => {
     const { pagination, getFilteredBusinesses } = get();
     const filteredBusinesses = getFilteredBusinesses();
-    // Ordenar por fecha de creación descendente (más recientes primero)
-    const sortedBusinesses = filteredBusinesses
-      .slice()
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    const start = (pagination.currentPage - 1) * pagination.pageSize;
-    const end = start + pagination.pageSize;
-    return sortedBusinesses.slice(start, end);
-  },
-
-  // NUEVAS FUNCIONES PARA CUSTOMERS (solo los que tienen WON)
-  getFilteredCustomerBusinesses: () => {
-    const { businesses, searchTerm } = get();
-    let filtered = businesses;
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      filtered = businesses.filter(
-        (business) =>
-          business.name?.toLowerCase().includes(searchLower) ||
-          business.email?.toLowerCase().includes(searchLower) ||
-          business.phone?.includes(searchTerm)
-      );
-    }
-    // Solo se incluyen los negocios que tengan al menos un contacto y cuyo primer contacto tenga status "won"
-    return filtered.filter((business) => {
-      const contacts = get().getContactsForBusiness(business._id);
-      return contacts.length && contacts[0].status === 'won';
-    });
-  },
-
-  getPaginatedCustomerBusinesses: () => {
-    const { pagination, getFilteredCustomerBusinesses } = get();
-    const filteredBusinesses = getFilteredCustomerBusinesses();
     // Ordenar por fecha de creación descendente (más recientes primero)
     const sortedBusinesses = filteredBusinesses
       .slice()

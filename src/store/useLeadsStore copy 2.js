@@ -28,7 +28,7 @@ const useLeadsStore = create((set, get) => ({
     totalItems: 0,
   },
 
-  // Column Configuration (Contrato con ColumnsVisibilityDialog)
+  // Column Configuration
   availableColumns: [
     { id: 'companyName', label: 'Company Name', required: true },
     { id: 'email', label: 'Email' },
@@ -65,60 +65,71 @@ const useLeadsStore = create((set, get) => ({
       let contactsData = [];
 
       switch (user.role) {
-        case 'admin': {
-          const [businessesResponse, contactsResponse] = await Promise.all([
-            axios.get(env.endpoints.business.all),
-            axios.get(env.endpoints.leads.all),
-          ]);
-          businessesData = businessesResponse.data;
-          contactsData = contactsResponse.data;
+        case 'admin':
+          {
+            const [businessesResponse, contactsResponse] = await Promise.all([
+              axios.get(env.endpoints.business.all),
+              axios.get(env.endpoints.leads.all),
+            ]);
+            businessesData = businessesResponse.data;
+            contactsData = contactsResponse.data;
+          }
           break;
-        }
-        case 'owner': {
-          const [ownerBusinesses, ownerContacts] = await Promise.all([
-            axios.get(env.endpoints.business.all),
-            axios.get(env.endpoints.leads.all),
-          ]);
-          businessesData = ownerBusinesses.data.filter(
-            (business) => business.createdBy?.companyId === user.companyId
-          );
-          contactsData = ownerContacts.data.filter(
-            (contact) =>
-              contact.user?.companyId === user.companyId ||
-              businessesData.some((b) => b._id === contact.business?._id)
-          );
-          break;
-        }
-        case 'manager': {
-          const sellers = await get().fetchSellers(user._id);
-          const sellerIds = [user._id, ...sellers.map((seller) => seller._id)];
 
-          const [managerBusinesses, managerContacts] = await Promise.all([
-            axios.get(env.endpoints.business.all),
-            axios.get(env.endpoints.leads.all),
-          ]);
+        case 'owner':
+          {
+            const [ownerBusinesses, ownerContacts] = await Promise.all([
+              axios.get(env.endpoints.business.all),
+              axios.get(env.endpoints.leads.all),
+            ]);
+            businessesData = ownerBusinesses.data.filter(
+              (business) => business.createdBy?.companyId === user.companyId
+            );
+            contactsData = ownerContacts.data.filter(
+              (contact) =>
+                contact.user?.companyId === user.companyId ||
+                businessesData.some((b) => b._id === contact.business?._id)
+            );
+          }
+          break;
 
-          businessesData = managerBusinesses.data.filter((business) =>
-            sellerIds.includes(business.createdBy?._id)
-          );
-          contactsData = managerContacts.data.filter(
-            (contact) =>
-              sellerIds.includes(contact.assignedTo) ||
-              businessesData.some((b) => b._id === contact.business?._id)
-          );
+        case 'manager':
+          {
+            const sellers = await get().fetchSellers(user._id);
+            const sellerIds = [
+              user._id,
+              ...sellers.map((seller) => seller._id),
+            ];
+
+            const [managerBusinesses, managerContacts] = await Promise.all([
+              axios.get(env.endpoints.business.all),
+              axios.get(env.endpoints.leads.all),
+            ]);
+
+            businessesData = managerBusinesses.data.filter((business) =>
+              sellerIds.includes(business.createdBy?._id)
+            );
+            contactsData = managerContacts.data.filter(
+              (contact) =>
+                sellerIds.includes(contact.assignedTo) ||
+                businessesData.some((b) => b._id === contact.business?._id)
+            );
+          }
           break;
-        }
-        case 'sale': {
-          const [sellerBusinesses, sellerContacts] = await Promise.all([
-            axios.get(env.endpoints.business.getByUser(user._id)),
-            axios.get(env.endpoints.leads.all),
-          ]);
-          businessesData = sellerBusinesses.data;
-          contactsData = sellerContacts.data.filter(
-            (contact) => contact.assignedTo === user._id
-          );
+
+        case 'sale':
+          {
+            const [sellerBusinesses, sellerContacts] = await Promise.all([
+              axios.get(env.endpoints.business.getByUser(user._id)),
+              axios.get(env.endpoints.leads.all),
+            ]);
+            businessesData = sellerBusinesses.data;
+            contactsData = sellerContacts.data.filter(
+              (contact) => contact.assignedTo === user._id
+            );
+          }
           break;
-        }
+
         default:
           throw new Error('Invalid user role');
       }
@@ -146,14 +157,13 @@ const useLeadsStore = create((set, get) => ({
         });
       });
 
-      // Actualizar totalItems en la paginación usando los negocios filtrados para Leads (no WON)
-      const filteredBusinesses = get().getFilteredBusinesses();
+      // Actualizar totalItems en la paginación
       set({
         businesses: businessesData,
         contacts: contactsByBusiness,
         pagination: {
           ...get().pagination,
-          totalItems: filteredBusinesses.length,
+          totalItems: businessesData.length,
         },
         isLoading: false,
         error: null,
@@ -167,7 +177,7 @@ const useLeadsStore = create((set, get) => ({
     }
   },
 
-  // UI Actions (mantiene compatibilidad con componentes existentes)
+  // UI Actions
   setVisibleColumns: (columns) => set({ visibleColumns: columns }),
   resetColumnsToDefault: () =>
     set({
@@ -197,60 +207,21 @@ const useLeadsStore = create((set, get) => ({
     return contacts[businessId] || [];
   },
 
-  // Para la vista de LEADS (se excluyen los que tienen WON en el primer contacto)
   getFilteredBusinesses: () => {
     const { businesses, searchTerm } = get();
-    let filtered = businesses;
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      filtered = businesses.filter(
-        (business) =>
-          business.name?.toLowerCase().includes(searchLower) ||
-          business.email?.toLowerCase().includes(searchLower) ||
-          business.phone?.includes(searchTerm)
-      );
-    }
-    return filtered.filter((business) => {
-      const contacts = get().getContactsForBusiness(business._id);
-      return !contacts.length || contacts[0].status !== 'won';
-    });
+    if (!searchTerm) return businesses;
+    const searchLower = searchTerm.toLowerCase();
+    return businesses.filter(
+      (business) =>
+        business.name?.toLowerCase().includes(searchLower) ||
+        business.email?.toLowerCase().includes(searchLower) ||
+        business.phone?.includes(searchTerm)
+    );
   },
 
   getPaginatedBusinesses: () => {
     const { pagination, getFilteredBusinesses } = get();
     const filteredBusinesses = getFilteredBusinesses();
-    // Ordenar por fecha de creación descendente (más recientes primero)
-    const sortedBusinesses = filteredBusinesses
-      .slice()
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    const start = (pagination.currentPage - 1) * pagination.pageSize;
-    const end = start + pagination.pageSize;
-    return sortedBusinesses.slice(start, end);
-  },
-
-  // NUEVAS FUNCIONES PARA CUSTOMERS (solo los que tienen WON)
-  getFilteredCustomerBusinesses: () => {
-    const { businesses, searchTerm } = get();
-    let filtered = businesses;
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      filtered = businesses.filter(
-        (business) =>
-          business.name?.toLowerCase().includes(searchLower) ||
-          business.email?.toLowerCase().includes(searchLower) ||
-          business.phone?.includes(searchTerm)
-      );
-    }
-    // Solo se incluyen los negocios que tengan al menos un contacto y cuyo primer contacto tenga status "won"
-    return filtered.filter((business) => {
-      const contacts = get().getContactsForBusiness(business._id);
-      return contacts.length && contacts[0].status === 'won';
-    });
-  },
-
-  getPaginatedCustomerBusinesses: () => {
-    const { pagination, getFilteredCustomerBusinesses } = get();
-    const filteredBusinesses = getFilteredCustomerBusinesses();
     // Ordenar por fecha de creación descendente (más recientes primero)
     const sortedBusinesses = filteredBusinesses
       .slice()
