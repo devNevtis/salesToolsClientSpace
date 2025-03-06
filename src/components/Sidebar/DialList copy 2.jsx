@@ -15,10 +15,11 @@ import axios from 'axios';
 import { Loader2, AlertCircle } from 'lucide-react';
 
 const DialList = () => {
-  const { destination, setDestination } = useCallStore(); // Obtener y actualizar el destino
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const setDestination = useCallStore((state) => state.setDestination);
 
   useEffect(() => {
     const fetchDestinations = async () => {
@@ -28,7 +29,7 @@ const DialList = () => {
         );
         setDestinations(response.data);
       } catch (err) {
-        setError('Cannot get the number list.');
+        setError('Can not get the number list .');
       } finally {
         setLoading(false);
       }
@@ -39,30 +40,31 @@ const DialList = () => {
 
   return (
     <div className="w-[200px] pt-2">
+      {/* Estado de carga */}
       {loading ? (
         <div className="flex items-center justify-center py-2">
           <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
         </div>
       ) : error ? (
+        // Estado de error
         <div className="flex items-center gap-2 text-red-500 text-sm">
           <AlertCircle className="h-4 w-4" />
           {error}
         </div>
       ) : (
-        <Select value={destination} onValueChange={setDestination}>
+        // Select de destinos
+        <Select onValueChange={setDestination}>
           <SelectTrigger className="w-full border-gray-300 rounded-xl text-gray-700 shadow-sm hover:shadow-md transition-all">
-            <SelectValue placeholder="Select a number">
-              {destination || 'Select a number'}
-            </SelectValue>
+            <SelectValue placeholder="Select a number" />
           </SelectTrigger>
           <SelectContent className="rounded-xl border border-gray-300 shadow-md">
             <SelectGroup>
-              {destinations.map((dest) => (
+              {destinations.map((destination) => (
                 <SelectItem
-                  key={dest.destination_number}
-                  value={dest.destination_number}
+                  key={destination.destination_number}
+                  value={destination}
                 >
-                  {dest.destination_number}
+                  {destination.destination_number}
                 </SelectItem>
               ))}
             </SelectGroup>

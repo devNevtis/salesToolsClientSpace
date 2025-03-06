@@ -14,7 +14,7 @@ import DialList from '@/components/Sidebar/DialList';
 import axios from 'axios';
 import useCompanyTheme from '@/store/useCompanyTheme';
 import useCallStore from '@/store/useCallStore';
-import { Phone } from 'lucide-react';
+import { Phone, X } from 'lucide-react';
 
 export default function CallDialog() {
   const { isOpen, business, closeDialog } = useCallDialogStore();
@@ -25,6 +25,7 @@ export default function CallDialog() {
 
   const handleCall = async () => {
     if (number && destination) {
+      // Crear el cuerpo de la solicitud POST (JSON)
       const data = {
         destination: {
           domain_uuid: userCall.domain_uuid,
@@ -62,13 +63,21 @@ export default function CallDialog() {
       };
 
       try {
+        // Hacer el POST a la API
         console.log(data);
         const response = await axios.post(
           'https://api.nevtis.com/fusionpbx/users/serv2/click-to-call/c401dee4-4ecf-4cc6-9fbd-5dddb3e1a376',
           data,
-          { headers: { 'Content-Type': 'application/json' } }
+          {
+            headers: {
+              'Content-Type': 'application/json', // Aseguramos que estamos enviando JSON
+            },
+          }
         );
         const clickToCallUrl = response.data.clickToCallUrl;
+
+        // Si la llamada fue exitosa, puedes hacer algo más (como mostrar un mensaje de éxito)
+        //alert('Call initiated successfully!');
       } catch (error) {
         console.error('Error initiating the call:', error);
         alert('Failed to initiate the call.');
@@ -78,62 +87,44 @@ export default function CallDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={closeDialog}>
-      <DialogContent className="p-6 rounded-lg w-[450px]">
-        {/* Header */}
-        <DialogHeader className="flex flex-row justify-between items-center pt-1">
-          <DialogTitle className="text-md font-semibold flex flex-col items-start">
-            <span className="text-sm">Call to </span>
-            <div>
-              <span style={{ color: theme.base2 }} className="font-bold">
-                {business?.name}
-              </span>
-              :
-              <span
-                className="text-sm px-2 py-1 rounded-lg ml-2 text-white"
-                style={{ backgroundColor: theme.base1 }}
-              >
-                {business?.phone.slice(0, 3)}-{business?.phone.slice(3, 6)}-
-                {business?.phone.slice(6)}
-              </span>
-            </div>
+      <DialogContent>
+        <DialogHeader
+          className={'flex flex-row justify-between items-center pt-1'}
+        >
+          <DialogTitle>
+            Call to {business?.name}:{' '}
+            <span
+              className="text-sm underline text-white px-1"
+              style={{ backgroundColor: theme.base1 }}
+            >
+              {business?.phone}
+            </span>
           </DialogTitle>
           <DialList />
         </DialogHeader>
-
-        {/* Botón de llamada */}
-        <div className="flex justify-center mt-4">
-          <button
-            onClick={handleCall}
-            disabled={!number || !destination}
-            className={`w-2/3 h-10 flex items-center justify-center gap-2 rounded-xl text-white transition-all ${
-              number && destination
-                ? 'bg-green-600 hover:bg-green-700'
-                : 'bg-gray-300 cursor-not-allowed text-gray-500'
-            }`}
-          >
-            <Phone className="h-5 w-5" />
-            <span>Call</span>
-          </button>
+        <div>
+          <div className="w-full flex justify-center gap-2">
+            <button
+              onClick={handleCall}
+              disabled={!number || !destination}
+              className="w-1/3 h-8 rounded-full flex items-center justify-center gap-2 transition-colors"
+              style={{
+                backgroundColor: number && destination ? theme.base1 : 'white',
+                color: number && destination ? 'white' : 'rgb(100, 116, 139)',
+              }}
+            >
+              <Phone className="h-4 w-4" />
+              <span>Call</span>
+            </button>
+          </div>
+          <form className="grid w-full gap-2 mt-2 border border-gray-300 shadow-md rounded-md p-3">
+            <Input placeholder="Title" />
+            <Textarea placeholder="Type your note here." />
+            <Button type="submit" style={{ backgroundColor: theme.base2 }}>
+              Submit
+            </Button>
+          </form>
         </div>
-
-        {/* Formulario de notas */}
-        <form className="grid w-full gap-3 mt-4 border border-gray-300 shadow-sm rounded-md p-4 bg-gray-50">
-          <Input
-            placeholder="Call title"
-            className="w-full border-gray-300 rounded-md px-3 py-2"
-          />
-          <Textarea
-            placeholder="Write a transcript of the call here."
-            className="w-full h-24 border-gray-300 rounded-md px-3 py-2 resize-none"
-          />
-          <Button
-            type="submit"
-            className="w-full py-2 mt-2 text-white rounded-md transition-all hover:opacity-90"
-            style={{ backgroundColor: theme.base2 }}
-          >
-            Save Note
-          </Button>
-        </form>
       </DialogContent>
     </Dialog>
   );

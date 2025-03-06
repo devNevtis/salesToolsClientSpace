@@ -170,18 +170,35 @@ export default function LeadsDataTable() {
           </div>
         ) : null;
       case 'location':
+        const addressParts = [
+          business.address,
+          business.city,
+          business.state,
+          business.postalCode,
+        ].filter(Boolean);
+        const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+          addressParts.join(', ')
+        )}`;
         return (
           <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-gray-500" />
-            <span>
-              {business.city}, {business.state}
-            </span>
+            <button
+              onClick={() => window.open(googleMapsUrl, '_blank')}
+              className="flex items-center gap-2 text-blue-500 hover:underline"
+            >
+              <MapPin className="h-4 w-4 text-gray-500" />
+              <span>
+                {business.city}, {business.state}
+              </span>
+            </button>
           </div>
         );
       case 'website':
+        const websiteUrl = business.website.startsWith('http')
+          ? business.website
+          : `https://${business.website}`;
         return business.website ? (
           <a
-            href={business.website}
+            href={websiteUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-[var(--theme-base2)] hover:underline"
@@ -318,6 +335,13 @@ export default function LeadsDataTable() {
                                     <span className="text-gray-500">
                                       {contact.phone}
                                     </span>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => openCallDialog(business)}
+                                    >
+                                      <Phone className="h-4 w-4 text-blue-500" />
+                                    </Button>
                                   </>
                                 )}
                                 <div className="ml-auto flex items-center gap-2">
