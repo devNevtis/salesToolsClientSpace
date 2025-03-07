@@ -37,6 +37,8 @@ const DialList = () => {
     fetchDestinations();
   }, []);
 
+  //console.log(destinations);
+
   return (
     <div className="w-[200px] pt-2">
       {loading ? (
@@ -49,10 +51,14 @@ const DialList = () => {
           {error}
         </div>
       ) : (
-        <Select value={destination} onValueChange={setDestination}>
+        <Select
+          value={destination ? JSON.stringify(destination) : ''}
+          onValueChange={(val) => setDestination(JSON.parse(val))}
+        >
+          {/* <Select value={destination} onValueChange={setDestination}> */}
           <SelectTrigger className="w-full border-gray-300 rounded-xl text-gray-700 shadow-sm hover:shadow-md transition-all">
             <SelectValue placeholder="Select a number">
-              {destination || 'Select a number'}
+              {destination?.destination_number || 'Select a number'}
             </SelectValue>
           </SelectTrigger>
           <SelectContent className="rounded-xl border border-gray-300 shadow-md">
@@ -60,7 +66,8 @@ const DialList = () => {
               {destinations.map((dest) => (
                 <SelectItem
                   key={dest.destination_number}
-                  value={dest.destination_number}
+                  value={JSON.stringify(dest)}
+                  /* value={dest.destination_number} */
                 >
                   {dest.destination_number}
                 </SelectItem>

@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 
 const useCallStore = create((set) => ({
-  destination: '', // El número del destino seleccionado
+  destination: null, // El número del destino seleccionado
   dialedNumber: '', // El número digitado en el dialer pad
   userCall: {
     // Información adicional de la llamada
@@ -17,17 +17,18 @@ const useCallStore = create((set) => ({
     outbound_caller_id_number: '7147839680',
     directory_first_name: 'Juan',
     directory_last_name: 'Olmedo',
-    //extension_uuid: '8a25f402-ef08-48ee-bebb-8be3ff9677d6',
-    //domain_uuid: 'c401dee4-4ecf-4cc6-9fbd-5dddb3e1a376',
-    //extension: '160',
-    //password: 'RW0UB*$k3KX.8I.8Mcvv',
-    //accountcode: null,
-    // effective_caller_id_name: '160',
-    // effective_caller_id_number: '160',
-    // outbound_caller_id_name: 'NEVTIS',
-    // outbound_caller_id_number: '7147839680',
-    // directory_first_name: '160',
-    // directory_last_name: '160',
+
+    /*     extension_uuid: '8a25f402-ef08-48ee-bebb-8be3ff9677d6',
+    domain_uuid: 'c401dee4-4ecf-4cc6-9fbd-5dddb3e1a376',
+    extension: '160',
+    password: 'RW0UB*$k3KX.8I.8Mcvv',
+    accountcode: null,
+    effective_caller_id_name: '160',
+    effective_caller_id_number: '160',
+    outbound_caller_id_name: 'NEVTIS',
+    outbound_caller_id_number: '7147839680',
+    directory_first_name: '160',
+    directory_last_name: '160', */
   },
 
   setDestination: (destination) => set({ destination }),

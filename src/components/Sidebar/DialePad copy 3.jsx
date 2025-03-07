@@ -126,30 +126,14 @@ const DialerPad = () => {
             },
           }
         );
-
-        // Mostrar la respuesta de la API (puedes ajustarlo según lo que necesites)
-        /* console.log('Response from API:', response.data); */
-        // Verificar si la respuesta contiene la URL y abrirla en una nueva pestaña
         const clickToCallUrl = response.data.clickToCallUrl;
         if (clickToCallUrl) {
-          // Abre la URL en una nueva pestaña del navegador
-          //window.open(clickToCallUrl, '_blank');
-          const link = document.createElement('a');
-          link.href = clickToCallUrl;
-          link.target = '_self'; // No abrir una nueva pestaña
-          //console.log(clickToCallUrl);
-          // Simular el clic en el enlace sin redirigir
-          link.addEventListener('click', (event) => {
-            event.preventDefault(); // Evita que el navegador cambie la página
-            console.log('Simulating click on:', clickToCallUrl); // Solo para depuración
-          });
-
-          // Simular el clic en el enlace
-          link.click();
           toast({
             title: 'Call initiated successfully!',
             description: `to: ${number}`,
           });
+          /*           await axios.get(clickToCallUrl); // Esto simula el "clic" al hacer una solicitud GET
+          console.log('Request simulated to:', clickToCallUrl); // Solo para depuración */
         }
 
         // Si la llamada fue exitosa, puedes hacer algo más (como mostrar un mensaje de éxito)

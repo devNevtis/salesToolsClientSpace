@@ -4,6 +4,7 @@ import { useCallDialogStore } from '@/store/useCallDialogStore';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -97,6 +98,7 @@ export default function CallDialog() {
               </span>
             </div>
           </DialogTitle>
+          <DialogDescription></DialogDescription>
           <DialList />
         </DialogHeader>
 
