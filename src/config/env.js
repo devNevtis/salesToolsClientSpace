@@ -65,6 +65,10 @@ export const env = {
     },
     callNotes: {
       create: `${process.env.NEXT_PUBLIC_API_URL}/dialtools/call-notes/create`,
+      getByUser: (userId) =>
+        `${process.env.NEXT_PUBLIC_API_URL}/dialtools/call-notes/user/${userId}`,
+      getByBusiness: (businessId) =>
+        `${process.env.NEXT_PUBLIC_API_URL}/dialtools/call-notes/business/${businessId}`,
     },
     config: {
       all: `${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_CONFIG_ENDPOINT}/all`,

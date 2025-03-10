@@ -22,6 +22,8 @@ import { Phone } from 'lucide-react';
 import { FiPhoneCall } from 'react-icons/fi';
 import CompanyLogo from '@/components/Sidebar/CompanyLogo';
 import { useAuth } from '@/components/AuthProvider';
+import { useToast } from '@/hooks/use-toast';
+import useLeadsStore from '@/store/useLeadsStore';
 
 export default function CallDialog() {
   const { isOpen, business, closeDialog } = useCallDialogStore();
@@ -30,12 +32,14 @@ export default function CallDialog() {
   const userCall = useCallStore((state) => state.userCall);
   const number = business?.phone;
   const { user } = useAuth();
+  const { getContactsForBusiness } = useLeadsStore();
 
   // Estados para capturar los datos del formulario
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleCall = async () => {
     if (number && destination) {
@@ -92,10 +96,12 @@ export default function CallDialog() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const contacts = getContactsForBusiness(business._id);
     // Construcción de la estructura de datos
     const data = {
       user: user?._id || '',
-      lead: business?._id,
+      lead: contacts[0]?._id || '',
+      business: business?._id,
       destination: destination?.destination_number || '',
       extension: userCall.extension,
       dest: number,
@@ -111,10 +117,14 @@ export default function CallDialog() {
       const response = await axiosInstance.post(
         env.endpoints.callNotes.create,
         data
-      ); // ✅ Endpoint correcto
+      );
 
-      console.log('Datos enviados correctamente');
       console.log('Respuesta:', response.data);
+      console.log('Datos enviados correctamente');
+      toast({
+        title: 'Note saved',
+        description: 'The note has been saved successfully.',
+      });
       closeDialog();
     } catch (error) {
       console.error('Error enviando los datos:', error);
@@ -122,6 +132,8 @@ export default function CallDialog() {
       setLoading(false);
     }
   };
+
+  //console.log(business);
 
   return (
     <Dialog open={isOpen} onOpenChange={closeDialog}>
