@@ -1,21 +1,27 @@
 'use client';
 
+import { useState } from 'react';
 import { useCallDialogStore } from '@/store/useCallDialogStore';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import DialList from '@/components/Sidebar/DialList';
+import axiosInstance from '@/lib/axios';
+import { env } from '@/config/env';
 import axios from 'axios';
 import useCompanyTheme from '@/store/useCompanyTheme';
 import useCallStore from '@/store/useCallStore';
 import { Phone } from 'lucide-react';
+import { FiPhoneCall } from 'react-icons/fi';
+import CompanyLogo from '@/components/Sidebar/CompanyLogo';
+import { useAuth } from '@/components/AuthProvider';
 
 export default function CallDialog() {
   const { isOpen, business, closeDialog } = useCallDialogStore();
@@ -23,6 +29,13 @@ export default function CallDialog() {
   const destination = useCallStore((state) => state.destination);
   const userCall = useCallStore((state) => state.userCall);
   const number = business?.phone;
+  const { user } = useAuth();
+
+  // Estados para capturar los datos del formulario
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [tags, setTags] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleCall = async () => {
     if (number && destination) {
@@ -59,17 +72,16 @@ export default function CallDialog() {
           directory_first_name: userCall.directory_first_name,
           directory_last_name: userCall.directory_last_name,
         },
-        dest: number, // Número marcado
+        dest: number,
       };
 
       try {
         console.log(data);
-        const response = await axios.post(
+        await axios.post(
           'https://api.nevtis.com/fusionpbx/users/serv2/click-to-call/c401dee4-4ecf-4cc6-9fbd-5dddb3e1a376',
           data,
           { headers: { 'Content-Type': 'application/json' } }
         );
-        const clickToCallUrl = response.data.clickToCallUrl;
       } catch (error) {
         console.error('Error initiating the call:', error);
         alert('Failed to initiate the call.');
@@ -77,65 +89,116 @@ export default function CallDialog() {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Construcción de la estructura de datos
+    const data = {
+      user: user?._id || '',
+      lead: business?._id,
+      destination: destination?.destination_number || '',
+      extension: userCall.extension,
+      dest: number,
+      title,
+      description,
+      tags: tags.split(',').map((tag) => tag.trim()),
+    };
+
+    try {
+      setLoading(true);
+      console.log('Enviando datos:', data);
+
+      const response = await axiosInstance.post(
+        env.endpoints.callNotes.create,
+        data
+      ); // ✅ Endpoint correcto
+
+      console.log('Datos enviados correctamente');
+      console.log('Respuesta:', response.data);
+      closeDialog();
+    } catch (error) {
+      console.error('Error enviando los datos:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={closeDialog}>
-      <DialogContent className="p-6 rounded-lg w-[450px]">
-        {/* Header */}
-        <DialogHeader className="flex flex-row justify-between items-center pt-1">
-          <DialogTitle className="text-md font-semibold flex flex-col items-start">
-            <span className="text-sm">Call to </span>
-            <div>
-              <span style={{ color: theme.base2 }} className="font-bold">
-                {business?.name}
-              </span>
-              :
-              <span
-                className="text-sm px-2 py-1 rounded-lg ml-2 text-white"
-                style={{ backgroundColor: theme.base1 }}
-              >
-                {business?.phone.slice(0, 3)}-{business?.phone.slice(3, 6)}-
-                {business?.phone.slice(6)}
-              </span>
-            </div>
+      <DialogContent className="w-[50vw] max-w-[90%] p-0 rounded-lg overflow-hidden">
+        {/* Franja superior */}
+        <DialogHeader
+          className="w-full flex flex-row items-center justify-evenly px-6 py-4"
+          style={{ backgroundColor: theme.base1 }}
+        >
+          {/* Logo de la empresa */}
+          <div className="w-1/6">
+            <CompanyLogo />
+          </div>
+          {/* Nombre de la empresa */}
+          <DialogTitle className="text-white font-semibold">
+            Call to {business?.name}
           </DialogTitle>
           <DialogDescription></DialogDescription>
-          <DialList />
+
+          {/* Selector de destino */}
+          <div className="mx-6">
+            <DialList />
+          </div>
+
+          {/* Botón de llamada */}
+          <div className="bg-white rounded-full">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleCall}
+              disabled={!number || !destination}
+              className={`rounded-full font-semibold border-2 p-6 transition-all ${
+                number && destination
+                  ? 'text-[var(--theme-base1)] hover:bg-[var(--theme-base1)] hover:text-white border-white'
+                  : 'text-gray-300 cursor-not-allowed'
+              }`}
+            >
+              <FiPhoneCall className=" font-semibold h-12 w-12" />
+            </Button>
+          </div>
         </DialogHeader>
 
-        {/* Botón de llamada */}
-        <div className="flex justify-center mt-4">
-          <button
-            onClick={handleCall}
-            disabled={!number || !destination}
-            className={`w-2/3 h-10 flex items-center justify-center gap-2 rounded-xl text-white transition-all ${
-              number && destination
-                ? 'bg-green-600 hover:bg-green-700'
-                : 'bg-gray-300 cursor-not-allowed text-gray-500'
-            }`}
-          >
-            <Phone className="h-5 w-5" />
-            <span>Call</span>
-          </button>
-        </div>
-
         {/* Formulario de notas */}
-        <form className="grid w-full gap-3 mt-4 border border-gray-300 shadow-sm rounded-md p-4 bg-gray-50">
-          <Input
-            placeholder="Call title"
-            className="w-full border-gray-300 rounded-md px-3 py-2"
-          />
-          <Textarea
-            placeholder="Write a transcript of the call here."
-            className="w-full h-24 border-gray-300 rounded-md px-3 py-2 resize-none"
-          />
-          <Button
-            type="submit"
-            className="w-full py-2 mt-2 text-white rounded-md transition-all hover:opacity-90"
-            style={{ backgroundColor: theme.base2 }}
+        <div className="p-6 bg-gray-50 border-t border-gray-300">
+          <form
+            className="flex justify-start items-end gap-3"
+            onSubmit={handleSubmit}
           >
-            Save Note
-          </Button>
-        </form>
+            <div className="flex-1">
+              <Input
+                placeholder="Call title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full border-gray-300 rounded-md px-3 py-2"
+              />
+              <Textarea
+                placeholder="Write a transcript of the call here."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full mt-2 h-48 border-gray-300 rounded-md px-3 py-2 resize-none"
+              />
+              <Input
+                placeholder="Tags (comma separated)"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                className="w-full border-gray-300 rounded-md px-3 py-2"
+              />
+            </div>
+            <Button
+              type="submit"
+              className="ml-auto w-1/5 py-2 mt-2 text-white rounded-md transition-all hover:opacity-90"
+              style={{ backgroundColor: theme.base1 }}
+            >
+              Save Note
+            </Button>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

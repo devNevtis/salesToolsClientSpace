@@ -56,7 +56,7 @@ const DialList = () => {
           onValueChange={(val) => setDestination(JSON.parse(val))}
         >
           {/* <Select value={destination} onValueChange={setDestination}> */}
-          <SelectTrigger className="w-full border-gray-300 rounded-xl text-gray-700 shadow-sm hover:shadow-md transition-all">
+          <SelectTrigger className="w-full border-gray-300 rounded-xl bg-white text-gray-700 shadow-sm hover:shadow-md transition-all">
             <SelectValue placeholder="Select a number">
               {destination?.destination_number || 'Select a number'}
             </SelectValue>
