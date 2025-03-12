@@ -3,10 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../AuthProvider';
 import axiosInstance from '@/lib/axios';
 import { env } from '@/config/env';
+import axios from 'axios';
 import CallRecordsTab from './CallRecordsTab';
 
 const CallRecords = ({ businessId }) => {
   const { user } = useAuth();
+  console.log(user);
+  console.log(businessId);
   const [callRecords, setCallRecords] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -17,6 +20,8 @@ const CallRecords = ({ businessId }) => {
       const { data } = await axiosInstance.get(
         env.endpoints.callNotes.getByBusiness(businessId)
       );
+      //const dataFiltered = data.filter((record) => record.lead === businessId);
+      console.log(data);
       setCallRecords(data);
     } catch (error) {
       console.error('Error fetching call records:', error);
@@ -31,10 +36,7 @@ const CallRecords = ({ businessId }) => {
 
   return (
     <div>
-      <CallRecordsTab
-        callRecords={callRecords}
-        setCallRecords={setCallRecords}
-      />
+      <CallRecordsTab callRecords={callRecords} />
     </div>
   );
 };

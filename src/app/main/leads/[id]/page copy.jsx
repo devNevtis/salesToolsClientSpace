@@ -11,11 +11,11 @@ import LeadDetailHeader from '@/components/leads/LeadDetailHeader';
 import EditLeadTab from '@/components/leads/EditLeadTab';
 import NotesTab from '@/components/leads/NotesTab';
 import OpportunitiesTab from '@/components/leads/OpportunitiesTab';
-import CallRecords from '@/components/leads/CallRecords';
 import { Button } from '@/components/ui/button';
 import LeadEditSkeleton from '@/components/skeletons/LeadEditSkeleton';
 import NotesSkeleton from '@/components/skeletons/NotesSkeleton';
 import OpportunitiesSkeleton from '@/components/skeletons/OpportunitiesSkeleton';
+import CallRecords from '@/components/leads/CallRecords';
 
 export default function LeadDetailPage() {
   const params = useParams();
@@ -42,6 +42,7 @@ export default function LeadDetailPage() {
   const handleTabChange = (value) => {
     startTransition(() => {
       setActiveTab(value);
+      // Usar un id específico para el contenedor
       document.querySelector('#tab-content')?.scrollTo({
         top: 0,
         behavior: 'smooth',
@@ -84,65 +85,62 @@ export default function LeadDetailPage() {
         business={currentBusiness}
         contactsCount={associatedContacts.length}
       />
-
       <div className="mt-6 relative">
         <Tabs
           value={activeTab}
           onValueChange={handleTabChange}
           className="w-full transition-all duration-300 ease-in-out"
         >
-          {/* 🆕 Tabs List Mejorado */}
-          <div className="relative border-b border-muted flex justify-between overflow-x-auto">
-            <TabsList className="flex space-x-4 px-4 w-full">
-              {[
-                { id: 'edit', label: 'Edit Lead' },
-                { id: 'notes', label: 'Notes' },
-                { id: 'opportunities', label: 'Opportunities' },
-                { id: 'call-records', label: 'Call Records' },
-              ].map((tab) => (
-                <TabsTrigger
-                  key={tab.id}
-                  value={tab.id}
-                  className={`relative px-4 py-2 text-sm font-medium rounded-md transition-all 
-                    ${
-                      activeTab === tab.id
-                        ? 'text-primary bg-primary/10'
-                        : 'text-muted-foreground hover:bg-muted'
-                    }`}
-                >
-                  {tab.label}
-                  {activeTab === tab.id && (
-                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded-full transition-all duration-300" />
-                  )}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
+          <TabsList className="grid w-full grid-cols-4 mb-4">
+            <TabsTrigger
+              value="edit"
+              className="data-[state=active]:bg-primary/5"
+            >
+              Edit Lead
+            </TabsTrigger>
+            <TabsTrigger
+              value="notes"
+              className="data-[state=active]:bg-primary/5"
+            >
+              Notes
+            </TabsTrigger>
+            <TabsTrigger
+              value="opportunities"
+              className="data-[state=active]:bg-primary/5"
+            >
+              Opportunities
+            </TabsTrigger>
+            <TabsTrigger
+              value="call-records"
+              className="data-[state=active]:bg-primary/5"
+            >
+              Call Records
+            </TabsTrigger>
+          </TabsList>
 
-          {/* 🆕 Contenido con Transiciones Suaves */}
           <div
             id="tab-content"
             className="relative transition-all duration-300"
           >
-            <TabsContent value="edit" className="mt-4 animate-fadeIn">
+            <TabsContent value="edit" className="mt-4">
               <Suspense fallback={<LeadEditSkeleton />}>
                 <EditLeadTab business={currentBusiness} />
               </Suspense>
             </TabsContent>
 
-            <TabsContent value="notes" className="mt-4 animate-fadeIn">
+            <TabsContent value="notes" className="mt-6">
               <Suspense fallback={<NotesSkeleton />}>
                 <NotesTab businessId={currentBusiness?._id} />
               </Suspense>
             </TabsContent>
 
-            <TabsContent value="opportunities" className="mt-4 animate-fadeIn">
+            <TabsContent value="opportunities" className="mt-6">
               <Suspense fallback={<OpportunitiesSkeleton />}>
                 <OpportunitiesTab businessId={currentBusiness._id} />
               </Suspense>
             </TabsContent>
 
-            <TabsContent value="call-records" className="mt-4 animate-fadeIn">
+            <TabsContent value="call-records" className="mt-6">
               <Suspense fallback={<OpportunitiesSkeleton />}>
                 <CallRecords businessId={currentBusiness._id} />
               </Suspense>
@@ -150,7 +148,6 @@ export default function LeadDetailPage() {
           </div>
         </Tabs>
 
-        {/* 🆕 Indicador de Carga al Cambiar de Tab */}
         {isPending && (
           <div className="absolute bottom-4 right-4 animate-in fade-in slide-in-from-bottom-2">
             <div className="bg-black/80 text-white px-4 py-2 rounded-md shadow-lg flex items-center gap-2">
