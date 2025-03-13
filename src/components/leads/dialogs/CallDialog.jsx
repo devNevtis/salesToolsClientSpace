@@ -19,6 +19,7 @@ import axios from 'axios';
 import useCompanyTheme from '@/store/useCompanyTheme';
 import useCallStore from '@/store/useCallStore';
 import { Phone } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 import { FiPhoneCall } from 'react-icons/fi';
 import CompanyLogo from '@/components/Sidebar/CompanyLogo';
 import { useAuth } from '@/components/AuthProvider';
@@ -133,6 +134,15 @@ export default function CallDialog() {
     }
   };
 
+  const handleWhatsAppCall = () => {
+    if (!number) return;
+
+    const phoneNumber = number.replace(/\D/g, ''); // ✅ Elimina caracteres no numéricos
+    const whatsappUrl = `https://wa.me/${phoneNumber}`;
+
+    window.open(whatsappUrl, '_blank');
+  };
+
   //console.log(business);
 
   return (
@@ -149,7 +159,10 @@ export default function CallDialog() {
           </div>
           {/* Nombre de la empresa */}
           <DialogTitle className="text-white font-semibold">
-            Call to {business?.name}
+            <span className="flex flex-col">
+              <span>Call to {business?.name}</span>
+              <span className="text-sm">{business?.phone}</span>
+            </span>
           </DialogTitle>
           <DialogDescription></DialogDescription>
 
@@ -159,7 +172,7 @@ export default function CallDialog() {
           </div>
 
           {/* Botón de llamada */}
-          <div className="bg-white rounded-full">
+          {/*           <div className="bg-white rounded-full">
             <Button
               variant="ghost"
               size="icon"
@@ -172,6 +185,38 @@ export default function CallDialog() {
               }`}
             >
               <FiPhoneCall className=" font-semibold h-12 w-12" />
+            </Button>
+          </div> */}
+          {/* Contenedor de botones de llamada */}
+          <div className="flex gap-4">
+            {/* Botón de llamada normal */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleCall}
+              disabled={!number || !destination}
+              className={`rounded-full font-semibold border-2 p-6 transition-all ${
+                number && destination
+                  ? 'text-[var(--theme-base1)] hover:bg-[var(--theme-base1)] hover:text-white border-white'
+                  : 'text-gray-300 cursor-not-allowed'
+              }`}
+            >
+              <FiPhoneCall className="font-semibold h-12 w-12" />
+            </Button>
+
+            {/* ✅ Botón de llamada por WhatsApp */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleWhatsAppCall}
+              disabled={!number}
+              className={`rounded-full font-semibold border-2 p-6 transition-all ${
+                number
+                  ? 'text-green-500 hover:bg-green-500 hover:text-white border-white'
+                  : 'text-gray-300 cursor-not-allowed'
+              }`}
+            >
+              <FaWhatsapp className="h-12 w-12" />
             </Button>
           </div>
         </DialogHeader>
