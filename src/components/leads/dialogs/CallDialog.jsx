@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCallDialogStore } from '@/store/useCallDialogStore';
 import {
   Dialog,
@@ -41,6 +41,14 @@ export default function CallDialog() {
   const [tags, setTags] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const [contacts, setContacts] = useState([]);
+
+  useEffect(() => {
+    if (business?._id) {
+      const fetchedContacts = getContactsForBusiness(business._id);
+      setContacts(fetchedContacts);
+    }
+  }, [business]);
 
   const handleCall = async () => {
     if (number && destination) {
@@ -144,6 +152,7 @@ export default function CallDialog() {
   };
 
   //console.log(business);
+  //console.log(contacts);
 
   return (
     <Dialog open={isOpen} onOpenChange={closeDialog}>
@@ -161,7 +170,11 @@ export default function CallDialog() {
           <DialogTitle className="text-white font-semibold">
             <span className="flex flex-col">
               <span>Call to {business?.name}</span>
-              <span className="text-sm">{business?.phone}</span>
+              {contacts.length > 0 && (
+                <span className="text-xs font-normal">
+                  {contacts[0].name} : {business?.phone}
+                </span>
+              )}
             </span>
           </DialogTitle>
           <DialogDescription></DialogDescription>
