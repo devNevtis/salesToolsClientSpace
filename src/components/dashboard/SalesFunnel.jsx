@@ -1,57 +1,29 @@
 // src/components/dashboard/SalesFunnel.jsx
-"use client"
+'use client';
 
 import { useMemo } from 'react';
-import { Card } from "@/components/ui/card";
-import { AlertCircle, Loader2 } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from '@/components/ui/card';
+import { AlertCircle } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 import useFunnelStore from '@/store/useFunnelStore';
-import {
-  ResponsiveContainer,
-  FunnelChart,
-  Funnel,
-  LabelList,
-  Tooltip,
-} from 'recharts';
+import { ResponsiveContainer, FunnelChart, Funnel, Tooltip } from 'recharts';
 
-const CustomLabel = ({ x, y, width, height, value, name, fill }) => {
-  const rectWidth = Math.min(80, width * 0.8);
-  const rectHeight = 40;
-  const fontSize = 12;
-  
-  return (
-    <g>
-      <rect
-        x={x + width / 2 - rectWidth / 2}
-        y={y + height / 2 - rectHeight / 2}
-        width={rectWidth}
-        height={rectHeight}
-        rx={4}
-        ry={4}
-        fill="white"
-        opacity={0.95}
-        className="drop-shadow-sm"
-      />
-      <text
-        x={x + width / 2}
-        y={y + height / 2 - fontSize / 2}
-        textAnchor="middle"
-        fill={fill}
-        className="text-sm font-medium"
-      >
-        {name}
-      </text>
-      <text
-        x={x + width / 2}
-        y={y + height / 2 + fontSize}
-        textAnchor="middle"
-        fill={fill}
-        className="text-sm font-bold"
-      >
-        {value}
-      </text>
-    </g>
-  );
+// Nueva paleta de colores UX-friendly para el funnel
+const STAGE_COLORS = {
+  New: '#5B9BFF', // Azul Brillante
+  Qualified: '#936BFF', // Púrpura Vivo
+  Discussion: '#E57BA4', // Rosa Intenso
+  Negotiation: '#FFA559', // Naranja Fuerte
+  Won: '#57C78E', // Verde Éxito
+  Lost: '#FF6B6B', // Rojo Intenso
+};
+
+// Función para abreviar nombres de etapas
+const getAbbreviatedName = (name) => {
+  if (!name) return '';
+  const words = name.split(' ');
+  if (words.length === 1) return words[0].substring(0, 3).toUpperCase(); // Tomamos las 3 primeras letras
+  return words[0][0].toUpperCase() + words[1][0].toUpperCase(); // Tomamos la primera letra de cada palabra
 };
 
 const CustomTooltip = ({ active, payload }) => {
@@ -59,10 +31,8 @@ const CustomTooltip = ({ active, payload }) => {
     const data = payload[0].payload;
     return (
       <div className="bg-white p-3 border rounded-lg shadow-lg">
-        <p className="font-medium">{data.name}</p>
-        <p className="text-sm text-muted-foreground">
-          {data.value} leads
-        </p>
+        <p className="font-semibold">{data.name}</p>
+        <p className="text-sm text-muted-foreground">{data.value} leads</p>
       </div>
     );
   }
@@ -72,31 +42,41 @@ const CustomTooltip = ({ active, payload }) => {
 export default function SalesFunnel() {
   const { leadStatuses, isLoading } = useFunnelStore();
 
-  const funnelData = useMemo(() => [
-    { name: "NEW", value: leadStatuses?.new || 0, fill: "#224f5a" },
-    { name: "QUALIFIED", value: leadStatuses?.qualified || 0, fill: "#29abe2" },
-    { name: "DISCUSSION", value: leadStatuses?.discussion || 0, fill: "#66c7c3" },
-    { name: "NEGOTIATION", value: leadStatuses?.negotiation || 0, fill: "#e5e5e5" },
-    { name: "WON", value: leadStatuses?.won || 0, fill: "#f25c07" },
-  ], [leadStatuses]);
+  const funnelData = useMemo(
+    () => [
+      { name: 'New', value: leadStatuses?.new || 0, fill: STAGE_COLORS.New },
+      {
+        name: 'Qualified',
+        value: leadStatuses?.qualified || 0,
+        fill: STAGE_COLORS.Qualified,
+      },
+      {
+        name: 'Discussion',
+        value: leadStatuses?.discussion || 0,
+        fill: STAGE_COLORS.Discussion,
+      },
+      {
+        name: 'Negotiation',
+        value: leadStatuses?.negotiation || 0,
+        fill: STAGE_COLORS.Negotiation,
+      },
+      { name: 'Won', value: leadStatuses?.won || 0, fill: STAGE_COLORS.Won },
+    ],
+    [leadStatuses]
+  );
 
-  // Si está cargando, mostrar skeleton
   if (isLoading) {
     return (
       <Card className="relative bg-white">
         <div className="p-4">
-          <div className="flex items-center space-x-4">
-            <Skeleton className="h-8 w-32" />
-            <Skeleton className="h-8 w-8 rounded-full" />
-          </div>
+          <Skeleton className="h-8 w-32" />
           <Skeleton className="mt-4 h-[250px] w-full" />
         </div>
       </Card>
     );
   }
 
-  // Si no hay datos o todos los valores son 0
-  if (!leadStatuses || Object.values(funnelData).every(item => item.value === 0)) {
+  if (!leadStatuses || funnelData.every((item) => item.value === 0)) {
     return (
       <Card className="relative bg-white">
         <div className="p-4 h-[280px] flex flex-col items-center justify-center text-muted-foreground">
@@ -109,19 +89,19 @@ export default function SalesFunnel() {
 
   return (
     <Card className="relative bg-white">
-      <div className="p-2 flex flex-col h-[280px]">
-        {/* Header with Lost indicator */}
+      <div className="p-4 flex flex-col h-[320px]">
+        {/* Header con título y Lost indicator */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-[#224f5a]">Sales Funnel</h2>
           {leadStatuses?.lost > 0 && (
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-red-100 text-red-600 rounded-full">
+            <div className="flex items-center gap-2 px-2 py-1 bg-red-100 text-red-600 rounded-full">
               <AlertCircle className="h-4 w-4" />
               <span className="font-medium">Lost: {leadStatuses.lost}</span>
             </div>
           )}
         </div>
-        
-        {/* Funnel Chart */}
+
+        {/* Embudo gráfico */}
         <div className="flex-1 min-h-0">
           <ResponsiveContainer width="100%" height="100%">
             <FunnelChart>
@@ -132,14 +112,30 @@ export default function SalesFunnel() {
                 isAnimationActive
                 animationDuration={800}
                 animationEasing="ease-in-out"
-              >
-                <LabelList
-                  position="center"
-                  content={<CustomLabel />}
-                />
-              </Funnel>
+              />
             </FunnelChart>
           </ResponsiveContainer>
+        </div>
+
+        {/* Lista de valores por etapa - Ahora en una sola línea con etiquetas abreviadas */}
+        <div className="flex flex-wrap gap-2 justify-center mt-4">
+          {funnelData.map((stage) => (
+            <div
+              key={stage.name}
+              className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-lg"
+            >
+              <span
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: stage.fill }}
+              ></span>
+              <span className="text-sm font-medium">
+                {getAbbreviatedName(stage.name)}:
+              </span>
+              <span className="text-xs font-semibold text-[#224f5a]">
+                {stage.value}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </Card>

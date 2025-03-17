@@ -1,75 +1,54 @@
-// src/components/dashboard/OpportunityFunnel.jsx
-"use client"
+'use client';
 
 import { useMemo } from 'react';
-import { Card } from "@/components/ui/card";
-import { AlertCircle, DollarSign } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from '@/components/ui/card';
+import { AlertCircle, DollarSign } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 import useFunnelStore from '@/store/useFunnelStore';
-import {
-  ResponsiveContainer,
-  FunnelChart,
-  Funnel,
-  LabelList,
-  Tooltip,
-} from 'recharts';
+import { ResponsiveContainer, FunnelChart, Funnel, Tooltip } from 'recharts';
 
-// Paleta de colores consistente con la UI
-const STAGE_COLORS = [
-  "#224f5a", // Primary dark
-  "#29abe2", // Secondary blue
-  "#66c7c3", // Highlight teal
-  "#f25c07", // Action orange
-  "#92c5de", // Light blue
-  "#2c7fb8", // Medium blue
-  "#48a999", // Medium teal
-  "#f4a261", // Light orange
-  "#e76f51", // Dark orange
-];
+// Paleta de colores UX-friendly basada en el funnel de oportunidades
+/* const STAGE_COLORS = {
+  Prospecting: '#0d6efd', // Azul
+  Qualification: '#6610f2', // Púrpura
+  'Need Analysis': '#d63384', // Rosa
+  Demo: '#fd7e14', // Naranja
+  'Proposal Sent': '#ffc107', // Amarillo
+  Negotiation: '#198754', // Verde
+  Won: '#198754', // Verde Éxito
+  Lost: '#dc3545', // Rojo
+}; */
 
-const CustomLabel = ({ x, y, width, height, value, name, fill }) => {
-  const rectWidth = Math.min(120, width * 0.8);
-  const rectHeight = 45;
-  const fontSize = 12;
-  
-  return (
-    <g>
-      <rect
-        x={x + width / 2 - rectWidth / 2}
-        y={y + height / 2 - rectHeight / 2}
-        width={rectWidth}
-        height={rectHeight}
-        rx={4}
-        ry={4}
-        fill="white"
-        opacity={0.95}
-        className="drop-shadow-sm"
-      />
-      <text
-        x={x + width / 2}
-        y={y + height / 2 - fontSize / 2}
-        textAnchor="middle"
-        fill={fill}
-        className="text-sm font-medium"
-      >
-        {name}
-      </text>
-      <text
-        x={x + width / 2}
-        y={y + height / 2 + fontSize}
-        textAnchor="middle"
-        fill={fill}
-        className="text-sm font-bold"
-      >
-        {typeof value === 'number' ? 
-          new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            maximumFractionDigits: 0
-          }).format(value) : value}
-      </text>
-    </g>
-  );
+// Paleta de colores en tonos pastel para el funnel de oportunidades
+/* const STAGE_COLORS = {
+  Prospecting: '#A5C8FF', // Azul Pastel
+  Qualification: '#C6A5FF', // Púrpura Pastel
+  'Need Analysis': '#F5A6C6', // Rosa Pastel
+  Demo: '#FFBF86', // Naranja Pastel
+  'Proposal Sent': '#FFE29A', // Amarillo Pastel
+  Negotiation: '#A3D9A5', // Verde Pastel
+  Won: '#86D9A3', // Verde Éxito Pastel
+  Lost: '#FFADAD', // Rojo Pastel
+}; */
+
+// Paleta de colores en tonos intermedios (equilibrio entre intensidad y suavidad)
+const STAGE_COLORS = {
+  Prospecting: '#5B9BFF', // Azul Medio
+  Qualification: '#936BFF', // Púrpura Medio
+  'Need Analysis': '#E57BA4', // Rosa Medio
+  Demo: '#FFA559', // Naranja Medio
+  'Proposal Sent': '#FFD678', // Amarillo Medio
+  Negotiation: '#6FCF97', // Verde Medio
+  Won: '#57C78E', // Verde Éxito Medio
+  Lost: '#FF6B6B', // Rojo Medio
+};
+
+// Función para abreviar los nombres de las etapas
+const getAbbreviatedName = (name) => {
+  if (!name) return '';
+  const words = name.split(' ');
+  if (words.length === 1) return words[0][0]; // Tomamos las 3 primeras letras
+  return words[0][0].toUpperCase() + '.' + words[1][0].toUpperCase(); // Tomamos la primera letra de cada palabra
 };
 
 const CustomTooltip = ({ active, payload }) => {
@@ -77,15 +56,12 @@ const CustomTooltip = ({ active, payload }) => {
     const data = payload[0].payload;
     return (
       <div className="bg-white p-3 border rounded-lg shadow-lg">
-        <div className="flex items-center gap-2">
-          <span className="font-medium">{data.name}</span>
-          <span className="text-xs text-muted-foreground">Stage</span>
-        </div>
-        <p className="text-sm font-semibold text-green-600">
+        <p className="font-semibold">{data.name}</p>
+        <p className="text-sm text-muted-foreground">
           {new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD',
-            maximumFractionDigits: 0
+            maximumFractionDigits: 0,
           }).format(data.value)}
         </p>
       </div>
@@ -100,40 +76,34 @@ export default function OpportunityFunnel() {
   const funnelData = useMemo(() => {
     if (!stages || !opportunityStages) return [];
 
-    // Ordenar stages por su orden y filtrar activos
-    const activeStages = [...stages]
-      .filter(stage => stage.show)
-      .sort((a, b) => a.order - b.order);
-
-    return activeStages.map((stage, index) => ({
-      name: stage.name,
-      value: opportunityStages[stage.name] || 0,
-      fill: STAGE_COLORS[index % STAGE_COLORS.length],
-      order: stage.order
-    }));
+    return [...stages]
+      .filter((stage) => stage.show)
+      .sort((a, b) => a.order - b.order)
+      .map((stage) => ({
+        name: stage.name,
+        shortName: getAbbreviatedName(stage.name),
+        value: opportunityStages[stage.name] || 0,
+        fill: STAGE_COLORS[stage.name] || '#6c757d', // Gris si es una etapa personalizada
+      }));
   }, [stages, opportunityStages]);
 
-  const totalValue = useMemo(() => 
-    funnelData.reduce((sum, item) => sum + item.value, 0)
-  , [funnelData]);
+  const totalValue = useMemo(
+    () => funnelData.reduce((sum, item) => sum + item.value, 0),
+    [funnelData]
+  );
 
-  // Si está cargando, mostrar skeleton
   if (isLoading) {
     return (
       <Card className="relative bg-white">
         <div className="p-4">
-          <div className="flex items-center space-x-4">
-            <Skeleton className="h-8 w-32" />
-            <Skeleton className="h-8 w-24 rounded-full" />
-          </div>
+          <Skeleton className="h-8 w-32" />
           <Skeleton className="mt-4 h-[250px] w-full" />
         </div>
       </Card>
     );
   }
 
-  // Si no hay datos o el funnel está vacío
-  if (!funnelData.length || funnelData.every(item => item.value === 0)) {
+  if (!funnelData.length || funnelData.every((item) => item.value === 0)) {
     return (
       <Card className="relative bg-white">
         <div className="p-4 h-[280px] flex flex-col items-center justify-center text-muted-foreground">
@@ -146,21 +116,25 @@ export default function OpportunityFunnel() {
 
   return (
     <Card className="relative bg-white">
-      <div className="p-4 flex flex-col h-[280px]">
+      <div className="p-4 flex flex-col h-[320px]">
+        {/* Header con total de oportunidades */}
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-[#224f5a]">Opportunity Sales</h2>
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-600 rounded-full">
+          <h2 className="text-xl font-bold text-[#224f5a]">
+            Opportunity Sales
+          </h2>
+          <div className="flex items-center gap-2 px-2 py-1 bg-green-50 text-green-600 rounded-full">
             <DollarSign className="h-4 w-4" />
             <span className="font-medium">
               {new Intl.NumberFormat('en-US', {
                 style: 'currency',
                 currency: 'USD',
-                maximumFractionDigits: 0
+                maximumFractionDigits: 0,
               }).format(totalValue)}
             </span>
           </div>
         </div>
-        
+
+        {/* Embudo gráfico */}
         <div className="flex-1 min-h-0">
           <ResponsiveContainer width="100%" height="100%">
             <FunnelChart>
@@ -171,14 +145,28 @@ export default function OpportunityFunnel() {
                 isAnimationActive
                 animationDuration={800}
                 animationEasing="ease-in-out"
-              >
-                <LabelList
-                  position="center"
-                  content={<CustomLabel />}
-                />
-              </Funnel>
+              />
             </FunnelChart>
           </ResponsiveContainer>
+        </div>
+
+        {/* Lista de valores por etapa */}
+        <div className="flex flex-wrap gap-2 justify-center mt-4">
+          {funnelData.map((stage) => (
+            <div
+              key={stage.name}
+              className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-lg"
+            >
+              <span
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: stage.fill }}
+              ></span>
+              <span className="text-sm font-medium">{stage.shortName}:</span>
+              <span className="text-xs font-semibold text-[#224f5a]">
+                {stage.value}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </Card>
