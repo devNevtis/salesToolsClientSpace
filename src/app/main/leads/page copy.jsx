@@ -17,7 +17,7 @@ import LeadCreationDialog from '@/components/leads/LeadCreationDialog';
 import MilestonesTab from '@/components/milestones/MilestonesTab';
 import OpportunitiesTab from '@/components/opportunities/OpportunitiesTab';
 
-function LeadsPage() {
+export default function LeadsPage() {
   const { theme } = useCompanyTheme();
   const { user } = useAuth();
   const { fetchBusinesses, setSearchTerm, searchTerm, isLoading, error } =
@@ -163,5 +163,3 @@ function LeadsPage() {
     </div>
   );
 }
-
-export default withAuth(LeadsPage);

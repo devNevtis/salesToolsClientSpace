@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, Suspense, useState, useTransition } from 'react';
+import withAuth from '@/components/withAuth';
 import { useParams, useRouter } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import useLeadsStore from '@/store/useLeadsStore2';
@@ -17,7 +18,7 @@ import LeadEditSkeleton from '@/components/skeletons/LeadEditSkeleton';
 import NotesSkeleton from '@/components/skeletons/NotesSkeleton';
 import OpportunitiesSkeleton from '@/components/skeletons/OpportunitiesSkeleton';
 
-export default function LeadDetailPage() {
+function LeadDetailPage() {
   const params = useParams();
   const router = useRouter();
   const leadId = params.id;
@@ -163,3 +164,5 @@ export default function LeadDetailPage() {
     </div>
   );
 }
+
+export default withAuth(LeadDetailPage);

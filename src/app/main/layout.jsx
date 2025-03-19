@@ -1,6 +1,7 @@
 // app/main/layout.jsx
 'use client';
 import { useEffect } from 'react';
+import withAuth from '@/components/withAuth';
 import Navbar from '@/components/Navbar/Navbar';
 import Sidebar from '@/components/Sidebar/Sidebar';
 import { useCompanyData } from '@/hooks/useCompanyData';
@@ -30,4 +31,4 @@ const MainLayout = ({ children }) => {
   );
 };
 
-export default MainLayout;
+export default withAuth(MainLayout);

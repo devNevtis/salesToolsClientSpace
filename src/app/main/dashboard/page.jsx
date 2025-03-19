@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import withAuth from '@/components/withAuth';
 import Dashboard from '@/components/dashboard/Dashboard';
 import useLeadsStore from '@/store/useLeadsStore';
 import { useAuth } from '@/components/AuthProvider';
@@ -19,4 +20,4 @@ function DashboardPage() {
   return <Dashboard leads={businesses} />;
 }
 
-export default DashboardPage;
+export default withAuth(DashboardPage);
