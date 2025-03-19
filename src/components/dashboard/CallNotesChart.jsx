@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { create } from 'zustand';
+import CallNotesBarChart from './CallNotesBarChart'; // Importamos el nuevo gráfico
 
 // Zustand store para manejar el estado global
 const useNotesStore = create((set) => ({
@@ -36,12 +37,12 @@ const CallNotesChart = ({ contacts }) => {
     }
   }, [allNotes, contacts]);
 
-  console.log(filteredNotes);
-
   return (
     <div>
-      <h2>Call Notes Chart</h2>
-      {filteredNotes.length > 0 ? (
+      {/* Enviar filteredNotes al nuevo componente */}
+      <CallNotesBarChart filteredNotes={filteredNotes} />
+
+      {/*       {filteredNotes.length > 0 ? (
         <ul>
           {filteredNotes.map((note) => (
             <li key={note._id}>Note ID: {note._id}</li>
@@ -49,7 +50,7 @@ const CallNotesChart = ({ contacts }) => {
         </ul>
       ) : (
         <p>No matching notes found.</p>
-      )}
+      )} */}
     </div>
   );
 };
