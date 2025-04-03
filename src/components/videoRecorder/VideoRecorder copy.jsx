@@ -25,24 +25,20 @@ const VideoRecorder = () => {
   const timeoutRef = useRef(null);
   const { toast } = useToast();
 
-  // Solicitar permisos y obtener la lista completa de cámaras
   useEffect(() => {
-    const requestPermissionsAndGetCameras = async () => {
+    const getCameras = async () => {
       try {
-        // Solicitar permiso a la cámara para poder obtener las etiquetas reales
-        await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        // Luego, enumeramos los dispositivos disponibles
         const devices = await navigator.mediaDevices.enumerateDevices();
         const videoInputs = devices.filter(
           (device) => device.kind === 'videoinput'
         );
         setVideoDevices(videoInputs);
       } catch (err) {
-        console.error('Error accessing video devices:', err);
+        console.error('Error listing video devices:', err);
       }
     };
 
-    requestPermissionsAndGetCameras();
+    getCameras();
   }, []);
 
   useEffect(() => {
