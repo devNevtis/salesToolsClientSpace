@@ -25,7 +25,6 @@ import CompanyLogo from '@/components/Sidebar/CompanyLogo';
 import { useAuth } from '@/components/AuthProvider';
 import { useToast } from '@/hooks/use-toast';
 import useLeadsStore from '@/store/useLeadsStore';
-import { useRouter } from 'next/navigation';
 
 export default function CallDialog() {
   const { isOpen, business, closeDialog } = useCallDialogStore();
@@ -35,14 +34,13 @@ export default function CallDialog() {
   const number = business?.phone;
   const { user } = useAuth();
   const { getContactsForBusiness } = useLeadsStore();
-  const router = useRouter();
-  const { toast } = useToast();
 
-  // Estados para el formulario
+  // Estados para capturar los datos del formulario
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
   const [contacts, setContacts] = useState([]);
 
   useEffect(() => {
@@ -107,36 +105,11 @@ export default function CallDialog() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Detectamos cuál botón envió el formulario.
-    const isSaveAndRecord =
-      e.nativeEvent.submitter &&
-      e.nativeEvent.submitter.name === 'saveAndRecord';
-
-    // Consideramos la nota vacía si title, description y tags están vacíos (trim para eliminar espacios)
-    const isNoteEmpty =
-      title.trim() === '' && description.trim() === '' && tags.trim() === '';
-
-    // Si se usa "Save" y la nota está vacía, se muestra un mensaje de error.
-    if (!isSaveAndRecord && isNoteEmpty) {
-      toast({
-        title: 'Empty note',
-        description: 'Please fill in some details before saving the note.',
-      });
-      return;
-    }
-
-    // Si se usa "Save & Record" y la nota está vacía, redirigimos sin guardar
-    if (isSaveAndRecord && isNoteEmpty) {
-      closeDialog();
-      router.push('/main/video-rec');
-      return;
-    }
-
-    // Si la nota no está vacía, se guarda la nota.
-    const contactsForBusiness = getContactsForBusiness(business._id);
+    const contacts = getContactsForBusiness(business._id);
+    // Construcción de la estructura de datos
     const data = {
       user: user?._id || '',
-      lead: contactsForBusiness[0]?._id || '',
+      lead: contacts[0]?._id || '',
       business: business?._id,
       destination: destination?.destination_number || '',
       extension: userCall.extension,
@@ -149,25 +122,21 @@ export default function CallDialog() {
     try {
       setLoading(true);
       console.log('Enviando datos:', data);
+
       const response = await axiosInstance.post(
         env.endpoints.callNotes.create,
         data
       );
+
       console.log('Respuesta:', response.data);
+      console.log('Datos enviados correctamente');
       toast({
         title: 'Note saved',
         description: 'The note has been saved successfully.',
       });
       closeDialog();
-      if (isSaveAndRecord) {
-        router.push('/main/video-rec');
-      }
     } catch (error) {
       console.error('Error enviando los datos:', error);
-      toast({
-        title: 'Error',
-        description: 'There was an error saving your note.',
-      });
     } finally {
       setLoading(false);
     }
@@ -175,10 +144,15 @@ export default function CallDialog() {
 
   const handleWhatsAppCall = () => {
     if (!number) return;
-    const phoneNumber = number.replace(/\D/g, '');
+
+    const phoneNumber = number.replace(/\D/g, ''); // ✅ Elimina caracteres no numéricos
     const whatsappUrl = `https://wa.me/${phoneNumber}`;
+
     window.open(whatsappUrl, '_blank');
   };
+
+  //console.log(business);
+  //console.log(contacts);
 
   return (
     <Dialog open={isOpen} onOpenChange={closeDialog}>
@@ -188,9 +162,11 @@ export default function CallDialog() {
           className="w-full flex flex-row items-center justify-evenly px-6 py-4"
           style={{ backgroundColor: theme.base1 }}
         >
+          {/* Logo de la empresa */}
           <div className="w-1/6">
             <CompanyLogo />
           </div>
+          {/* Nombre de la empresa */}
           <DialogTitle className="text-white font-semibold">
             <span className="flex flex-col">
               <span>Call to {business?.name}</span>
@@ -202,10 +178,31 @@ export default function CallDialog() {
             </span>
           </DialogTitle>
           <DialogDescription></DialogDescription>
+
+          {/* Selector de destino */}
           <div className="mx-6">
             <DialList />
           </div>
+
+          {/* Botón de llamada */}
+          {/*           <div className="bg-white rounded-full">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleCall}
+              disabled={!number || !destination}
+              className={`rounded-full font-semibold border-2 p-6 transition-all ${
+                number && destination
+                  ? 'text-[var(--theme-base1)] hover:bg-[var(--theme-base1)] hover:text-white border-white'
+                  : 'text-gray-300 cursor-not-allowed'
+              }`}
+            >
+              <FiPhoneCall className=" font-semibold h-12 w-12" />
+            </Button>
+          </div> */}
+          {/* Contenedor de botones de llamada */}
           <div className="flex gap-4">
+            {/* Botón de llamada normal */}
             <Button
               variant="ghost"
               size="icon"
@@ -219,6 +216,8 @@ export default function CallDialog() {
             >
               <FiPhoneCall className="font-semibold h-12 w-12" />
             </Button>
+
+            {/* ✅ Botón de llamada por WhatsApp */}
             <Button
               variant="ghost"
               size="icon"
@@ -237,7 +236,10 @@ export default function CallDialog() {
 
         {/* Formulario de notas */}
         <div className="p-6 bg-gray-50 border-t border-gray-300">
-          <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
+          <form
+            className="flex justify-start items-end gap-3"
+            onSubmit={handleSubmit}
+          >
             <div className="flex-1">
               <Input
                 placeholder="Call title"
@@ -258,26 +260,13 @@ export default function CallDialog() {
                 className="w-full border-gray-300 rounded-md px-3 py-2"
               />
             </div>
-            <div className="flex flex-col md:flex-row gap-2">
-              <Button
-                type="submit"
-                name="save"
-                value="save"
-                className="flex-1 py-2 text-white rounded-md transition-all hover:opacity-90"
-                style={{ backgroundColor: theme.base1 }}
-              >
-                Save Note
-              </Button>
-              <Button
-                type="submit"
-                name="saveAndRecord"
-                value="saveAndRecord"
-                className="flex-1 py-2 text-white rounded-md transition-all hover:opacity-90"
-                style={{ backgroundColor: theme.base1 }}
-              >
-                Save & Record Video
-              </Button>
-            </div>
+            <Button
+              type="submit"
+              className="ml-auto w-1/5 py-2 mt-2 text-white rounded-md transition-all hover:opacity-90"
+              style={{ backgroundColor: theme.base1 }}
+            >
+              Save Note
+            </Button>
           </form>
         </div>
       </DialogContent>

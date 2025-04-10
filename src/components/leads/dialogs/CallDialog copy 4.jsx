@@ -25,6 +25,7 @@ import CompanyLogo from '@/components/Sidebar/CompanyLogo';
 import { useAuth } from '@/components/AuthProvider';
 import { useToast } from '@/hooks/use-toast';
 import useLeadsStore from '@/store/useLeadsStore';
+// Importamos useRouter para redirigir
 import { useRouter } from 'next/navigation';
 
 export default function CallDialog() {
@@ -35,10 +36,10 @@ export default function CallDialog() {
   const number = business?.phone;
   const { user } = useAuth();
   const { getContactsForBusiness } = useLeadsStore();
-  const router = useRouter();
+  const router = useRouter(); // Hook para navegación
   const { toast } = useToast();
 
-  // Estados para el formulario
+  // Estados para formulario y carga
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
@@ -106,33 +107,11 @@ export default function CallDialog() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Detectamos cuál botón envió el formulario.
+    // Detectamos cuál botón envió el formulario
     const isSaveAndRecord =
       e.nativeEvent.submitter &&
       e.nativeEvent.submitter.name === 'saveAndRecord';
 
-    // Consideramos la nota vacía si title, description y tags están vacíos (trim para eliminar espacios)
-    const isNoteEmpty =
-      title.trim() === '' && description.trim() === '' && tags.trim() === '';
-
-    // Si se usa "Save" y la nota está vacía, se muestra un mensaje de error.
-    if (!isSaveAndRecord && isNoteEmpty) {
-      toast({
-        title: 'Empty note',
-        description: 'Please fill in some details before saving the note.',
-      });
-      return;
-    }
-
-    // Si se usa "Save & Record" y la nota está vacía, redirigimos sin guardar
-    if (isSaveAndRecord && isNoteEmpty) {
-      closeDialog();
-      router.push('/main/video-rec');
-      return;
-    }
-
-    // Si la nota no está vacía, se guarda la nota.
     const contactsForBusiness = getContactsForBusiness(business._id);
     const data = {
       user: user?._id || '',
@@ -149,25 +128,24 @@ export default function CallDialog() {
     try {
       setLoading(true);
       console.log('Enviando datos:', data);
+
       const response = await axiosInstance.post(
         env.endpoints.callNotes.create,
         data
       );
+
       console.log('Respuesta:', response.data);
       toast({
         title: 'Note saved',
         description: 'The note has been saved successfully.',
       });
       closeDialog();
+      // Si se presionó el botón de "Save & Record", redirigimos a la ruta correspondiente
       if (isSaveAndRecord) {
         router.push('/main/video-rec');
       }
     } catch (error) {
       console.error('Error enviando los datos:', error);
-      toast({
-        title: 'Error',
-        description: 'There was an error saving your note.',
-      });
     } finally {
       setLoading(false);
     }
@@ -236,6 +214,7 @@ export default function CallDialog() {
         </DialogHeader>
 
         {/* Formulario de notas */}
+        {/* Formulario de notas */}
         <div className="p-6 bg-gray-50 border-t border-gray-300">
           <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
             <div className="flex-1">
@@ -258,6 +237,7 @@ export default function CallDialog() {
                 className="w-full border-gray-300 rounded-md px-3 py-2"
               />
             </div>
+            {/* Contenedor responsivo para los botones: en pantallas medianas en adelante estarán en fila */}
             <div className="flex flex-col md:flex-row gap-2">
               <Button
                 type="submit"
