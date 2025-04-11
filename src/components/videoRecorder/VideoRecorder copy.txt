@@ -9,9 +9,15 @@ import { Badge } from '@/components/ui/badge';
 import { FaCircle, FaStop } from 'react-icons/fa';
 import TimeDisplay from './TimeDisplay';
 import { useToast } from '@/hooks/use-toast';
+import {
+  MdCloudUpload,
+  MdCloudDownload,
+  MdOutlineAddLink,
+} from 'react-icons/md';
 import { uploadVideoToSupabase } from '@/lib/supabase/uploadToSupabase';
 
 const VideoRecorder = () => {
+  const [videoPublicLink, setVideoPublicLink] = useState('');
   const videoRef = useRef(null);
   const [videoDevices, setVideoDevices] = useState([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState('');
@@ -19,20 +25,24 @@ const VideoRecorder = () => {
   const timeoutRef = useRef(null);
   const { toast } = useToast();
 
+  // Solicitar permisos y obtener la lista completa de cámaras
   useEffect(() => {
-    const getCameras = async () => {
+    const requestPermissionsAndGetCameras = async () => {
       try {
+        // Solicitar permiso a la cámara para poder obtener las etiquetas reales
+        await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        // Luego, enumeramos los dispositivos disponibles
         const devices = await navigator.mediaDevices.enumerateDevices();
         const videoInputs = devices.filter(
           (device) => device.kind === 'videoinput'
         );
         setVideoDevices(videoInputs);
       } catch (err) {
-        console.error('Error listing video devices:', err);
+        console.error('Error accessing video devices:', err);
       }
     };
 
-    getCameras();
+    requestPermissionsAndGetCameras();
   }, []);
 
   useEffect(() => {
@@ -101,11 +111,14 @@ const VideoRecorder = () => {
 
     try {
       const publicUrl = await uploadVideoToSupabase(blob, filename);
+      // Genera el link a la página pública usando el nombre del archivo.
+      const pageLink = `https://app.salestoolspro.com/v/${filename}`;
       toast({
         title: 'Video uploaded!',
         description: publicUrl,
       });
       console.log('URL del video:', publicUrl);
+      setVideoPublicLink(pageLink);
     } catch (err) {
       toast({
         title: 'Upload failed',
@@ -193,16 +206,42 @@ const VideoRecorder = () => {
               controls
               className="rounded-lg border w-[500px] aspect-video bg-black"
             />
-            <a
-              href={mediaBlobUrl}
-              download="recording.mp4"
-              className="text-blue-600 hover:underline"
-            >
-              Download Video
-            </a>
-            <Button onClick={handleUpload} disabled={!mediaBlobUrl}>
-              Subir a Supabase
-            </Button>
+            <div className="flex flex-row justify-evenly w-full">
+              <a
+                href={mediaBlobUrl}
+                download="recording.mp4"
+                className="bg-black text-white text-sm rounded-md p-2 hover:bg-gray-800 transition-colors"
+              >
+                <MdCloudDownload className="inline-block mr-1" />
+                Download
+              </a>
+              <Button onClick={handleUpload} disabled={!mediaBlobUrl}>
+                <MdCloudUpload className="inline-block mr-1" />
+                and
+                <MdOutlineAddLink className="inline-block mx-1" />
+              </Button>
+            </div>
+            {videoPublicLink && (
+              <div className="flex items-center gap-2 mt-4">
+                <input
+                  type="text"
+                  readOnly
+                  value={videoPublicLink}
+                  className="border rounded-md p-2 w-full max-w-md"
+                />
+                <Button
+                  onClick={() => {
+                    navigator.clipboard.writeText(videoPublicLink);
+                    toast({
+                      title: 'Link copiado',
+                      description: 'El enlace se ha copiado al portapapeles.',
+                    });
+                  }}
+                >
+                  Copiar link
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

@@ -9,10 +9,10 @@ export const metadata = ({ params }) => {
 
   return {
     title: `Video: ${filename}`,
-    description: 'Mira este video grabado desde mi app.',
+    description: 'Watch this video recorded for you.',
     openGraph: {
-      title: `Video de mi app: ${filename}`,
-      description: 'Mira este video grabado desde mi app.',
+      title: `Video for you: ${filename}`,
+      description: 'Watch this video recorded for you.',
       images: [
         {
           url: thumbnailUrl,
@@ -38,17 +38,19 @@ export default function VideoPage({ params }) {
   return (
     <main style={{ padding: '1rem', textAlign: 'center' }}>
       {/* <h1>Video: {filename}</h1> */}
-      <h1 className="text-2xl">Your Video</h1>
-      <div className="flex flex-col items-center justify-center gap-6 p-6">
+      <h1 className="text-2xl text-white font-semibold">
+        <span className="bg-teal-800 px-3 py-2 rounded-full">Your Video</span>
+      </h1>
+      <div className="flex flex-col items-center justify-center gap-6 p-8">
         <video
           src={videoUrl}
           controls
           width="640"
           height="360"
           style={{ maxWidth: '100%' }}
-          className="rounded-lg border p-4 border-gray-300 shadow-lg"
+          className="rounded-lg border p-5 border-teal-900 shadow-lg shadow-teal-900"
         >
-          Tu navegador no soporta el elemento video.
+          Your browser dont support the video.
         </video>
       </div>
     </main>

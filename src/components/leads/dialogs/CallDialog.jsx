@@ -50,7 +50,7 @@ export default function CallDialog() {
       const fetchedContacts = getContactsForBusiness(business._id);
       setContacts(fetchedContacts);
     }
-  }, [business]);
+  }, [business, getContactsForBusiness]);
 
   const handleCall = async () => {
     if (number && destination) {

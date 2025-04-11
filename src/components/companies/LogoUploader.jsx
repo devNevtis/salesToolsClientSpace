@@ -1,8 +1,8 @@
 // src/components/companies/LogoUploader.jsx
-"use client";
-import { useState, useEffect } from "react"; // Añadimos useEffect
-import { Upload, Image as ImageIcon, X, Loader2 } from "lucide-react";
-import { useLogoUploader } from "@/hooks/use-logo-uploader";
+'use client';
+import { useState, useEffect } from 'react'; // Añadimos useEffect
+import { Upload, Image as ImageIcon, X, Loader2 } from 'lucide-react';
+import { useLogoUploader } from '@/hooks/use-logo-uploader';
 import useCompanyTheme from '@/store/useCompanyTheme';
 
 export const LogoUploader = () => {
@@ -32,7 +32,7 @@ export const LogoUploader = () => {
   };
 
   const handleRemoveLogo = () => {
-    setTheme({ ...theme, logo: "" });
+    setTheme({ ...theme, logo: '' });
     setPreview(null);
   };
 
@@ -40,15 +40,18 @@ export const LogoUploader = () => {
     <div>
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-lg font-medium text-gray-700">Company Logo</h3>
-        <span className="text-sm text-gray-500">Upload your company logo here</span>
+        <span className="text-sm text-gray-500">
+          Upload your company logo here
+        </span>
       </div>
 
       <div className="mt-2">
         {preview ? (
           <div className="relative w-full bg-white rounded-lg border-2 border-dashed border-gray-300 p-4">
-            <img 
-              src={preview} 
-              alt="Logo preview" 
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={preview}
+              alt="Logo preview"
               className="max-h-[100px] w-auto mx-auto object-contain"
             />
             <button
@@ -58,7 +61,6 @@ export const LogoUploader = () => {
             >
               <X className="h-4 w-4" />
             </button>
-            
             {/* Añadimos la opción de cambiar el logo debajo de la imagen */}
             <label
               htmlFor="logo-upload"
@@ -91,7 +93,9 @@ export const LogoUploader = () => {
             <Upload className="h-10 w-10 text-gray-400 mb-4" />
             <div className="text-center">
               <p className="text-base">Click to upload or drag and drop</p>
-              <p className="text-sm text-gray-500">SVG, PNG, JPG or GIF (MAX. 800×400px)</p>
+              <p className="text-sm text-gray-500">
+                SVG, PNG, JPG or GIF (MAX. 800×400px)
+              </p>
             </div>
           </label>
         )}

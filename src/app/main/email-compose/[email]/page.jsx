@@ -29,7 +29,7 @@ export default function EmailCompose() {
     if (email && email !== emailData.to) {
       setEmailData((prev) => ({ ...prev, to: decodeURIComponent(email) }));
     }
-  }, [email]);
+  }, [email, emailData.to]);
 
   // Estado para el proveedor seleccionado
   const [selectedProvider, setSelectedProvider] = useState('');

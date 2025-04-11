@@ -25,7 +25,7 @@ const CallNotesChart = ({ contacts }) => {
       }
     };
     fetchNotes();
-  }, []);
+  }, [setAllNotes]);
 
   useEffect(() => {
     if (allNotes.length > 0) {

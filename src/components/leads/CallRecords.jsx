@@ -10,22 +10,21 @@ const CallRecords = ({ businessId }) => {
   const [callRecords, setCallRecords] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchCallRecords = async () => {
-    if (!user?._id || !businessId) return;
-    setLoading(true);
-    try {
-      const { data } = await axiosInstance.get(
-        env.endpoints.callNotes.getByBusiness(businessId)
-      );
-      setCallRecords(data);
-    } catch (error) {
-      console.error('Error fetching call records:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchCallRecords = async () => {
+      if (!user?._id || !businessId) return;
+      setLoading(true);
+      try {
+        const { data } = await axiosInstance.get(
+          env.endpoints.callNotes.getByBusiness(businessId)
+        );
+        setCallRecords(data);
+      } catch (error) {
+        console.error('Error fetching call records:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchCallRecords();
   }, [user, businessId]);
 

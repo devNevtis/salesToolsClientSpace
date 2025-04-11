@@ -38,7 +38,7 @@ function LeadDetailPage() {
       fetchBusinesses();
       fetchLeads();
     }
-  }, [leadId, businesses, isLoadingBusiness]);
+  }, [leadId, businesses, isLoadingBusiness, fetchBusinesses, fetchLeads]);
 
   const handleTabChange = (value) => {
     startTransition(() => {

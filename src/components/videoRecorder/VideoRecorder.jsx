@@ -45,6 +45,16 @@ const VideoRecorder = () => {
     requestPermissionsAndGetCameras();
   }, []);
 
+  // Este efecto solo se encarga de limpiar el stream anterior si cambia
+  useEffect(() => {
+    return () => {
+      if (previewStream) {
+        previewStream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [previewStream]);
+
+  // Este efecto obtiene un nuevo stream al cambiar de cámara
   useEffect(() => {
     const getStream = async () => {
       if (!selectedDeviceId) return;
@@ -55,11 +65,11 @@ const VideoRecorder = () => {
           audio: true,
         });
 
-        if (previewStream) {
-          previewStream.getTracks().forEach((track) => track.stop());
-        }
+        setPreviewStream((prev) => {
+          if (prev) prev.getTracks().forEach((track) => track.stop());
+          return stream;
+        });
 
-        setPreviewStream(stream);
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
         }
@@ -69,12 +79,6 @@ const VideoRecorder = () => {
     };
 
     getStream();
-
-    return () => {
-      if (previewStream) {
-        previewStream.getTracks().forEach((track) => track.stop());
-      }
-    };
   }, [selectedDeviceId]);
 
   const { status, startRecording, stopRecording, mediaBlobUrl } =
