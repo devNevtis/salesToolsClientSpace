@@ -130,21 +130,19 @@ export default function LeadSourceChart({ contacts }) {
 
   return (
     <Card className="relative bg-white">
-      {/* Mantenemos la estructura general y altura */}
-      <div className="p-4 flex flex-col h-[290px]">
-        <h2 className="text-xl font-bold text-[#224f5a] mb-2 shrink-0">
+      <div className="p-2 flex flex-col h-[290px]">
+        <h2 className="text-xl font-bold text-[#224f5a] mb-4">
           Contact Sources
-        </h2>{' '}
-        {/* Reducido mb */}
+        </h2>
         <div className="flex-1 min-h-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={chartData}
                 cx="50%"
-                cy="50%" // Centrado vertical
-                innerRadius={50}
-                outerRadius={80}
+                cy="50%"
+                innerRadius={60}
+                outerRadius={90}
                 paddingAngle={2}
                 dataKey="value"
               >
@@ -157,17 +155,13 @@ export default function LeadSourceChart({ contacts }) {
               </Pie>
               <Tooltip content={<CustomTooltip />} />
               <Legend
-                iconSize={14}
-                wrapperStyle={{
-                  paddingTop: '10px',
-                }}
+                iconSize={18}
+                layout="horizontal"
+                verticalAlign="bottom"
+                align="center"
                 formatter={(value) => (
-                  <span className="flex items-center gap-1.5 text-xs md:text-sm">
-                    {' '}
-                    {CHANNEL_ICONS[value] || (
-                      <Zap className="inline h-3.5 w-3.5" />
-                    )}{' '}
-                    <span>{value}</span>
+                  <span className="flex items-center space-x-2">
+                    {CHANNEL_ICONS[value]} <span>{value}</span>
                   </span>
                 )}
               />

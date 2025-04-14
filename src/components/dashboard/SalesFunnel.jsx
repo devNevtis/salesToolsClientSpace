@@ -89,7 +89,7 @@ export default function SalesFunnel() {
 
   return (
     <Card className="relative bg-white">
-      <div className="p-4 flex flex-col h-[320px]">
+      <div className="p-4 flex flex-col h-[290px]">
         {/* Header con título y Lost indicator */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-[#224f5a]">Sales Funnel</h2>

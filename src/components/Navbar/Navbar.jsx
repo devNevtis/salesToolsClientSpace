@@ -1,108 +1,113 @@
 // src/components/Navbar/Navbar.jsx
 'use client';
 
+import { useState } from 'react'; // Importa useState
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { MdOutlineDashboard, MdFormatListBulletedAdd } from 'react-icons/md';
-import { FiSettings } from 'react-icons/fi'; // Importamos icono de configuración
+import { FiSettings } from 'react-icons/fi';
+import { Menu } from 'lucide-react';
 import LogoutButton from '@/components/logout/LogoutButton';
 import { useAuth } from '@/components/AuthProvider';
 import useCompanyTheme from '@/store/useCompanyTheme';
 import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import Sidebar from '@/components/Sidebar/Sidebar';
 
 const Navbar = () => {
   const pathname = usePathname();
   const { user } = useAuth();
   const { theme } = useCompanyTheme();
+  // Estado para el Sheet, manejado DENTRO del Navbar
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const canAccessConfig = user?.role === 'owner' || user?.role === 'admin';
 
-  const getLinkStyle = (href) => {
-    const isActive = pathname.startsWith(href);
-    return {
-      display: 'flex',
-      alignItems: 'end',
-      gap: '0.5rem',
-      padding: '0.5rem',
-      color: isActive ? theme.highlighting : 'white',
-      transition: 'color 0.2s',
-    };
+  const headerInlineStyle = {
+    '--theme-base1': theme?.base1 || '#224F5A',
+    '--theme-highlighting': theme?.highlighting || '#FFFFFF',
+    backgroundColor: 'var(--theme-base1)',
   };
 
-  const navbarStyle = {
-    width: '100%',
-    height: '5vh',
-    backgroundColor: theme.base1,
-    borderRadius: '0.375rem',
-    boxShadow:
-      '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-    marginBottom: '0.5rem',
-    marginTop: '0.5rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-  };
-
-  const handleHover = (e, href) => {
+  const getLinkClasses = (href) => {
     const isActive = pathname.startsWith(href);
-    e.currentTarget.style.color = isActive ? theme.highlighting : 'white';
+    let classes =
+      'flex items-center gap-1.5 p-2 rounded-md transition-colors duration-150 ease-in-out text-sm font-medium'; // Ajustado gap y items-center
+    if (isActive) {
+      // Usa la variable CSS para el color de texto activo
+      classes += ' text-[var(--theme-highlighting)] bg-black/10';
+    } else {
+      // Color blanco por defecto para inactivo, hover sutil
+      classes += ' text-white hover:bg-black/10 hover:text-white/90';
+    }
+    return classes;
   };
 
   return (
-    <div style={navbarStyle}>
-      <div className="flex gap-2 w-1/3">
+    <header
+      className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 md:px-6 border-b shadow-md"
+      style={headerInlineStyle}
+    >
+      {/* === Sheet y Trigger (Contenedor + Botón Hamburguesa) === */}
+      <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+        {/* Botón Hamburguesa (SheetTrigger) - Visible solo en pantallas < lg */}
+        <SheetTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden text-white hover:bg-black/20 mr-2"
+          >
+            <Menu className="h-6 w-6" />
+            <span className="sr-only">Toggle Menu</span>
+          </Button>
+        </SheetTrigger>
+
+        {/* Contenido del Sheet (Sidebar) */}
+        <SheetContent
+          side="left"
+          className="p-0 w-[280px]"
+          aria-describedby={undefined}
+        >
+          <Sidebar closeSheet={() => setIsSidebarOpen(false)} />
+        </SheetContent>
+      </Sheet>
+      <nav className="hidden lg:flex items-center gap-1">
         <Link
           href="/main/dashboard"
-          style={getLinkStyle('/main/dashboard')}
-          onMouseEnter={(e) => handleHover(e, '/main/dashboard')}
-          onMouseLeave={(e) => handleHover(e, '/main/dashboard')}
+          className={getLinkClasses('/main/dashboard')}
         >
-          <MdOutlineDashboard size={20} />
-          <p className="font-semibold text-sm">Dash</p>
+          <MdOutlineDashboard size={18} />
+          <p>Dash</p>
         </Link>
-        <Link
-          href="/main/leads"
-          style={getLinkStyle('/main/leads')}
-          onMouseEnter={(e) => handleHover(e, '/main/leads')}
-          onMouseLeave={(e) => handleHover(e, '/main/leads')}
-        >
-          <MdFormatListBulletedAdd size={20} />
-          <p className="font-semibold text-sm">Leads/Cust</p>
+        <Link href="/main/leads" className={getLinkClasses('/main/leads')}>
+          <MdFormatListBulletedAdd size={18} />
+          <p>Leads/Cust</p>
         </Link>
-        {/* Botón de configuración */}
         {canAccessConfig && (
           <Link
             href={`/main/company/${user.companyId}`}
-            style={getLinkStyle(`/main/company/${user.companyId}`)}
-            onMouseEnter={(e) =>
-              handleHover(e, `/main/company/${user.companyId}`)
-            }
-            onMouseLeave={(e) =>
-              handleHover(e, `/main/company/${user.companyId}`)
-            }
+            className={getLinkClasses(`/main/company/${user.companyId}`)}
           >
-            <FiSettings size={20} />
-            <p className="font-semibold text-sm">Settings</p>
+            <FiSettings size={18} />
+            <p>Settings</p>
           </Link>
         )}
+      </nav>
+      <div className="hidden lg:flex justify-center flex-1 px-4">
+        <Image
+          src="/DialToolsProLogoWhite.png"
+          alt="Logo"
+          width={140}
+          height={40}
+          className="object-contain"
+          priority={true}
+        />
       </div>
-
-      <div className="w-1/3 flex justify-center">
-        <div>
-          <Image
-            src="/DialToolsProLogoWhite.png"
-            alt="logowhite"
-            width={150}
-            height={100}
-            className="pt-2"
-            priority={true}
-          />
-        </div>
-      </div>
-
-      <div className="w-1/3 flex justify-end">
+      <div className="flex items-center shrink-0">
         <LogoutButton />
       </div>
-    </div>
+    </header>
   );
 };
 

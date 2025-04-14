@@ -1,3 +1,4 @@
+//src/components/dashboard/OpportunityFunnel.jsx
 'use client';
 
 import { useMemo } from 'react';
@@ -116,7 +117,7 @@ export default function OpportunityFunnel() {
 
   return (
     <Card className="relative bg-white">
-      <div className="p-4 flex flex-col h-[320px]">
+      <div className="p-4 flex flex-col h-[290px]">
         {/* Header con total de oportunidades */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-[#224f5a]">

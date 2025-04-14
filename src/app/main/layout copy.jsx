@@ -21,15 +21,11 @@ const MainLayout = ({ children }) => {
   }, [fetchBusinesses, fetchLeads]);
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <div className="hidden lg:block lg:w-[280px] shrink-0 border-r bg-slate-100 h-screen sticky top-0">
-        <Sidebar />
-      </div>
-      {/* === Área de Contenido Principal === */}
-      <div className="flex flex-col flex-1 w-full lg:w-[calc(100%-280px)]">
-        {/* Navbar (ya es sticky) */}
+    <div className="flex flex-col-reverse md:flex-row">
+      <Sidebar />
+      <div className="w-[100%] h-[100vh]">
         <Navbar />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+        <div>{children}</div>
       </div>
     </div>
   );

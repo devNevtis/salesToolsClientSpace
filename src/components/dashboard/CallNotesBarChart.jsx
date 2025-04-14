@@ -75,7 +75,7 @@ export default function CallNotesBarChart({ filteredNotes }) {
   }, [filteredByTime]);
 
   return (
-    <Card className="p-4 h-[300px] flex flex-col justify-between">
+    <Card className="p-4 h-[290px] flex flex-col justify-between">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold text-[#224f5a]">
           Call Notes Analytics
