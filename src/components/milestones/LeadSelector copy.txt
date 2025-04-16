@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import useLeadsStore from '@/store/useLeadsStore';
 import useMilestonesStore from '@/store/useMilestonesStore';
 
@@ -17,10 +17,11 @@ export default function LeadSelector() {
 
   return (
     <div className="flex items-center gap-4">
-      <span className="text-xs sm:text-sm font-medium">
-        Select Lead/Customer:
-      </span>
-      <Select value={selectedLeadId || ''} onValueChange={setSelectedLead}>
+      <span className="text-sm font-medium">Select Lead/Customer:</span>
+      <Select 
+        value={selectedLeadId || ''} 
+        onValueChange={setSelectedLead}
+      >
         <SelectTrigger className="w-[300px]">
           <SelectValue placeholder="Select a lead or customer" />
         </SelectTrigger>
