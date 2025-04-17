@@ -104,7 +104,7 @@ function LeadDetailPage() {
                 <TabsTrigger
                   key={tab.id}
                   value={tab.id}
-                  className={`relative px-4 py-2 text-sm font-medium rounded-md transition-all 
+                  className={`relative px-1 md:px-4 py-2 text-xs md:text-sm font-semibold md:font-medium rounded-md transition-all 
                     ${
                       activeTab === tab.id
                         ? 'text-primary bg-primary/10'
