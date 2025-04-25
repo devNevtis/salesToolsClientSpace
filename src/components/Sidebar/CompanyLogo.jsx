@@ -1,9 +1,9 @@
 //src/components/Sidebar/CompanyLogo.jsx
-"use client";
-import { Card } from "@/components/ui/card";
+'use client';
+import { Card } from '@/components/ui/card';
 import useCompanyTheme from '@/store/useCompanyTheme';
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import Image from 'next/image';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const CompanyLogo = () => {
   const { theme } = useCompanyTheme();
