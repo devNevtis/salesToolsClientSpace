@@ -3,7 +3,6 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { useReactMediaRecorder } from 'react-media-recorder';
-import axios from 'axios'; // Importar Axios
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,15 +14,11 @@ import {
   MdCloudDownload,
   MdOutlineAddLink,
 } from 'react-icons/md';
-// Ya no importamos uploadVideoToSupabase
+import { uploadVideoToSupabase } from '@/lib/supabase/uploadToSupabase';
 import useCompanyTheme from '@/store/useCompanyTheme';
 
 const APP_BASE_URL =
   process.env.NEXT_PUBLIC_APP_BASE_URL || 'https://app.salestoolspro.com';
-
-// URL del nuevo endpoint de carga
-const UPLOAD_API_ENDPOINT =
-  'https://api.nevtis.com/marketplace/files/video/upload';
 
 const VideoRecorder = () => {
   const [videoPublicLink, setVideoPublicLink] = useState('');
@@ -38,20 +33,22 @@ const VideoRecorder = () => {
   const { theme } = useCompanyTheme();
   const logoUrlFromStore = theme?.logo;
 
-  // --- useEffects para permisos, cámaras y streams (SIN CAMBIOS) ---
+  // Solicitar permisos y obtener la lista completa de cámaras al montar
   useEffect(() => {
     const requestPermissionsAndGetCameras = async () => {
       try {
+        // Solicitar permiso a la cámara y micrófono
         await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        // Enumerar dispositivos disponibles
         const devices = await navigator.mediaDevices.enumerateDevices();
         const videoInputs = devices.filter(
           (device) => device.kind === 'videoinput'
         );
         setVideoDevices(videoInputs);
-        // Opcional: seleccionar la primera cámara por defecto
-        // if (videoInputs.length > 0 && !selectedDeviceId) {
-        //   setSelectedDeviceId(videoInputs[0].deviceId);
-        // }
+        // Opcional: seleccionar la primera cámara por defecto si no hay una seleccionada
+        if (videoInputs.length > 0 && !selectedDeviceId) {
+          // setSelectedDeviceId(videoInputs[0].deviceId); // Descomenta si se quiere seleccionar una por defecto
+        }
       } catch (err) {
         console.error('Error accessing media devices:', err);
         toast({
@@ -67,6 +64,7 @@ const VideoRecorder = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Limpiar el stream anterior si cambia o el componente se desmonta
   useEffect(() => {
     return () => {
       if (previewStream) {
@@ -76,10 +74,12 @@ const VideoRecorder = () => {
     };
   }, [previewStream]);
 
+  // Obtener un nuevo stream al cambiar de cámara
   useEffect(() => {
     let isMounted = true;
 
     const getStream = async () => {
+      // Si no hay cámara seleccionada, detener el stream actual y limpiar
       if (!selectedDeviceId) {
         if (previewStream) {
           console.log('No device selected, stopping preview stream.');
@@ -99,17 +99,21 @@ const VideoRecorder = () => {
 
         if (isMounted) {
           console.log('New stream obtained, setting preview.');
+          // Detener el stream anterior antes de setear el nuevo
           setPreviewStream((prev) => {
             if (prev && prev.id !== stream.id) {
+              // Evitar detener el mismo stream
               console.log('Stopping previous stream before setting new one.');
               prev.getTracks().forEach((track) => track.stop());
             }
             return stream;
           });
+          // Asignar el stream al elemento video
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
           }
         } else {
+          // Si el componente se desmontó mientras se obtenía el stream, detenerlo
           console.log(
             'Component unmounted while getting stream, stopping tracks.'
           );
@@ -123,6 +127,7 @@ const VideoRecorder = () => {
             description: `No se pudo acceder a la cámara seleccionada. ${err.message}`,
             variant: 'destructive',
           });
+          // Limpiar el stream si falla el acceso
           setPreviewStream(null);
           if (videoRef.current) videoRef.current.srcObject = null;
         }
@@ -131,14 +136,16 @@ const VideoRecorder = () => {
 
     getStream();
 
+    // Función de limpieza para este efecto
     return () => {
       isMounted = false;
+      // No detener el stream aquí directamente, el efecto de limpieza de [previewStream] se encarga
       console.log('Cleanup function for device selection effect.');
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDeviceId, toast]);
 
-  // --- Hook useReactMediaRecorder (SIN CAMBIOS) ---
+  // Hook para la grabación
   const {
     status,
     startRecording,
@@ -147,26 +154,30 @@ const VideoRecorder = () => {
     clearBlobUrl,
     previewStream: recorderPreviewStream,
   } = useReactMediaRecorder({
+    // Usar el deviceId seleccionado si existe
     video: selectedDeviceId ? { deviceId: { exact: selectedDeviceId } } : true,
     audio: true,
     blobPropertyBag: { type: 'video/mp4' },
     // askPermissionOnMount: false,
   });
 
-  // --- useEffect para sincronizar <video> con stream (SIN CAMBIOS) ---
+  // Sincronizar el elemento <video> con el stream correcto (preview o grabación)
   useEffect(() => {
     if (videoRef.current) {
       if (status === 'recording' && recorderPreviewStream) {
+        // Durante la grabación, mostrar el stream del grabador
         if (videoRef.current.srcObject !== recorderPreviewStream) {
           console.log('Setting video source to recorderPreviewStream');
           videoRef.current.srcObject = recorderPreviewStream;
         }
       } else if (status !== 'recording' && previewStream) {
+        // Cuando no se graba, mostrar el stream de preview normal
         if (videoRef.current.srcObject !== previewStream) {
           console.log('Setting video source to previewStream');
           videoRef.current.srcObject = previewStream;
         }
       } else if (!previewStream && status !== 'recording') {
+        // Si no hay stream de preview y no se está grabando, limpiar
         if (videoRef.current.srcObject !== null) {
           console.log('Clearing video source (no stream available)');
           videoRef.current.srcObject = null;
@@ -175,7 +186,7 @@ const VideoRecorder = () => {
     }
   }, [previewStream, status, recorderPreviewStream]);
 
-  // --- Funciones handleStartRecording y handleStopRecording (SIN CAMBIOS) ---
+  // Iniciar grabación
   const handleStartRecording = () => {
     if (!selectedDeviceId && videoDevices.length > 0) {
       toast({
@@ -193,12 +204,25 @@ const VideoRecorder = () => {
       });
       return;
     }
-    clearBlobUrl();
-    setVideoPublicLink('');
+    clearBlobUrl(); // Limpiar video anterior
+    setVideoPublicLink(''); // Limpiar link anterior
     console.log('Starting recording...');
     startRecording();
+
+    // Detener automáticamente después de 30 segundos (opcional)
+    // timeoutRef.current = setTimeout(() => {
+    //   if (status === 'recording') { // Comprobar si sigue grabando
+    //      console.log("Stopping recording automatically after 30 seconds.");
+    //      stopRecording(); // Llamar a stopRecording directamente
+    //      toast({
+    //       title: 'Grabación finalizada',
+    //       description: 'Se detuvo automáticamente después de 30 segundos.',
+    //     });
+    //   }
+    // }, 30000);
   };
 
+  // Detener grabación manualmente
   const handleStopRecording = () => {
     console.log('Stopping recording manually...');
     stopRecording();
@@ -206,9 +230,10 @@ const VideoRecorder = () => {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
+    // Considerar si reiniciar el preview stream aquí o dejar que el usuario re-seleccione
   };
 
-  // --- Función handleUpload (MODIFICADA PARA USAR AXIOS Y LA NUEVA API) ---
+  // Subir video y generar link
   const handleUpload = async () => {
     if (!mediaBlobUrl) {
       toast({
@@ -229,125 +254,98 @@ const VideoRecorder = () => {
 
     setIsUploading(true);
     setVideoPublicLink('');
-    console.log('Starting upload process to new API...');
+    console.log('Starting upload process...');
 
     try {
-      // 1. Obtener el Blob del video grabado
-      const responseBlob = await fetch(mediaBlobUrl);
-      if (!responseBlob.ok) {
-        throw new Error(`Failed to fetch blob: ${responseBlob.statusText}`);
-      }
-      const blob = await responseBlob.blob();
+      // Obtener el Blob del video grabado
+      const response = await fetch(mediaBlobUrl);
+      if (!response.ok)
+        throw new Error(`Failed to fetch blob: ${response.statusText}`);
+      const blob = await response.blob();
       console.log('Blob obtained, size:', blob.size);
 
-      // 2. Crear FormData y añadir el blob
-      const formData = new FormData();
-      // La API espera la clave 'file' para el video
-      formData.append('file', blob, `video-${Date.now()}.mp4`); // Opcionalmente puedes pasar un nombre de archivo aquí
+      // Crear nombre de archivo único para Supabase
+      const uniqueTimestamp = Date.now();
+      const videoFilename = `video-${uniqueTimestamp}.mp4`;
+      console.log('Uploading to Supabase with filename:', videoFilename);
 
-      console.log('Uploading to new API endpoint:', UPLOAD_API_ENDPOINT);
+      // Llamar a la función de subida (asume que devuelve la URL pública)
+      const supabasePublicUrl = await uploadVideoToSupabase(
+        blob,
+        videoFilename
+      );
+      if (!supabasePublicUrl)
+        throw new Error('Upload to Supabase did not return a public URL.');
+      console.log('Video subido a Supabase:', supabasePublicUrl);
 
-      // 3. Realizar la petición POST con Axios
-      const uploadResponse = await axios.post(UPLOAD_API_ENDPOINT, formData, {
-        headers: {
-          // Axios setea 'Content-Type': 'multipart/form-data' automáticamente con FormData
-          // Añade aquí cualquier header adicional necesario (ej: Authorization)
-          // 'Authorization': `Bearer TU_TOKEN_SI_ES_NECESARIO`
-        },
-      });
-
-      // 4. Procesar la respuesta de la API
-      if (uploadResponse.status >= 200 && uploadResponse.status < 300) {
-        const data = uploadResponse.data;
-        console.log('API Upload Response:', data);
-
-        if (
-          !data.key ||
-          typeof data.key !== 'string' ||
-          !data.key.includes('/')
-        ) {
-          throw new Error(
-            'Respuesta inválida de la API: Falta o es incorrecta la clave "key".'
-          );
+      // --- Extraer SOLO el nombre del archivo del logo ---
+      let logoFilenameIdentifier = '';
+      try {
+        // Validar que la URL del logo sea un string válido
+        if (typeof logoUrlFromStore !== 'string' || !logoUrlFromStore) {
+          throw new Error('Invalid logo URL string.');
         }
+        // Usar la URL directamente con new URL, maneja codificaciones existentes
+        const parsedLogoUrl = new URL(logoUrlFromStore);
+        const pathSegments = parsedLogoUrl.pathname.split('/');
+        // Tomar el último segmento no vacío
+        logoFilenameIdentifier = pathSegments.filter(Boolean).pop() || '';
 
-        // Extraer el nombre del archivo de la clave devuelta (ej: "videos/nombre.mp4" -> "nombre.mp4")
-        const videoFilename = data.key.substring(data.key.lastIndexOf('/') + 1);
-        if (!videoFilename) {
-          throw new Error(
-            'No se pudo extraer el nombre del archivo desde la clave de la API.'
-          );
+        if (!logoFilenameIdentifier) {
+          throw new Error('Could not extract logo filename from URL path.');
         }
-        console.log('Extracted video filename from API:', videoFilename);
+        // *** LOG ANTES DE CODIFICAR ***
+        /*         console.log(
+          'Extracted logo filename (before encoding):',
+          `"${logoFilenameIdentifier}"`
+        ); */
 
-        // 5. Extraer el nombre del archivo del logo (Lógica SIN CAMBIOS)
-        let logoFilenameIdentifier = '';
-        try {
-          if (typeof logoUrlFromStore !== 'string' || !logoUrlFromStore) {
-            throw new Error('Invalid logo URL string.');
-          }
-          const parsedLogoUrl = new URL(logoUrlFromStore);
-          const pathSegments = parsedLogoUrl.pathname.split('/');
-          logoFilenameIdentifier = pathSegments.filter(Boolean).pop() || '';
-          if (!logoFilenameIdentifier) {
-            throw new Error('Could not extract logo filename from URL path.');
-          }
-          logoFilenameIdentifier = encodeURIComponent(logoFilenameIdentifier);
-        } catch (urlError) {
-          console.error('Error processing logo URL:', urlError);
-          toast({
-            title: 'Error de Configuración del Logo',
-            description: `La URL del logo (${logoUrlFromStore}) es inválida. ${urlError.message}`,
-            variant: 'destructive',
-          });
-          // No continuar si falla el logo
-          setIsUploading(false);
-          return;
-        }
-
-        // 6. Construir el link público de la aplicación (usando el nuevo videoFilename de la API)
-        const encodedVideoFilename = encodeURIComponent(videoFilename);
-        const pageLink = `${APP_BASE_URL}/v/${logoFilenameIdentifier}/${encodedVideoFilename}`;
-        console.log('Nuevo link público generado:', pageLink);
-
+        // Codificar el nombre del archivo para la URL
+        logoFilenameIdentifier = encodeURIComponent(logoFilenameIdentifier);
+        /*         console.log(
+          'Encoded logo filename (after encoding):',
+          logoFilenameIdentifier
+        ); */
+      } catch (urlError) {
+        console.error('Error processing logo URL:', urlError);
+        // Mostrar error más específico al usuario
         toast({
-          title: '¡Video Subido!',
-          description: `Link generado: ${pageLink}`,
+          title: 'Error de Configuración',
+          description: `La URL del logo (${logoUrlFromStore}) es inválida o no tiene el formato esperado.`,
+          variant: 'destructive',
         });
-        setVideoPublicLink(pageLink);
-      } else {
-        // Axios suele lanzar error para status no 2xx, pero por si acaso
-        throw new Error(
-          `API Error: ${uploadResponse.status} ${uploadResponse.statusText}`
-        );
+        setIsUploading(false);
+        return;
       }
-    } catch (err) {
-      console.error('Upload or link generation failed:', err);
-      let errorMessage = 'Ocurrió un error inesperado.';
-      if (axios.isAxiosError(err)) {
-        // Error específico de Axios (red, respuesta no 2xx, etc.)
-        errorMessage =
-          err.response?.data?.message ||
-          err.message ||
-          'Error de red o del servidor.';
-        console.error('Axios error details:', err.response?.data);
-      } else if (err instanceof Error) {
-        // Otros errores (fetch blob, procesamiento URL logo, extracción filename API)
-        errorMessage = err.message;
-      }
+
+      // --- Construir el nuevo link público de la aplicación ---
+      const encodedVideoFilename = encodeURIComponent(videoFilename);
+      // Estructura: /v/[logo-filename]/[video-filename]
+      const pageLink = `${APP_BASE_URL}/v/${logoFilenameIdentifier}/${encodedVideoFilename}`;
+      //console.log('Nuevo link público generado:', pageLink);
+
       toast({
-        title: 'Fallo la Operación de Subida',
-        description: errorMessage,
+        title: '¡Video Subido!',
+        description: `Link generado: ${pageLink}`,
+      });
+      setVideoPublicLink(pageLink);
+    } catch (err) {
+      // Capturar errores de fetch, subida, o procesamiento de URL
+      console.error('Upload or link generation failed:', err);
+      toast({
+        title: 'Fallo la Operación',
+        description: err.message || 'Ocurrió un error inesperado.',
         variant: 'destructive',
       });
       setVideoPublicLink('');
     } finally {
+      // Asegurarse de que el estado de carga se desactive siempre
       setIsUploading(false);
-      console.log('Upload process finished.');
+      //console.log('Upload process finished.');
     }
   };
 
-  // --- Renderizado del Componente (SIN CAMBIOS ESTRUCTURALES) ---
+  // --- Renderizado del Componente ---
   return (
     <div className="flex flex-col items-center justify-center gap-6 p-6">
       {/* Card para la grabación */}
@@ -410,6 +408,8 @@ const VideoRecorder = () => {
           </div>
           {/* Indicador de Tiempo */}
           <div className="h-6 mt-2">
+            {' '}
+            {/* Contenedor para evitar salto de layout */}
             <TimeDisplay isRecording={status === 'recording'} />
           </div>
           {/* Botones de Control */}
@@ -447,7 +447,7 @@ const VideoRecorder = () => {
         </CardContent>
       </Card>
 
-      {/* Card para Preview y Subida */}
+      {/* Card para Preview y Subida (solo si hay video grabado y no se está grabando) */}
       {mediaBlobUrl && status === 'stopped' && (
         <Card className="w-full max-w-xl mt-4 shadow-md rounded-lg">
           <CardContent className="flex flex-col items-center gap-4 p-4">
@@ -483,11 +483,13 @@ const VideoRecorder = () => {
                 disabled={!mediaBlobUrl || isUploading || !logoUrlFromStore}
                 className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md disabled:opacity-50 disabled:bg-blue-300"
               >
+                {/* Mostrar spinner o icono según estado */}
                 {isUploading ? (
                   <FaSpinner className="animate-spin mr-1" />
                 ) : (
                   <MdCloudUpload className="inline-block mr-1" />
                 )}
+                {/* Cambiar texto del botón según estado */}
                 {isUploading ? 'Uploading...' : 'Upload & Get Link'}
               </Button>
             </div>
