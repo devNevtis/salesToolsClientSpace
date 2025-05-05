@@ -1,0 +1,60 @@
+/* src/styles/custom-video-player.css */
+/* Estilos globales para personalizar Video.js, inspirados en CodePen */
+
+/* Aplica directamente a .video-js o usa una clase personalizada si la añades */
+.video-js.mi-reproductor-personalizado, /* Más específico si añades la clase */
+.video-js {
+  /* Regla general si no usas clase personalizada */
+  font-size: 10px;
+  color: #ffffff;
+}
+
+.video-js.mi-reproductor-personalizado .vjs-big-play-button,
+.video-js .vjs-big-play-button {
+  font-size: 3em;
+  height: 1.5em;
+  width: 3em;
+  line-height: 1.5em;
+  border: 0.06666em solid #ffffff;
+  border-radius: 0.3em;
+  background-color: rgba(43, 51, 63, 0.7);
+  /* Centrado debería funcionar con vjs-big-play-centered */
+}
+
+.video-js.mi-reproductor-personalizado .vjs-control-bar,
+.video-js.mi-reproductor-personalizado .vjs-menu-button .vjs-menu-content,
+.video-js .vjs-control-bar,
+.video-js .vjs-menu-button .vjs-menu-content {
+  background-color: rgba(43, 51, 63, 0.7);
+}
+
+.video-js.mi-reproductor-personalizado .vjs-slider,
+.video-js .vjs-slider {
+  background-color: rgba(96, 105, 119, 0.5);
+}
+
+.video-js.mi-reproductor-personalizado .vjs-volume-level,
+.video-js.mi-reproductor-personalizado .vjs-play-progress,
+.video-js.mi-reproductor-personalizado .vjs-slider-bar,
+.video-js .vjs-volume-level,
+.video-js .vjs-play-progress,
+.video-js .vjs-slider-bar {
+  background: #ffffff;
+}
+
+.video-js.mi-reproductor-personalizado .vjs-load-progress,
+.video-js .vjs-load-progress {
+  background: rgba(96, 105, 119, 0.5);
+}
+
+.video-js.mi-reproductor-personalizado .vjs-load-progress div,
+.video-js .vjs-load-progress div {
+  background: rgba(96, 105, 119, 0.75);
+}
+
+.video-js.mi-reproductor-personalizado .vjs-control:focus:before,
+.video-js.mi-reproductor-personalizado .vjs-control:focus,
+.video-js .vjs-control:focus:before,
+.video-js .vjs-control:focus {
+  outline: none;
+}
