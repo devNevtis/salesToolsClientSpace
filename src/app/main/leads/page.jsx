@@ -51,6 +51,7 @@ function LeadsPage() {
   const handleImportLeads = () => {
     console.log('Import leads clicked');
   };
+  console.log(user);
 
   return (
     // Usamos el padding de MainLayout (p-4 md:p-6), así que no añadimos container mx-auto px-4 aquí

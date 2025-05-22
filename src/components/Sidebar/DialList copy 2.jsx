@@ -16,20 +16,22 @@ import { Loader2, AlertCircle } from 'lucide-react';
 import { env } from '@/config/env';
 import areaCodesData from '@/data/usAreaCodes.json';
 
-// Función auxiliar para obtener información del estado y ciudad
 const getAreaCodeInfo = (phoneNumber) => {
   if (!phoneNumber || typeof phoneNumber !== 'string') {
     return null;
   }
+  // Asumimos que el número puede tener caracteres no numéricos (ej. +1, (NNN))
+  // Limpiamos para obtener solo dígitos
   const digits = phoneNumber.replace(/\D/g, '');
+
+  // Si el número empieza con '1' (código de país de USA), lo removemos para el código de área
   const relevantDigits = digits.startsWith('1') ? digits.substring(1) : digits;
 
   if (relevantDigits.length < 3) {
     return null;
   }
   const areaCode = relevantDigits.substring(0, 3);
-  // Devuelve el objeto completo, que ahora incluirá la ciudad si está en el JSON
-  return areaCodesData[areaCode] || null;
+  return areaCodesData[areaCode] || null; // Devuelve { state_code: 'CA', state_name: 'California' } o null
 };
 
 const DialList = () => {
@@ -62,23 +64,11 @@ const DialList = () => {
     fetchDestinations();
   }, []);
 
-  // Función para formatear la visualización del número con ciudad y estado
+  // Función para formatear la visualización del número con el estado
   const formatDisplayValue = (phoneNumber) => {
     if (!phoneNumber) return 'Select a number';
     const info = getAreaCodeInfo(phoneNumber);
-    if (info && info.city && info.state_code) {
-      // Verificar que tengamos ciudad y estado
-      return (
-        <>
-          {phoneNumber}
-          <span className="ml-2 inline-block bg-gray-200 text-gray-700 text-xs font-semibold px-2 py-0.5 rounded-full">
-            {info.city}, {info.state_code}
-          </span>
-        </>
-      );
-    }
-    // Fallback si solo tenemos código de estado (o nada)
-    if (info && info.state_code) {
+    if (info) {
       return (
         <>
           {phoneNumber}
@@ -129,26 +119,22 @@ const DialList = () => {
             <SelectGroup>
               {destinations.length > 0 ? (
                 destinations.map((dest) => {
+                  // Validar que `dest` y `dest.destination_number` existen
                   if (!dest || typeof dest.destination_number === 'undefined') {
                     console.warn('Skipping invalid destination object:', dest);
-                    return null;
+                    return null; // O manejar de otra forma
                   }
                   const key = dest.destination_uuid || dest.destination_number;
-                  const areaInfo = getAreaCodeInfo(dest.destination_number);
-                  let displayLocation = '';
-                  if (areaInfo && areaInfo.city && areaInfo.state_code) {
-                    displayLocation = `${areaInfo.city}, ${areaInfo.state_code}`;
-                  } else if (areaInfo && areaInfo.state_code) {
-                    displayLocation = areaInfo.state_code; // Fallback a solo estado si no hay ciudad
-                  }
-
                   return (
                     <SelectItem key={key} value={JSON.stringify(dest)}>
                       <div className="flex items-center justify-between w-full">
                         <span>{dest.destination_number}</span>
-                        {displayLocation && (
+                        {getAreaCodeInfo(dest.destination_number) && (
                           <span className="ml-2 inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">
-                            {displayLocation}
+                            {
+                              getAreaCodeInfo(dest.destination_number)
+                                .state_code
+                            }
                           </span>
                         )}
                       </div>

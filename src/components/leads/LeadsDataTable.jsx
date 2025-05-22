@@ -114,6 +114,8 @@ export default function LeadsDataTable() {
     return 'hover:bg-slate-100 transition-colors';
   };
 
+  console.log(businesses);
+
   // Renderizado de celdas (se mantiene igual en lógica, ajusta estilos si es necesario)
   const renderCell = (business, column) => {
     const contacts = getContactsForBusiness(business._id);

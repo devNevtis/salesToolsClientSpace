@@ -1,315 +1,754 @@
 {
-  "201": { "state_code": "NJ", "state_name": "New Jersey" },
-  "202": { "state_code": "DC", "state_name": "District of Columbia" },
-  "203": { "state_code": "CT", "state_name": "Connecticut" },
-  "205": { "state_code": "AL", "state_name": "Alabama" },
-  "206": { "state_code": "WA", "state_name": "Washington" },
-  "207": { "state_code": "ME", "state_name": "Maine" },
-  "208": { "state_code": "ID", "state_name": "Idaho" },
-  "209": { "state_code": "CA", "state_name": "California" },
-  "210": { "state_code": "TX", "state_name": "Texas" },
-  "212": { "state_code": "NY", "state_name": "New York" },
-  "213": { "state_code": "CA", "state_name": "California" },
-  "214": { "state_code": "TX", "state_name": "Texas" },
-  "215": { "state_code": "PA", "state_name": "Pennsylvania" },
-  "216": { "state_code": "OH", "state_name": "Ohio" },
-  "217": { "state_code": "IL", "state_name": "Illinois" },
-  "218": { "state_code": "MN", "state_name": "Minnesota" },
-  "219": { "state_code": "IN", "state_name": "Indiana" },
-  "224": { "state_code": "IL", "state_name": "Illinois" },
-  "225": { "state_code": "LA", "state_name": "Louisiana" },
-  "228": { "state_code": "MS", "state_name": "Mississippi" },
-  "229": { "state_code": "GA", "state_name": "Georgia" },
-  "231": { "state_code": "MI", "state_name": "Michigan" },
-  "234": { "state_code": "OH", "state_name": "Ohio" },
-  "239": { "state_code": "FL", "state_name": "Florida" },
-  "240": { "state_code": "MD", "state_name": "Maryland" },
-  "248": { "state_code": "MI", "state_name": "Michigan" },
-  "251": { "state_code": "AL", "state_name": "Alabama" },
-  "252": { "state_code": "NC", "state_name": "North Carolina" },
-  "253": { "state_code": "WA", "state_name": "Washington" },
-  "254": { "state_code": "TX", "state_name": "Texas" },
-  "256": { "state_code": "AL", "state_name": "Alabama" },
-  "260": { "state_code": "IN", "state_name": "Indiana" },
-  "262": { "state_code": "WI", "state_name": "Wisconsin" },
-  "267": { "state_code": "PA", "state_name": "Pennsylvania" },
-  "269": { "state_code": "MI", "state_name": "Michigan" },
-  "270": { "state_code": "KY", "state_name": "Kentucky" },
-  "272": { "state_code": "PA", "state_name": "Pennsylvania" },
-  "276": { "state_code": "VA", "state_name": "Virginia" },
-  "278": { "state_code": "MI", "state_name": "Michigan" },
-  "281": { "state_code": "TX", "state_name": "Texas" },
-  "301": { "state_code": "MD", "state_name": "Maryland" },
-  "302": { "state_code": "DE", "state_name": "Delaware" },
-  "303": { "state_code": "CO", "state_name": "Colorado" },
-  "304": { "state_code": "WV", "state_name": "West Virginia" },
-  "305": { "state_code": "FL", "state_name": "Florida" },
-  "307": { "state_code": "WY", "state_name": "Wyoming" },
-  "308": { "state_code": "NE", "state_name": "Nebraska" },
-  "309": { "state_code": "IL", "state_name": "Illinois" },
-  "310": { "state_code": "CA", "state_name": "California" },
-  "312": { "state_code": "IL", "state_name": "Illinois" },
-  "313": { "state_code": "MI", "state_name": "Michigan" },
-  "314": { "state_code": "MO", "state_name": "Missouri" },
-  "315": { "state_code": "NY", "state_name": "New York" },
-  "316": { "state_code": "KS", "state_name": "Kansas" },
-  "317": { "state_code": "IN", "state_name": "Indiana" },
-  "318": { "state_code": "LA", "state_name": "Louisiana" },
-  "319": { "state_code": "IA", "state_name": "Iowa" },
-  "320": { "state_code": "MN", "state_name": "Minnesota" },
-  "321": { "state_code": "FL", "state_name": "Florida" },
-  "323": { "state_code": "CA", "state_name": "California" },
-  "325": { "state_code": "TX", "state_name": "Texas" },
-  "330": { "state_code": "OH", "state_name": "Ohio" },
-  "331": { "state_code": "IL", "state_name": "Illinois" },
-  "334": { "state_code": "AL", "state_name": "Alabama" },
-  "336": { "state_code": "NC", "state_name": "North Carolina" },
-  "337": { "state_code": "LA", "state_name": "Louisiana" },
-  "339": { "state_code": "MA", "state_name": "Massachusetts" },
-  "346": { "state_code": "TX", "state_name": "Texas" },
-  "347": { "state_code": "NY", "state_name": "New York" },
-  "351": { "state_code": "MA", "state_name": "Massachusetts" },
-  "352": { "state_code": "FL", "state_name": "Florida" },
-  "360": { "state_code": "WA", "state_name": "Washington" },
-  "361": { "state_code": "TX", "state_name": "Texas" },
-  "364": { "state_code": "KY", "state_name": "Kentucky" },
-  "380": { "state_code": "OH", "state_name": "Ohio" },
-  "385": { "state_code": "UT", "state_name": "Utah" },
-  "386": { "state_code": "FL", "state_name": "Florida" },
-  "401": { "state_code": "RI", "state_name": "Rhode Island" },
-  "402": { "state_code": "NE", "state_name": "Nebraska" },
-  "404": { "state_code": "GA", "state_name": "Georgia" },
-  "405": { "state_code": "OK", "state_name": "Oklahoma" },
-  "406": { "state_code": "MT", "state_name": "Montana" },
-  "407": { "state_code": "FL", "state_name": "Florida" },
-  "408": { "state_code": "CA", "state_name": "California" },
-  "409": { "state_code": "TX", "state_name": "Texas" },
-  "410": { "state_code": "MD", "state_name": "Maryland" },
-  "412": { "state_code": "PA", "state_name": "Pennsylvania" },
-  "413": { "state_code": "MA", "state_name": "Massachusetts" },
-  "414": { "state_code": "WI", "state_name": "Wisconsin" },
-  "415": { "state_code": "CA", "state_name": "California" },
-  "417": { "state_code": "MO", "state_name": "Missouri" },
-  "419": { "state_code": "OH", "state_name": "Ohio" },
-  "423": { "state_code": "TN", "state_name": "Tennessee" },
-  "424": { "state_code": "CA", "state_name": "California" },
-  "425": { "state_code": "WA", "state_name": "Washington" },
-  "430": { "state_code": "TX", "state_name": "Texas" },
-  "432": { "state_code": "TX", "state_name": "Texas" },
-  "434": { "state_code": "VA", "state_name": "Virginia" },
-  "435": { "state_code": "UT", "state_name": "Utah" },
-  "440": { "state_code": "OH", "state_name": "Ohio" },
-  "442": { "state_code": "CA", "state_name": "California" },
-  "443": { "state_code": "MD", "state_name": "Maryland" },
-  "447": { "state_code": "IL", "state_name": "Illinois" },
-  "458": { "state_code": "OR", "state_name": "Oregon" },
-  "469": { "state_code": "TX", "state_name": "Texas" },
-  "470": { "state_code": "GA", "state_name": "Georgia" },
-  "475": { "state_code": "CT", "state_name": "Connecticut" },
-  "478": { "state_code": "GA", "state_name": "Georgia" },
-  "479": { "state_code": "AR", "state_name": "Arkansas" },
-  "480": { "state_code": "AZ", "state_name": "Arizona" },
-  "484": { "state_code": "PA", "state_name": "Pennsylvania" },
-  "501": { "state_code": "AR", "state_name": "Arkansas" },
-  "502": { "state_code": "KY", "state_name": "Kentucky" },
-  "503": { "state_code": "OR", "state_name": "Oregon" },
-  "504": { "state_code": "LA", "state_name": "Louisiana" },
-  "505": { "state_code": "NM", "state_name": "New Mexico" },
-  "507": { "state_code": "MN", "state_name": "Minnesota" },
-  "508": { "state_code": "MA", "state_name": "Massachusetts" },
-  "509": { "state_code": "WA", "state_name": "Washington" },
-  "510": { "state_code": "CA", "state_name": "California" },
-  "512": { "state_code": "TX", "state_name": "Texas" },
-  "513": { "state_code": "OH", "state_name": "Ohio" },
-  "515": { "state_code": "IA", "state_name": "Iowa" },
-  "516": { "state_code": "NY", "state_name": "New York" },
-  "517": { "state_code": "MI", "state_name": "Michigan" },
-  "518": { "state_code": "NY", "state_name": "New York" },
-  "520": { "state_code": "AZ", "state_name": "Arizona" },
-  "530": { "state_code": "CA", "state_name": "California" },
-  "531": { "state_code": "NE", "state_name": "Nebraska" },
-  "534": { "state_code": "WI", "state_name": "Wisconsin" },
-  "539": { "state_code": "OK", "state_name": "Oklahoma" },
-  "540": { "state_code": "VA", "state_name": "Virginia" },
-  "541": { "state_code": "OR", "state_name": "Oregon" },
-  "551": { "state_code": "NJ", "state_name": "New Jersey" },
-  "559": { "state_code": "CA", "state_name": "California" },
-  "561": { "state_code": "FL", "state_name": "Florida" },
-  "562": { "state_code": "CA", "state_name": "California" },
-  "563": { "state_code": "IA", "state_name": "Iowa" },
-  "564": { "state_code": "WA", "state_name": "Washington" },
-  "567": { "state_code": "OH", "state_name": "Ohio" },
-  "570": { "state_code": "PA", "state_name": "Pennsylvania" },
-  "571": { "state_code": "VA", "state_name": "Virginia" },
-  "573": { "state_code": "MO", "state_name": "Missouri" },
-  "574": { "state_code": "IN", "state_name": "Indiana" },
-  "575": { "state_code": "NM", "state_name": "New Mexico" },
-  "580": { "state_code": "OK", "state_name": "Oklahoma" },
-  "585": { "state_code": "NY", "state_name": "New York" },
-  "586": { "state_code": "MI", "state_name": "Michigan" },
-  "601": { "state_code": "MS", "state_name": "Mississippi" },
-  "602": { "state_code": "AZ", "state_name": "Arizona" },
-  "603": { "state_code": "NH", "state_name": "New Hampshire" },
-  "605": { "state_code": "SD", "state_name": "South Dakota" },
-  "606": { "state_code": "KY", "state_name": "Kentucky" },
-  "607": { "state_code": "NY", "state_name": "New York" },
-  "608": { "state_code": "WI", "state_name": "Wisconsin" },
-  "609": { "state_code": "NJ", "state_name": "New Jersey" },
-  "610": { "state_code": "PA", "state_name": "Pennsylvania" },
-  "612": { "state_code": "MN", "state_name": "Minnesota" },
-  "614": { "state_code": "OH", "state_name": "Ohio" },
-  "615": { "state_code": "TN", "state_name": "Tennessee" },
-  "616": { "state_code": "MI", "state_name": "Michigan" },
-  "617": { "state_code": "MA", "state_name": "Massachusetts" },
-  "618": { "state_code": "IL", "state_name": "Illinois" },
-  "619": { "state_code": "CA", "state_name": "California" },
-  "620": { "state_code": "KS", "state_name": "Kansas" },
-  "623": { "state_code": "AZ", "state_name": "Arizona" },
-  "626": { "state_code": "CA", "state_name": "California" },
-  "628": { "state_code": "CA", "state_name": "California" },
-  "629": { "state_code": "TN", "state_name": "Tennessee" },
-  "630": { "state_code": "IL", "state_name": "Illinois" },
-  "631": { "state_code": "NY", "state_name": "New York" },
-  "636": { "state_code": "MO", "state_name": "Missouri" },
-  "640": { "state_code": "IA", "state_name": "Iowa" },
-  "641": { "state_code": "IA", "state_name": "Iowa" },
-  "646": { "state_code": "NY", "state_name": "New York" },
-  "650": { "state_code": "CA", "state_name": "California" },
-  "651": { "state_code": "MN", "state_name": "Minnesota" },
-  "657": { "state_code": "CA", "state_name": "California" },
-  "660": { "state_code": "MO", "state_name": "Missouri" },
-  "661": { "state_code": "CA", "state_name": "California" },
-  "662": { "state_code": "MS", "state_name": "Mississippi" },
-  "667": { "state_code": "MD", "state_name": "Maryland" },
-  "669": { "state_code": "CA", "state_name": "California" },
-  "678": { "state_code": "GA", "state_name": "Georgia" },
-  "681": { "state_code": "WV", "state_name": "West Virginia" },
-  "682": { "state_code": "TX", "state_name": "Texas" },
-  "701": { "state_code": "ND", "state_name": "North Dakota" },
-  "702": { "state_code": "NV", "state_name": "Nevada" },
-  "703": { "state_code": "VA", "state_name": "Virginia" },
-  "704": { "state_code": "NC", "state_name": "North Carolina" },
-  "706": { "state_code": "GA", "state_name": "Georgia" },
-  "707": { "state_code": "CA", "state_name": "California" },
-  "708": { "state_code": "IL", "state_name": "Illinois" },
-  "712": { "state_code": "IA", "state_name": "Iowa" },
-  "713": { "state_code": "TX", "state_name": "Texas" },
-  "714": { "state_code": "CA", "state_name": "California" },
-  "715": { "state_code": "WI", "state_name": "Wisconsin" },
-  "716": { "state_code": "NY", "state_name": "New York" },
-  "717": { "state_code": "PA", "state_name": "Pennsylvania" },
-  "718": { "state_code": "NY", "state_name": "New York" },
-  "719": { "state_code": "CO", "state_name": "Colorado" },
-  "720": { "state_code": "CO", "state_name": "Colorado" },
-  "724": { "state_code": "PA", "state_name": "Pennsylvania" },
-  "727": { "state_code": "FL", "state_name": "Florida" },
-  "730": { "state_code": "IL", "state_name": "Illinois" },
-  "732": { "state_code": "NJ", "state_name": "New Jersey" },
-  "734": { "state_code": "MI", "state_name": "Michigan" },
-  "737": { "state_code": "TX", "state_name": "Texas" },
-  "740": { "state_code": "OH", "state_name": "Ohio" },
-  "743": { "state_code": "NC", "state_name": "North Carolina" },
-  "747": { "state_code": "CA", "state_name": "California" },
-  "754": { "state_code": "FL", "state_name": "Florida" },
-  "757": { "state_code": "VA", "state_name": "Virginia" },
-  "760": { "state_code": "CA", "state_name": "California" },
-  "762": { "state_code": "GA", "state_name": "Georgia" },
-  "763": { "state_code": "MN", "state_name": "Minnesota" },
-  "765": { "state_code": "IN", "state_name": "Indiana" },
-  "769": { "state_code": "MS", "state_name": "Mississippi" },
-  "770": { "state_code": "GA", "state_name": "Georgia" },
-  "772": { "state_code": "FL", "state_name": "Florida" },
-  "773": { "state_code": "IL", "state_name": "Illinois" },
-  "774": { "state_code": "MA", "state_name": "Massachusetts" },
-  "775": { "state_code": "NV", "state_name": "Nevada" },
-  "779": { "state_code": "IL", "state_name": "Illinois" },
-  "781": { "state_code": "MA", "state_name": "Massachusetts" },
-  "785": { "state_code": "KS", "state_name": "Kansas" },
-  "786": { "state_code": "FL", "state_name": "Florida" },
-  "801": { "state_code": "UT", "state_name": "Utah" },
-  "802": { "state_code": "VT", "state_name": "Vermont" },
-  "803": { "state_code": "SC", "state_name": "South Carolina" },
-  "804": { "state_code": "VA", "state_name": "Virginia" },
-  "805": { "state_code": "CA", "state_name": "California" },
-  "806": { "state_code": "TX", "state_name": "Texas" },
-  "808": { "state_code": "HI", "state_name": "Hawaii" },
-  "810": { "state_code": "MI", "state_name": "Michigan" },
-  "812": { "state_code": "IN", "state_name": "Indiana" },
-  "813": { "state_code": "FL", "state_name": "Florida" },
-  "814": { "state_code": "PA", "state_name": "Pennsylvania" },
-  "815": { "state_code": "IL", "state_name": "Illinois" },
-  "816": { "state_code": "MO", "state_name": "Missouri" },
-  "817": { "state_code": "TX", "state_name": "Texas" },
-  "818": { "state_code": "CA", "state_name": "California" },
-  "828": { "state_code": "NC", "state_name": "North Carolina" },
-  "830": { "state_code": "TX", "state_name": "Texas" },
-  "831": { "state_code": "CA", "state_name": "California" },
-  "832": { "state_code": "TX", "state_name": "Texas" },
-  "838": { "state_code": "NY", "state_name": "New York" },
-  "843": { "state_code": "SC", "state_name": "South Carolina" },
-  "845": { "state_code": "NY", "state_name": "New York" },
-  "847": { "state_code": "IL", "state_name": "Illinois" },
-  "848": { "state_code": "NJ", "state_name": "New Jersey" },
-  "850": { "state_code": "FL", "state_name": "Florida" },
-  "854": { "state_code": "SC", "state_name": "South Carolina" },
-  "855": { "state_code": "TF", "state_name": "Toll Free" },
-  "856": { "state_code": "NJ", "state_name": "New Jersey" },
-  "857": { "state_code": "MA", "state_name": "Massachusetts" },
-  "858": { "state_code": "CA", "state_name": "California" },
-  "859": { "state_code": "KY", "state_name": "Kentucky" },
-  "860": { "state_code": "CT", "state_name": "Connecticut" },
-  "862": { "state_code": "NJ", "state_name": "New Jersey" },
-  "863": { "state_code": "FL", "state_name": "Florida" },
-  "864": { "state_code": "SC", "state_name": "South Carolina" },
-  "865": { "state_code": "TN", "state_name": "Tennessee" },
-  "866": { "state_code": "TF", "state_name": "Toll Free" },
-  "870": { "state_code": "AR", "state_name": "Arkansas" },
-  "872": { "state_code": "IL", "state_name": "Illinois" },
-  "878": { "state_code": "PA", "state_name": "Pennsylvania" },
-  "901": { "state_code": "TN", "state_name": "Tennessee" },
-  "903": { "state_code": "TX", "state_name": "Texas" },
-  "904": { "state_code": "FL", "state_name": "Florida" },
-  "906": { "state_code": "MI", "state_name": "Michigan" },
-  "907": { "state_code": "AK", "state_name": "Alaska" },
-  "908": { "state_code": "NJ", "state_name": "New Jersey" },
-  "909": { "state_code": "CA", "state_name": "California" },
-  "910": { "state_code": "NC", "state_name": "North Carolina" },
-  "912": { "state_code": "GA", "state_name": "Georgia" },
-  "913": { "state_code": "KS", "state_name": "Kansas" },
-  "914": { "state_code": "NY", "state_name": "New York" },
-  "915": { "state_code": "TX", "state_name": "Texas" },
-  "916": { "state_code": "CA", "state_name": "California" },
-  "917": { "state_code": "NY", "state_name": "New York" },
-  "918": { "state_code": "OK", "state_name": "Oklahoma" },
-  "919": { "state_code": "NC", "state_name": "North Carolina" },
-  "920": { "state_code": "WI", "state_name": "Wisconsin" },
-  "925": { "state_code": "CA", "state_name": "California" },
-  "928": { "state_code": "AZ", "state_name": "Arizona" },
-  "929": { "state_code": "NY", "state_name": "New York" },
-  "931": { "state_code": "TN", "state_name": "Tennessee" },
-  "934": { "state_code": "NY", "state_name": "New York" },
-  "936": { "state_code": "TX", "state_name": "Texas" },
-  "937": { "state_code": "OH", "state_name": "Ohio" },
-  "938": { "state_code": "AL", "state_name": "Alabama" },
-  "940": { "state_code": "TX", "state_name": "Texas" },
-  "941": { "state_code": "FL", "state_name": "Florida" },
-  "947": { "state_code": "MI", "state_name": "Michigan" },
-  "949": { "state_code": "CA", "state_name": "California" },
-  "951": { "state_code": "CA", "state_name": "California" },
-  "952": { "state_code": "MN", "state_name": "Minnesota" },
-  "954": { "state_code": "FL", "state_name": "Florida" },
-  "956": { "state_code": "TX", "state_name": "Texas" },
-  "959": { "state_code": "CT", "state_name": "Connecticut" },
-  "970": { "state_code": "CO", "state_name": "Colorado" },
-  "971": { "state_code": "OR", "state_name": "Oregon" },
-  "972": { "state_code": "TX", "state_name": "Texas" },
-  "973": { "state_code": "NJ", "state_name": "New Jersey" },
-  "975": { "state_code": "MO", "state_name": "Missouri" },
-  "978": { "state_code": "MA", "state_name": "Massachusetts" },
-  "979": { "state_code": "TX", "state_name": "Texas" },
-  "980": { "state_code": "NC", "state_name": "North Carolina" },
-  "984": { "state_code": "NC", "state_name": "North Carolina" },
-  "985": { "state_code": "LA", "state_name": "Louisiana" },
-  "986": { "state_code": "ID", "state_name": "Idaho" },
-  "989": { "state_code": "MI", "state_name": "Michigan" }
+  "201": {
+    "city": "Jersey City",
+    "state_code": "NJ",
+    "state_name": "New Jersey"
+  },
+  "202": {
+    "city": "Washington",
+    "state_code": "DC",
+    "state_name": "District of Columbia"
+  },
+  "203": {
+    "city": "Bridgeport",
+    "state_code": "CT",
+    "state_name": "Connecticut"
+  },
+  "205": { "city": "Birmingham", "state_code": "AL", "state_name": "Alabama" },
+  "206": { "city": "Seattle", "state_code": "WA", "state_name": "Washington" },
+  "207": { "city": "Portland", "state_code": "ME", "state_name": "Maine" },
+  "208": { "city": "Boise", "state_code": "ID", "state_name": "Idaho" },
+  "209": { "city": "Stockton", "state_code": "CA", "state_name": "California" },
+  "210": { "city": "San Antonio", "state_code": "TX", "state_name": "Texas" },
+  "212": {
+    "city": "New York City",
+    "state_code": "NY",
+    "state_name": "New York"
+  },
+  "213": {
+    "city": "Los Angeles",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "214": { "city": "Dallas", "state_code": "TX", "state_name": "Texas" },
+  "215": {
+    "city": "Philadelphia",
+    "state_code": "PA",
+    "state_name": "Pennsylvania"
+  },
+  "216": { "city": "Cleveland", "state_code": "OH", "state_name": "Ohio" },
+  "217": {
+    "city": "Springfield",
+    "state_code": "IL",
+    "state_name": "Illinois"
+  },
+  "218": { "city": "Duluth", "state_code": "MN", "state_name": "Minnesota" },
+  "219": { "city": "Hammond", "state_code": "IN", "state_name": "Indiana" },
+  "223": {
+    "city": "Lancaster",
+    "state_code": "PA",
+    "state_name": "Pennsylvania"
+  },
+  "224": { "city": "Elgin", "state_code": "IL", "state_name": "Illinois" },
+  "225": {
+    "city": "Baton Rouge",
+    "state_code": "LA",
+    "state_name": "Louisiana"
+  },
+  "228": { "city": "Biloxi", "state_code": "MS", "state_name": "Mississippi" },
+  "229": { "city": "Albany", "state_code": "GA", "state_name": "Georgia" },
+  "231": { "city": "Muskegon", "state_code": "MI", "state_name": "Michigan" },
+  "234": { "city": "Akron", "state_code": "OH", "state_name": "Ohio" },
+  "239": { "city": "Cape Coral", "state_code": "FL", "state_name": "Florida" },
+  "240": { "city": "Germantown", "state_code": "MD", "state_name": "Maryland" },
+  "248": { "city": "Troy", "state_code": "MI", "state_name": "Michigan" },
+  "251": { "city": "Mobile", "state_code": "AL", "state_name": "Alabama" },
+  "252": {
+    "city": "Greenville",
+    "state_code": "NC",
+    "state_name": "North Carolina"
+  },
+  "253": { "city": "Tacoma", "state_code": "WA", "state_name": "Washington" },
+  "254": { "city": "Waco", "state_code": "TX", "state_name": "Texas" },
+  "256": { "city": "Huntsville", "state_code": "AL", "state_name": "Alabama" },
+  "260": { "city": "Fort Wayne", "state_code": "IN", "state_name": "Indiana" },
+  "262": { "city": "Kenosha", "state_code": "WI", "state_name": "Wisconsin" },
+  "267": {
+    "city": "Philadelphia",
+    "state_code": "PA",
+    "state_name": "Pennsylvania"
+  },
+  "269": { "city": "Kalamazoo", "state_code": "MI", "state_name": "Michigan" },
+  "270": {
+    "city": "Bowling Green",
+    "state_code": "KY",
+    "state_name": "Kentucky"
+  },
+  "272": {
+    "city": "Scranton",
+    "state_code": "PA",
+    "state_name": "Pennsylvania"
+  },
+  "276": { "city": "Bristol", "state_code": "VA", "state_name": "Virginia" },
+  "281": { "city": "Houston", "state_code": "TX", "state_name": "Texas" },
+  "301": { "city": "Germantown", "state_code": "MD", "state_name": "Maryland" },
+  "302": { "city": "Wilmington", "state_code": "DE", "state_name": "Delaware" },
+  "303": { "city": "Denver", "state_code": "CO", "state_name": "Colorado" },
+  "304": {
+    "city": "Charleston",
+    "state_code": "WV",
+    "state_name": "West Virginia"
+  },
+  "305": { "city": "Miami", "state_code": "FL", "state_name": "Florida" },
+  "307": { "city": "Cheyenne", "state_code": "WY", "state_name": "Wyoming" },
+  "308": {
+    "city": "Grand Island",
+    "state_code": "NE",
+    "state_name": "Nebraska"
+  },
+  "309": { "city": "Peoria", "state_code": "IL", "state_name": "Illinois" },
+  "310": {
+    "city": "Los Angeles",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "312": { "city": "Chicago", "state_code": "IL", "state_name": "Illinois" },
+  "313": { "city": "Detroit", "state_code": "MI", "state_name": "Michigan" },
+  "314": { "city": "St. Louis", "state_code": "MO", "state_name": "Missouri" },
+  "315": { "city": "Syracuse", "state_code": "NY", "state_name": "New York" },
+  "316": { "city": "Wichita", "state_code": "KS", "state_name": "Kansas" },
+  "317": {
+    "city": "Indianapolis",
+    "state_code": "IN",
+    "state_name": "Indiana"
+  },
+  "318": {
+    "city": "Shreveport",
+    "state_code": "LA",
+    "state_name": "Louisiana"
+  },
+  "319": { "city": "Cedar Rapids", "state_code": "IA", "state_name": "Iowa" },
+  "320": { "city": "St. Cloud", "state_code": "MN", "state_name": "Minnesota" },
+  "321": { "city": "Orlando", "state_code": "FL", "state_name": "Florida" },
+  "323": {
+    "city": "Los Angeles",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "325": { "city": "Abilene", "state_code": "TX", "state_name": "Texas" },
+  "327": { "city": "Conway", "state_code": "AR", "state_name": "Arkansas" },
+  "330": { "city": "Akron", "state_code": "OH", "state_name": "Ohio" },
+  "331": { "city": "Aurora", "state_code": "IL", "state_name": "Illinois" },
+  "334": { "city": "Montgomery", "state_code": "AL", "state_name": "Alabama" },
+  "336": {
+    "city": "Greensboro",
+    "state_code": "NC",
+    "state_name": "North Carolina"
+  },
+  "337": { "city": "Lafayette", "state_code": "LA", "state_name": "Louisiana" },
+  "339": {
+    "city": "Waltham",
+    "state_code": "MA",
+    "state_name": "Massachusetts"
+  },
+  "346": { "city": "Houston", "state_code": "TX", "state_name": "Texas" },
+  "347": {
+    "city": "New York City",
+    "state_code": "NY",
+    "state_name": "New York"
+  },
+  "351": {
+    "city": "Lowell",
+    "state_code": "MA",
+    "state_name": "Massachusetts"
+  },
+  "352": { "city": "Gainesville", "state_code": "FL", "state_name": "Florida" },
+  "360": {
+    "city": "Vancouver",
+    "state_code": "WA",
+    "state_name": "Washington"
+  },
+  "361": {
+    "city": "Corpus Christi",
+    "state_code": "TX",
+    "state_name": "Texas"
+  },
+  "364": { "city": "Owensboro", "state_code": "KY", "state_name": "Kentucky" },
+  "380": { "city": "Columbus", "state_code": "OH", "state_name": "Ohio" },
+  "385": { "city": "Salt Lake City", "state_code": "UT", "state_name": "Utah" },
+  "386": { "city": "Palm Coast", "state_code": "FL", "state_name": "Florida" },
+  "401": {
+    "city": "Providence",
+    "state_code": "RI",
+    "state_name": "Rhode Island"
+  },
+  "402": { "city": "Omaha", "state_code": "NE", "state_name": "Nebraska" },
+  "404": { "city": "Atlanta", "state_code": "GA", "state_name": "Georgia" },
+  "405": {
+    "city": "Oklahoma City",
+    "state_code": "OK",
+    "state_name": "Oklahoma"
+  },
+  "406": { "city": "Billings", "state_code": "MT", "state_name": "Montana" },
+  "407": { "city": "Orlando", "state_code": "FL", "state_name": "Florida" },
+  "408": { "city": "San Jose", "state_code": "CA", "state_name": "California" },
+  "409": { "city": "Beaumont", "state_code": "TX", "state_name": "Texas" },
+  "410": { "city": "Baltimore", "state_code": "MD", "state_name": "Maryland" },
+  "412": {
+    "city": "Pittsburgh",
+    "state_code": "PA",
+    "state_name": "Pennsylvania"
+  },
+  "413": {
+    "city": "Springfield",
+    "state_code": "MA",
+    "state_name": "Massachusetts"
+  },
+  "414": { "city": "Milwaukee", "state_code": "WI", "state_name": "Wisconsin" },
+  "415": {
+    "city": "San Francisco",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "417": {
+    "city": "Springfield",
+    "state_code": "MO",
+    "state_name": "Missouri"
+  },
+  "419": { "city": "Toledo", "state_code": "OH", "state_name": "Ohio" },
+  "423": {
+    "city": "Chattanooga",
+    "state_code": "TN",
+    "state_name": "Tennessee"
+  },
+  "424": {
+    "city": "Los Angeles",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "425": { "city": "Bellevue", "state_code": "WA", "state_name": "Washington" },
+  "430": { "city": "Tyler", "state_code": "TX", "state_name": "Texas" },
+  "432": { "city": "Midland", "state_code": "TX", "state_name": "Texas" },
+  "434": { "city": "Lynchburg", "state_code": "VA", "state_name": "Virginia" },
+  "435": { "city": "St. George", "state_code": "UT", "state_name": "Utah" },
+  "440": { "city": "Lorain", "state_code": "OH", "state_name": "Ohio" },
+  "442": {
+    "city": "Oceanside",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "443": { "city": "Baltimore", "state_code": "MD", "state_name": "Maryland" },
+  "447": {
+    "city": "Springfield",
+    "state_code": "IL",
+    "state_name": "Illinois"
+  },
+  "448": { "city": "Tallahassee", "state_code": "FL", "state_name": "Florida" },
+  "458": { "city": "Eugene", "state_code": "OR", "state_name": "Oregon" },
+  "469": { "city": "Dallas", "state_code": "TX", "state_name": "Texas" },
+  "470": { "city": "Atlanta", "state_code": "GA", "state_name": "Georgia" },
+  "475": {
+    "city": "New Haven",
+    "state_code": "CT",
+    "state_name": "Connecticut"
+  },
+  "478": { "city": "Macon", "state_code": "GA", "state_name": "Georgia" },
+  "479": { "city": "Fort Smith", "state_code": "AR", "state_name": "Arkansas" },
+  "480": { "city": "Mesa", "state_code": "AZ", "state_name": "Arizona" },
+  "484": {
+    "city": "Allentown",
+    "state_code": "PA",
+    "state_name": "Pennsylvania"
+  },
+  "501": {
+    "city": "Little Rock",
+    "state_code": "AR",
+    "state_name": "Arkansas"
+  },
+  "502": { "city": "Louisville", "state_code": "KY", "state_name": "Kentucky" },
+  "503": { "city": "Portland", "state_code": "OR", "state_name": "Oregon" },
+  "504": {
+    "city": "New Orleans",
+    "state_code": "LA",
+    "state_name": "Louisiana"
+  },
+  "505": {
+    "city": "Albuquerque",
+    "state_code": "NM",
+    "state_name": "New Mexico"
+  },
+  "507": { "city": "Rochester", "state_code": "MN", "state_name": "Minnesota" },
+  "508": {
+    "city": "Worcester",
+    "state_code": "MA",
+    "state_name": "Massachusetts"
+  },
+  "509": { "city": "Spokane", "state_code": "WA", "state_name": "Washington" },
+  "510": { "city": "Oakland", "state_code": "CA", "state_name": "California" },
+  "512": { "city": "Austin", "state_code": "TX", "state_name": "Texas" },
+  "513": { "city": "Cincinnati", "state_code": "OH", "state_name": "Ohio" },
+  "515": { "city": "Des Moines", "state_code": "IA", "state_name": "Iowa" },
+  "516": { "city": "Hempstead", "state_code": "NY", "state_name": "New York" },
+  "517": { "city": "Lansing", "state_code": "MI", "state_name": "Michigan" },
+  "518": { "city": "Albany", "state_code": "NY", "state_name": "New York" },
+  "520": { "city": "Tucson", "state_code": "AZ", "state_name": "Arizona" },
+  "530": { "city": "Redding", "state_code": "CA", "state_name": "California" },
+  "531": { "city": "Lincoln", "state_code": "NE", "state_name": "Nebraska" },
+  "534": {
+    "city": "Eau Claire",
+    "state_code": "WI",
+    "state_name": "Wisconsin"
+  },
+  "539": { "city": "Tulsa", "state_code": "OK", "state_name": "Oklahoma" },
+  "540": { "city": "Roanoke", "state_code": "VA", "state_name": "Virginia" },
+  "541": { "city": "Eugene", "state_code": "OR", "state_name": "Oregon" },
+  "551": {
+    "city": "Jersey City",
+    "state_code": "NJ",
+    "state_name": "New Jersey"
+  },
+  "559": { "city": "Fresno", "state_code": "CA", "state_name": "California" },
+  "561": {
+    "city": "West Palm Beach",
+    "state_code": "FL",
+    "state_name": "Florida"
+  },
+  "562": {
+    "city": "Long Beach",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "563": { "city": "Davenport", "state_code": "IA", "state_name": "Iowa" },
+  "564": {
+    "city": "Bellingham",
+    "state_code": "WA",
+    "state_name": "Washington"
+  },
+  "567": { "city": "Toledo", "state_code": "OH", "state_name": "Ohio" },
+  "570": {
+    "city": "Scranton",
+    "state_code": "PA",
+    "state_name": "Pennsylvania"
+  },
+  "571": { "city": "Arlington", "state_code": "VA", "state_name": "Virginia" },
+  "573": { "city": "Columbia", "state_code": "MO", "state_name": "Missouri" },
+  "574": { "city": "South Bend", "state_code": "IN", "state_name": "Indiana" },
+  "575": {
+    "city": "Las Cruces",
+    "state_code": "NM",
+    "state_name": "New Mexico"
+  },
+  "580": { "city": "Lawton", "state_code": "OK", "state_name": "Oklahoma" },
+  "585": { "city": "Rochester", "state_code": "NY", "state_name": "New York" },
+  "586": { "city": "Warren", "state_code": "MI", "state_name": "Michigan" },
+  "601": { "city": "Jackson", "state_code": "MS", "state_name": "Mississippi" },
+  "602": { "city": "Phoenix", "state_code": "AZ", "state_name": "Arizona" },
+  "603": {
+    "city": "Manchester",
+    "state_code": "NH",
+    "state_name": "New Hampshire"
+  },
+  "605": {
+    "city": "Sioux Falls",
+    "state_code": "SD",
+    "state_name": "South Dakota"
+  },
+  "606": { "city": "Ashland", "state_code": "KY", "state_name": "Kentucky" },
+  "607": { "city": "Binghamton", "state_code": "NY", "state_name": "New York" },
+  "608": { "city": "Madison", "state_code": "WI", "state_name": "Wisconsin" },
+  "609": { "city": "Trenton", "state_code": "NJ", "state_name": "New Jersey" },
+  "610": {
+    "city": "Allentown",
+    "state_code": "PA",
+    "state_name": "Pennsylvania"
+  },
+  "612": {
+    "city": "Minneapolis",
+    "state_code": "MN",
+    "state_name": "Minnesota"
+  },
+  "614": { "city": "Columbus", "state_code": "OH", "state_name": "Ohio" },
+  "615": { "city": "Nashville", "state_code": "TN", "state_name": "Tennessee" },
+  "616": {
+    "city": "Grand Rapids",
+    "state_code": "MI",
+    "state_name": "Michigan"
+  },
+  "617": {
+    "city": "Boston",
+    "state_code": "MA",
+    "state_name": "Massachusetts"
+  },
+  "618": { "city": "Belleville", "state_code": "IL", "state_name": "Illinois" },
+  "619": {
+    "city": "San Diego",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "620": { "city": "Hutchinson", "state_code": "KS", "state_name": "Kansas" },
+  "623": { "city": "Glendale", "state_code": "AZ", "state_name": "Arizona" },
+  "626": { "city": "Pasadena", "state_code": "CA", "state_name": "California" },
+  "628": {
+    "city": "San Francisco",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "629": { "city": "Nashville", "state_code": "TN", "state_name": "Tennessee" },
+  "630": { "city": "Aurora", "state_code": "IL", "state_name": "Illinois" },
+  "631": { "city": "Brentwood", "state_code": "NY", "state_name": "New York" },
+  "636": { "city": "O'Fallon", "state_code": "MO", "state_name": "Missouri" },
+  "640": { "city": "Ottumwa", "state_code": "IA", "state_name": "Iowa" },
+  "641": { "city": "Mason City", "state_code": "IA", "state_name": "Iowa" },
+  "646": {
+    "city": "New York City",
+    "state_code": "NY",
+    "state_name": "New York"
+  },
+  "650": {
+    "city": "Palo Alto",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "651": { "city": "St. Paul", "state_code": "MN", "state_name": "Minnesota" },
+  "657": { "city": "Anaheim", "state_code": "CA", "state_name": "California" },
+  "660": { "city": "Sedalia", "state_code": "MO", "state_name": "Missouri" },
+  "661": {
+    "city": "Bakersfield",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "662": {
+    "city": "Southaven",
+    "state_code": "MS",
+    "state_name": "Mississippi"
+  },
+  "667": { "city": "Baltimore", "state_code": "MD", "state_name": "Maryland" },
+  "669": { "city": "San Jose", "state_code": "CA", "state_name": "California" },
+  "678": { "city": "Atlanta", "state_code": "GA", "state_name": "Georgia" },
+  "681": {
+    "city": "Charleston",
+    "state_code": "WV",
+    "state_name": "West Virginia"
+  },
+  "682": { "city": "Fort Worth", "state_code": "TX", "state_name": "Texas" },
+  "701": { "city": "Fargo", "state_code": "ND", "state_name": "North Dakota" },
+  "702": { "city": "Las Vegas", "state_code": "NV", "state_name": "Nevada" },
+  "703": { "city": "Arlington", "state_code": "VA", "state_name": "Virginia" },
+  "704": {
+    "city": "Charlotte",
+    "state_code": "NC",
+    "state_name": "North Carolina"
+  },
+  "706": { "city": "Augusta", "state_code": "GA", "state_name": "Georgia" },
+  "707": {
+    "city": "Santa Rosa",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "708": { "city": "Cicero", "state_code": "IL", "state_name": "Illinois" },
+  "712": { "city": "Sioux City", "state_code": "IA", "state_name": "Iowa" },
+  "713": { "city": "Houston", "state_code": "TX", "state_name": "Texas" },
+  "714": { "city": "Anaheim", "state_code": "CA", "state_name": "California" },
+  "715": {
+    "city": "Eau Claire",
+    "state_code": "WI",
+    "state_name": "Wisconsin"
+  },
+  "716": { "city": "Buffalo", "state_code": "NY", "state_name": "New York" },
+  "717": {
+    "city": "Lancaster",
+    "state_code": "PA",
+    "state_name": "Pennsylvania"
+  },
+  "718": {
+    "city": "New York City",
+    "state_code": "NY",
+    "state_name": "New York"
+  },
+  "719": {
+    "city": "Colorado Springs",
+    "state_code": "CO",
+    "state_name": "Colorado"
+  },
+  "720": { "city": "Denver", "state_code": "CO", "state_name": "Colorado" },
+  "724": {
+    "city": "New Castle",
+    "state_code": "PA",
+    "state_name": "Pennsylvania"
+  },
+  "725": { "city": "Las Vegas", "state_code": "NV", "state_name": "Nevada" },
+  "727": {
+    "city": "St. Petersburg",
+    "state_code": "FL",
+    "state_name": "Florida"
+  },
+  "730": { "city": "Naperville", "state_code": "IL", "state_name": "Illinois" },
+  "732": {
+    "city": "Toms River",
+    "state_code": "NJ",
+    "state_name": "New Jersey"
+  },
+  "734": { "city": "Ann Arbor", "state_code": "MI", "state_name": "Michigan" },
+  "737": { "city": "Austin", "state_code": "TX", "state_name": "Texas" },
+  "740": { "city": "Newark", "state_code": "OH", "state_name": "Ohio" },
+  "743": {
+    "city": "Greensboro",
+    "state_code": "NC",
+    "state_name": "North Carolina"
+  },
+  "747": {
+    "city": "Los Angeles",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "754": {
+    "city": "Fort Lauderdale",
+    "state_code": "FL",
+    "state_name": "Florida"
+  },
+  "757": {
+    "city": "Virginia Beach",
+    "state_code": "VA",
+    "state_name": "Virginia"
+  },
+  "760": {
+    "city": "Oceanside",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "762": { "city": "Augusta", "state_code": "GA", "state_name": "Georgia" },
+  "763": {
+    "city": "Brooklyn Park",
+    "state_code": "MN",
+    "state_name": "Minnesota"
+  },
+  "765": { "city": "Muncie", "state_code": "IN", "state_name": "Indiana" },
+  "769": { "city": "Jackson", "state_code": "MS", "state_name": "Mississippi" },
+  "770": { "city": "Roswell", "state_code": "GA", "state_name": "Georgia" },
+  "772": {
+    "city": "Port St. Lucie",
+    "state_code": "FL",
+    "state_name": "Florida"
+  },
+  "773": { "city": "Chicago", "state_code": "IL", "state_name": "Illinois" },
+  "774": {
+    "city": "Worcester",
+    "state_code": "MA",
+    "state_name": "Massachusetts"
+  },
+  "775": { "city": "Reno", "state_code": "NV", "state_name": "Nevada" },
+  "779": { "city": "Rockford", "state_code": "IL", "state_name": "Illinois" },
+  "781": {
+    "city": "Waltham",
+    "state_code": "MA",
+    "state_name": "Massachusetts"
+  },
+  "785": { "city": "Topeka", "state_code": "KS", "state_name": "Kansas" },
+  "786": { "city": "Miami", "state_code": "FL", "state_name": "Florida" },
+  "801": { "city": "Salt Lake City", "state_code": "UT", "state_name": "Utah" },
+  "802": { "city": "Burlington", "state_code": "VT", "state_name": "Vermont" },
+  "803": {
+    "city": "Columbia",
+    "state_code": "SC",
+    "state_name": "South Carolina"
+  },
+  "804": { "city": "Richmond", "state_code": "VA", "state_name": "Virginia" },
+  "805": { "city": "Oxnard", "state_code": "CA", "state_name": "California" },
+  "806": { "city": "Lubbock", "state_code": "TX", "state_name": "Texas" },
+  "808": { "city": "Honolulu", "state_code": "HI", "state_name": "Hawaii" },
+  "810": { "city": "Flint", "state_code": "MI", "state_name": "Michigan" },
+  "812": { "city": "Evansville", "state_code": "IN", "state_name": "Indiana" },
+  "813": { "city": "Tampa", "state_code": "FL", "state_name": "Florida" },
+  "814": { "city": "Erie", "state_code": "PA", "state_name": "Pennsylvania" },
+  "815": { "city": "Joliet", "state_code": "IL", "state_name": "Illinois" },
+  "816": {
+    "city": "Kansas City",
+    "state_code": "MO",
+    "state_name": "Missouri"
+  },
+  "817": { "city": "Fort Worth", "state_code": "TX", "state_name": "Texas" },
+  "818": {
+    "city": "Los Angeles",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "828": {
+    "city": "Asheville",
+    "state_code": "NC",
+    "state_name": "North Carolina"
+  },
+  "830": { "city": "New Braunfels", "state_code": "TX", "state_name": "Texas" },
+  "831": { "city": "Salinas", "state_code": "CA", "state_name": "California" },
+  "832": { "city": "Houston", "state_code": "TX", "state_name": "Texas" },
+  "838": { "city": "Albany", "state_code": "NY", "state_name": "New York" },
+  "843": {
+    "city": "Charleston",
+    "state_code": "SC",
+    "state_name": "South Carolina"
+  },
+  "845": { "city": "Newburgh", "state_code": "NY", "state_name": "New York" },
+  "847": { "city": "Elgin", "state_code": "IL", "state_name": "Illinois" },
+  "848": {
+    "city": "New Brunswick",
+    "state_code": "NJ",
+    "state_name": "New Jersey"
+  },
+  "850": { "city": "Tallahassee", "state_code": "FL", "state_name": "Florida" },
+  "854": {
+    "city": "Charleston",
+    "state_code": "SC",
+    "state_name": "South Carolina"
+  },
+  "855": { "city": "Toll Free", "state_code": "TF", "state_name": "Toll Free" },
+  "856": { "city": "Camden", "state_code": "NJ", "state_name": "New Jersey" },
+  "857": {
+    "city": "Boston",
+    "state_code": "MA",
+    "state_name": "Massachusetts"
+  },
+  "858": {
+    "city": "San Diego",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "859": { "city": "Lexington", "state_code": "KY", "state_name": "Kentucky" },
+  "860": {
+    "city": "Hartford",
+    "state_code": "CT",
+    "state_name": "Connecticut"
+  },
+  "862": { "city": "Newark", "state_code": "NJ", "state_name": "New Jersey" },
+  "863": { "city": "Lakeland", "state_code": "FL", "state_name": "Florida" },
+  "864": {
+    "city": "Greenville",
+    "state_code": "SC",
+    "state_name": "South Carolina"
+  },
+  "866": { "city": "Toll Free", "state_code": "TF", "state_name": "Toll Free" },
+  "865": { "city": "Knoxville", "state_code": "TN", "state_name": "Tennessee" },
+  "870": { "city": "Jonesboro", "state_code": "AR", "state_name": "Arkansas" },
+  "872": { "city": "Chicago", "state_code": "IL", "state_name": "Illinois" },
+  "878": {
+    "city": "Pittsburgh",
+    "state_code": "PA",
+    "state_name": "Pennsylvania"
+  },
+  "901": { "city": "Memphis", "state_code": "TN", "state_name": "Tennessee" },
+  "903": { "city": "Tyler", "state_code": "TX", "state_name": "Texas" },
+  "904": {
+    "city": "Jacksonville",
+    "state_code": "FL",
+    "state_name": "Florida"
+  },
+  "906": { "city": "Marquette", "state_code": "MI", "state_name": "Michigan" },
+  "907": { "city": "Anchorage", "state_code": "AK", "state_name": "Alaska" },
+  "908": {
+    "city": "Elizabeth",
+    "state_code": "NJ",
+    "state_name": "New Jersey"
+  },
+  "909": {
+    "city": "San Bernardino",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "910": {
+    "city": "Fayetteville",
+    "state_code": "NC",
+    "state_name": "North Carolina"
+  },
+  "912": { "city": "Savannah", "state_code": "GA", "state_name": "Georgia" },
+  "913": { "city": "Kansas City", "state_code": "KS", "state_name": "Kansas" },
+  "914": { "city": "Yonkers", "state_code": "NY", "state_name": "New York" },
+  "915": { "city": "El Paso", "state_code": "TX", "state_name": "Texas" },
+  "916": {
+    "city": "Sacramento",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "917": {
+    "city": "New York City",
+    "state_code": "NY",
+    "state_name": "New York"
+  },
+  "918": { "city": "Tulsa", "state_code": "OK", "state_name": "Oklahoma" },
+  "919": {
+    "city": "Raleigh",
+    "state_code": "NC",
+    "state_name": "North Carolina"
+  },
+  "920": { "city": "Green Bay", "state_code": "WI", "state_name": "Wisconsin" },
+  "925": { "city": "Concord", "state_code": "CA", "state_name": "California" },
+  "928": { "city": "Yuma", "state_code": "AZ", "state_name": "Arizona" },
+  "929": {
+    "city": "New York City",
+    "state_code": "NY",
+    "state_name": "New York"
+  },
+  "931": {
+    "city": "Clarksville",
+    "state_code": "TN",
+    "state_name": "Tennessee"
+  },
+  "934": { "city": "Brentwood", "state_code": "NY", "state_name": "New York" },
+  "936": { "city": "Conroe", "state_code": "TX", "state_name": "Texas" },
+  "937": { "city": "Dayton", "state_code": "OH", "state_name": "Ohio" },
+  "938": { "city": "Huntsville", "state_code": "AL", "state_name": "Alabama" },
+  "940": { "city": "Denton", "state_code": "TX", "state_name": "Texas" },
+  "941": { "city": "North Port", "state_code": "FL", "state_name": "Florida" },
+  "947": { "city": "Troy", "state_code": "MI", "state_name": "Michigan" },
+  "949": { "city": "Irvine", "state_code": "CA", "state_name": "California" },
+  "951": {
+    "city": "Riverside",
+    "state_code": "CA",
+    "state_name": "California"
+  },
+  "952": {
+    "city": "Bloomington",
+    "state_code": "MN",
+    "state_name": "Minnesota"
+  },
+  "954": {
+    "city": "Fort Lauderdale",
+    "state_code": "FL",
+    "state_name": "Florida"
+  },
+  "956": { "city": "Laredo", "state_code": "TX", "state_name": "Texas" },
+  "959": {
+    "city": "Hartford",
+    "state_code": "CT",
+    "state_name": "Connecticut"
+  },
+  "970": {
+    "city": "Fort Collins",
+    "state_code": "CO",
+    "state_name": "Colorado"
+  },
+  "971": { "city": "Portland", "state_code": "OR", "state_name": "Oregon" },
+  "972": { "city": "Dallas", "state_code": "TX", "state_name": "Texas" },
+  "973": { "city": "Newark", "state_code": "NJ", "state_name": "New Jersey" },
+  "975": { "city": "Columbia", "state_code": "MO", "state_name": "Missouri" },
+  "978": {
+    "city": "Lowell",
+    "state_code": "MA",
+    "state_name": "Massachusetts"
+  },
+  "979": {
+    "city": "College Station",
+    "state_code": "TX",
+    "state_name": "Texas"
+  },
+  "980": {
+    "city": "Charlotte",
+    "state_code": "NC",
+    "state_name": "North Carolina"
+  },
+  "984": {
+    "city": "Raleigh",
+    "state_code": "NC",
+    "state_name": "North Carolina"
+  },
+  "985": { "city": "Houma", "state_code": "LA", "state_name": "Louisiana" },
+  "986": { "city": "Boise", "state_code": "ID", "state_name": "Idaho" },
+  "989": { "city": "Saginaw", "state_code": "MI", "state_name": "Michigan" }
 }
